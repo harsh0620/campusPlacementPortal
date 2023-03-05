@@ -1,5 +1,6 @@
 /*CHECK PERMISSION FUNCTION TO VERIFY WHETHER THE USER 
 CALLING FOR THE REQUEST HAS ACCESS TO DO IT OR NOT*/
+import { UnAuthenticatedError } from "../errors/index.js";
 
 const checkPermissions = (requestUser, resourceUserId) => {
   // if (requestUser.role === 'admin') return
