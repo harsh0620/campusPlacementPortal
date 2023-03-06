@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import adminAuthRouter from "./routes/adminAuthRoute.js";
+import companyRouter from "./routes/companyRoute.js";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 
@@ -25,7 +26,8 @@ app.use(express.json());
 
 // Mount admin authentication routes at /api/v1/auth
 app.use("/api/v1/auth", adminAuthRouter);
-
+// Mount company authentication routes at /api/v1/auth
+app.use("/api/v1/company", companyRouter);
 // Mount middleware for handling 404 not found errors
 app.use(notFoundMiddleware);
 

@@ -6,6 +6,11 @@ import jwt from "jsonwebtoken";
 
 // Create a new mongoose schema for Admin
 const adminSchema = mongoose.Schema({
+  role: {
+    type: String,
+    required: true,
+    default: "admin",
+  },
   name: {
     type: String,
     required: [true, "Please provide name"],
