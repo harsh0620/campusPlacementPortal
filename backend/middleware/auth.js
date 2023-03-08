@@ -1,29 +1,28 @@
-import { UnAuthenticatedError } from "../errors/index.js";
+import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-
-// Middleware function to verify the JWT token
+import UnAuthenticatedError from "../errors/unauthenticated.js";
 const auth = async (req, res, next) => {
-  // Get the Authorization header from the request
   const authHeader = req.headers.authorization;
-
-  // Check if the Authorization header exists or starts with Bearer
   if (!authHeader || !authHeader.startsWith("Bearer")) {
-    throw new UnAuthenticatedError("Authentication invalid");
+    console.error("Authentication invalid");
+    res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ message: "Authentication invalid" });
+    return;
   }
-
-  // Extract the token from the Authorization header
   const token = authHeader.split(" ")[1];
 
   try {
-    // Verify the token using JWT and the secret key
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Attach the user ID to the request object
+    // console.log(payload)
+    // attach the user request object
+    // req.user = payload
     req.user = { userId: payload.userId };
     next();
   } catch (error) {
-    // If the token verification fails, throw an error
-    throw new UnAuthenticatedError("Authentication invalid");
+    console.error(error.message);
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: error.message });
+    return;
   }
 };
 

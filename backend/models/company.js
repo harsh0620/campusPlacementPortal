@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
-
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 const hrSchema = mongoose.Schema({
   name: {
     type: String,
@@ -38,6 +39,7 @@ const companySchema = mongoose.Schema({
     required: [true, "Please provide company name"],
     minlength: 3,
     maxlength: 50,
+    unique: true,
   },
   email: {
     type: String,
@@ -83,6 +85,28 @@ const companySchema = mongoose.Schema({
     required: [true, "Please provide company address"],
   },
   hr: hrSchema,
+  programs: {
+    type: [String],
+    required: [true, "Please provide program"],
+    enum: ["B.Tech", "M.Tech", "MBA", "MCA", "BBA", "BCA", "B.Sc", "M.Sc"],
+  },
+  streams: {
+    type: [String],
+    required: [true, "Please provide streams"],
+    enum: [
+      "Computer Science",
+      "Electronics",
+      "Mechanical",
+      "Civil",
+      "Electrical",
+      "Agriculture",
+      "Mining",
+      "Chemical",
+      "Biotechnology",
+      "Food Technology",
+      "Textile",
+    ],
+  },
   placementDrives: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -99,5 +123,23 @@ const companySchema = mongoose.Schema({
     default: Date.now,
   },
 });
+// Hash password before saving the user
+companySchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
+// Create a JWT token for the user
+companySchema.methods.createJWT = function () {
+  return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_LIFETIME,
+  });
+};
+
+// Compare user password with hashed password
+companySchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
 export default mongoose.model("Company", companySchema);

@@ -1,24 +1,26 @@
 import { StatusCodes } from "http-status-codes";
 
 const errorHandlerMiddleware = (err, req, res, next) => {
+  console.log(err);
   const defaultError = {
-    statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR, // if statusCode is not defined, set it to internal server error
-    msg: err.message || "Something went wrong,try again later", // if msg is not defined, set it to a default message
+    statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
+    message: err.message || "Something went wrong, try again later",
   };
   if (err.name === "ValidationError") {
-    // if the error is a validation error
-    defaultError.statusCode = StatusCodes.BAD_REQUEST; // set the status code to bad request
-    defaultError.msg = Object.values(err.errors) // get all the error messages
+    defaultError.statusCode = StatusCodes.BAD_REQUEST;
+    // defaultError.message = err.message
+    defaultError.message = Object.values(err.errors)
       .map((item) => item.message)
       .join(",");
   }
   if (err.code && err.code === 11000) {
-    // if the error is due to duplicate key
-    defaultError.statusCode = StatusCodes.BAD_REQUEST; // set the status code to bad request
-    defaultError.msg = `${Object.keys(err.keyValue)} field has to be unique`;
+    defaultError.statusCode = StatusCodes.BAD_REQUEST;
+    defaultError.message = `${Object.keys(
+      err.keyValue
+    )} field has to be unique`;
   }
-  // send the error message as a response
-  res.status(defaultError.statusCode).json({ msg: defaultError.msg });
+
+  res.status(defaultError.statusCode).json({ message: defaultError.message });
 };
 
 export default errorHandlerMiddleware;

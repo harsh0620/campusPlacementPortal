@@ -1,7 +1,7 @@
-class CustomeAPIError extends Error {
+class CustomAPIError extends Error {
   constructor(message) {
     super(message);
   }
 }
 
-export default CustomeAPIError;
+export default CustomAPIError;
