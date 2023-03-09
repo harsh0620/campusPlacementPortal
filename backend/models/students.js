@@ -1,10 +1,16 @@
 import mongoose from "mongoose";
-
+import validator from "validator";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 const studentSchema = mongoose.Schema({
   role: {
     type: String,
     required: true,
     default: "student",
+  },
+  verified: {
+    type: Boolean,
+    default: false,
   },
   placementDetails: {
     applied: {
@@ -45,7 +51,6 @@ const studentSchema = mongoose.Schema({
   personalDetails: {
     profileImage: {
       type: String,
-      required: true,
     },
     enrollmentNo: {
       type: String,
@@ -145,40 +150,24 @@ const studentSchema = mongoose.Schema({
     },
     pincode: {
       type: String,
-      required: true,
     },
   },
-  academicDetails: {
-    degree: {
-      type: String,
-    },
-    specialization: {
-      type: String,
-    },
-    institute: {
-      type: String,
-    },
-    yearOfPassing: {
-      type: Number,
-    },
-    board: {
-      type: String,
-    },
-    result: {
-      option: {
+  academicDetails: [
+    {
+      degree: {
         type: String,
-        enum: ["CGPA", "Percentage"],
       },
-      value: {
+      specialization: {
+        type: String,
+      },
+      institute: {
+        type: String,
+      },
+      yearOfPassing: {
         type: Number,
       },
-    },
-    numberOfSemesters: {
-      type: Number,
-    },
-    semesters: {
-      count: {
-        type: Number,
+      board: {
+        type: String,
       },
       result: {
         option: {
@@ -189,11 +178,30 @@ const studentSchema = mongoose.Schema({
           type: Number,
         },
       },
-      backlogSubjects: {
+      numberOfSemesters: {
         type: Number,
       },
+      semesters: [
+        {
+          count: {
+            type: Number,
+          },
+          result: {
+            option: {
+              type: String,
+              enum: ["CGPA", "Percentage"],
+            },
+            value: {
+              type: Number,
+            },
+          },
+          backlogSubjects: {
+            type: Number,
+          },
+        },
+      ],
     },
-  },
+  ],
   professionalDetails: {
     experiences: [
       {
@@ -269,10 +277,6 @@ const studentSchema = mongoose.Schema({
     },
     links: {
       type: [String],
-      validate: {
-        validator: validator.isURL,
-        message: "Please provide valid URL",
-      },
     },
   },
   documents: {
@@ -297,7 +301,29 @@ const studentSchema = mongoose.Schema({
     ],
   },
 });
+// Hash password before saving the user
+studentSchema.pre("save", async function () {
+  if (!this.isModified("personalDetails.password")) return;
+  const salt = await bcrypt.genSalt(10);
+  this.personalDetails.password = await bcrypt.hash(
+    this.personalDetails.password,
+    salt
+  );
+});
 
-const Student = mongoose.model("Student", studentSchema);
+// Create a JWT token for the user
+studentSchema.methods.createJWT = function () {
+  return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_LIFETIME,
+  });
+};
 
-module.exports = Student;
+// Compare user password with hashed password
+studentSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(
+    candidatePassword,
+    this.personalDetails.password
+  );
+  return isMatch;
+};
+export default mongoose.model("Student", studentSchema);

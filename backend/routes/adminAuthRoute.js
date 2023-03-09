@@ -1,12 +1,11 @@
 import express from "express";
-
 const router = express.Router();
 import {
   registerAdmin,
   loginAdmin,
   updateAdmin,
 } from "../controller/adminAuthController.js";
-
+import authenticateUser from "../middleware/auth.js";
 /**
  * @desc Register a new admin user
  * @route POST /api/admin/register
@@ -26,6 +25,6 @@ router.route("/admin/login").post(loginAdmin);
  * @route PUT /api/v1/auth/admin/profile
  * @access Private
  */
-router.route("/admin/profile").patch(updateAdmin);
+router.route("/admin/profile").patch(authenticateUser, updateAdmin);
 
 export default router;
