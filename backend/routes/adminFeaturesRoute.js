@@ -1,30 +1,30 @@
-// import express from "express";
-// const router = express.Router();
-
+import express from "express";
+const router = express.Router();
+import authenticateUser from "../middleware/auth.js";
 // // Import Admin Feature Controllers
-// import {
-// createCompany,
-// updateCompany,
-// deleteCompany,
-// getAllCompanies,
-// getCompanyById,
-// createJobDrive,
-// updateJobDrive,
-// deleteJobDrive,
-// getAllJobDrives,
-// getJobDriveById,
-// createStudentDetails,
-// updateStudentDetails,
-// deleteStudentDetails,
-// getAllStudentDetails,
-// getStudentDetailsById,
-// allowApplication,
-// blockApplication,
-// verifyStudentDetails,
-// verifyCompanyDetails,
-// filterStudents,
-// filterCompanies,
-// } from "../controller/adminFeaturesController.js";
+import {
+  // createCompany,
+  // updateCompany,
+  // deleteCompany,
+  // getAllCompanies,
+  // getCompanyById,
+  // createJobDrive,
+  // updateJobDrive,
+  // deleteJobDrive,
+  // getAllJobDrives,
+  // getJobDriveById,
+  // createStudentDetails,
+  // updateStudentDetails,
+  // deleteStudentDetails,
+  // getAllStudentDetails,
+  // getStudentDetailsById,
+  // allowApplication,
+  // blockApplication,
+  verifyStudent,
+  // verifyCompanyDetails,
+  // filterStudents,
+  // filterCompanies,
+} from "../controller/adminFeaturesController.js";
 
 // // CRUD Operations for Companies
 // router.route("/companies").post(createCompany).get(getAllCompanies);
@@ -58,11 +58,13 @@
 // router.route("/blockapplication/:id").put(blockApplication);
 
 // // Verify Student and Company Details
-// router.route("/verifystudent/:id").put(verifyStudentDetails);
+router
+  .route("/verifyStudent/:studentId")
+  .patch(authenticateUser, verifyStudent);
 // router.route("/verifycompany/:id").put(verifyCompanyDetails);
 
 // // Filter Students and Companies
 // router.route("/filterstudents").get(filterStudents);
 // router.route("/filtercompanies").get(filterCompanies);
 
-// export default router;
+export default router;

@@ -282,12 +282,24 @@ const studentSchema = mongoose.Schema({
   documents: {
     resume: {
       type: String,
+      validate: {
+        validator: validator.isURL,
+        message: "Please provide valid URL",
+      },
     },
     photo: {
       type: String,
+      validate: {
+        validator: validator.isURL,
+        message: "Please provide valid URL",
+      },
     },
     aadhar: {
       type: String,
+      validate: {
+        validator: validator.isURL,
+        message: "Please provide valid URL",
+      },
     },
     marksheets: [
       {
@@ -296,6 +308,10 @@ const studentSchema = mongoose.Schema({
         },
         marksheetLink: {
           type: String,
+          validate: {
+            validator: validator.isURL,
+            message: "Please provide valid URL",
+          },
         },
       },
     ],

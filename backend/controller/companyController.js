@@ -1,5 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { BadRequestError, NotFoundError } from "../errors/index.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnAuthenticatedError,
+} from "../errors/index.js";
 import Company from "../models/Company.js";
 import checkPermissions from "../utils/checkPermissions.js";
 
@@ -10,6 +14,7 @@ import checkPermissions from "../utils/checkPermissions.js";
  */
 const createCompany = async (req, res, next) => {
   try {
+    await checkPermissions(req.user, "temp", next);
     const {
       name,
       email,
@@ -181,7 +186,7 @@ const getCompanyById = async (req, res) => {
   try {
     const company = await Company.findById(req.params.id);
     if (!company) {
-      res.status(StatusCodes.NOT_FOUND).json({ message: "Company not found" });
+      throw new NotFoundError("Company not found");
     } else {
       res.status(StatusCodes.OK).json(company);
     }
@@ -237,7 +242,9 @@ const updateCompanyById = async (req, res, next) => {
     // @TO_CHANGE
     req.user.role = "admin";
     if (req.user.role !== "admin") {
-      throw new BadRequestError("You are not authorized to create a company");
+      throw new UnAuthenticatedError(
+        "You are not authorized to create a company"
+      );
     }
     const updatedCompany = await Company.findOneAndUpdate(
       { _id: companyId },

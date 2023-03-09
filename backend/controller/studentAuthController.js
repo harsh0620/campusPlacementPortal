@@ -5,11 +5,6 @@ import {
   NotFoundError,
   UnAuthenticatedError,
 } from "../errors/index.js";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 
 /**
  * @desc Register a new student user
@@ -92,9 +87,16 @@ const loginStudent = async (req, res, next) => {
     // Generate a JSON web token (JWT) for the authenticated student
     const token = student.createJWT();
     // Remove the password field from the student object to prevent it from being sent to the client
-    // student.password = undefined;
+    student.password = undefined;
     // Send a response to the client with a 200 (OK) status code, including the authenticated student object and the generated token
-    res.status(StatusCodes.OK).json({ student, token });
+    res.status(StatusCodes.OK).json({
+      student: {
+        email: student.personalDetails.email,
+        name: student.personalDetails.name,
+        enrollmentNo: student.personalDetails.enrollmentNo,
+      },
+      token,
+    });
   } catch (err) {
     next(err);
   }
@@ -102,7 +104,7 @@ const loginStudent = async (req, res, next) => {
 
 /**
  * @desc Update an existing student user's updatePersonalDetailsStudent
- * @route PUT /api/v1/auth/student/updatePersonalDetailsStudent
+ * @route PUT /api/v1/student/updatePersonalDetailsStudent
  * @access Private
  */
 // Define an asynchronous function called updateUser that takes in two parameters: req and res
@@ -151,7 +153,7 @@ const updatePersonalDetailsStudent = async (req, res, next) => {
 
 /**
  * @desc Update an existing student user's updatePersonalDetailsStudent
- * @route PUT /api/v1/auth/student/updatePersonalDetailsStudent
+ * @route PUT /api/v1/student/updatePersonalDetailsStudent
  * @access Private
  */
 // Define an asynchronous function called updateUser that takes in two parameters: req and res
@@ -188,7 +190,7 @@ const updateAcademicDetailsStudent = async (req, res, next) => {
 };
 /**
  * @desc Update an existing student user's updatePersonalDetailsStudent
- * @route PUT /api/v1/auth/student/updateProfessionalDetailsStudent
+ * @route PUT /api/v1/student/updateProfessionalDetailsStudent
  * @access Private
  */
 // Define an asynchronous function called updateUser that takes in two parameters: req and res
@@ -224,109 +226,41 @@ const updateProfessionalDetailsStudent = async (req, res, next) => {
   }
 };
 
-// set up multer storage engine for storing files locally
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/documents");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-
-// set up multer upload middleware
-const fileFilter = (req, file, callback) => {
-  const allowedTypes = ["application/pdf"];
-  if (!allowedTypes.includes(file.mimetype)) {
-    const error = new Error("Invalid file type. Only PDF files are allowed.");
-    error.code = "LIMIT_FILE_TYPES";
-    return callback(error, false);
-  }
-  callback(null, true);
-};
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  },
-  fileFilter: fileFilter,
-  fields: [
-    { name: "resume", maxCount: 1 },
-    { name: "photo", maxCount: 1 },
-    { name: "aadhar", maxCount: 1 },
-    { name: "marksheets", maxCount: 5 },
-  ],
-});
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-// define controller function for updating student documents
-const updateDocuments = async (req, res, next) => {
+/**
+ * @desc Update an existing student user's updatePersonalDetailsStudent
+ * @route PUT /api/v1/student/documentDetails
+ * @access Private
+ */
+// Define an asynchronous function called updateUser that takes in two parameters: req and res
+const updateDocumentStudent = async (req, res, next) => {
   try {
-    const studentId = "6408920cbbcb37ac977fc4b3";
-    const { resume, photo, aadhar, marksheets } = req.body;
-
-    // create path to directory where student documents will be stored
-    const studentDir = path.join(__dirname, "../uploads/documents", studentId);
-    if (!fs.existsSync(studentDir)) {
-      fs.mkdirSync(studentDir, { recursive: true });
-    }
-
-    // handle file uploads and save file paths to database
-    const uploadFile = (fieldname, file) => {
-      return new Promise((resolve, reject) => {
-        upload.single(fieldname)(req, res, (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            if (req.file) {
-              const filePath = path.join(studentDir, req.file.filename);
-              resolve({ [fieldname]: filePath });
-            } else {
-              resolve({});
-            }
-          }
-        });
-      });
-    };
-
-    const documentPaths = {
-      resume: await uploadFile("resume", resume),
-      photo: await uploadFile("photo", photo),
-      aadhar: await uploadFile("aadhar", aadhar),
-      marksheets: [],
-    };
-
-    // handle marksheet uploads and save file paths to database
-    if (Array.isArray(marksheets)) {
-      for (let i = 0; i < marksheets.length; i++) {
-        const { marksheetName, marksheetFile } = marksheets[i];
-        if (marksheetName && marksheetFile) {
-          const marksheetPath = await uploadFile(
-            `marksheet${i}`,
-            marksheetFile
-          );
-          documentPaths.marksheets.push({
-            marksheetName: marksheetName,
-            marksheetLink: marksheetPath[`marksheet${i}`],
-          });
-        }
-      }
-    }
-
-    // update student document paths in database
-    const updatedStudent = await Student.findOneAndUpdate(
-      { _id: studentId },
-      { documents: documentPaths },
-      { new: true }
+    // Find the user in the database using the user ID stored in the request object
+    //@TO_CHANGE
+    const userId = "6408920cbbcb37ac977fc4b3";
+    const student = await Student.findOne({ _id: userId }).select(
+      "+personalDetails.password"
     );
-
-    res.status(StatusCodes.OK).json(updatedStudent);
-  } catch (error) {
-    next(error);
+    if (!student) {
+      throw new NotFoundError(`No student with id :${userId}`);
+    }
+    req.body.password = student.personalDetails.password;
+    const updatedStudent = await Student.findOneAndUpdate(
+      { _id: userId },
+      { documents: req.body },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    // Generate a new JSON web token (JWT) for the updated student object
+    const token = updatedStudent.createJWT();
+    // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
+    res.status(StatusCodes.OK).json({
+      documents: updatedStudent.documents,
+      token,
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -336,5 +270,5 @@ export {
   updatePersonalDetailsStudent,
   updateAcademicDetailsStudent,
   updateProfessionalDetailsStudent,
-  updateDocuments,
+  updateDocumentStudent,
 };

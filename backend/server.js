@@ -4,12 +4,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import adminAuthRouter from "./routes/adminAuthRoute.js";
+import adminFeaturesRouter from "./routes/adminFeaturesRoute.js";
 import companyRouter from "./routes/companyRoute.js";
 import studentAuthRouter from "./routes/studentAuthRoute.js";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -20,7 +19,7 @@ const app = express();
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-const __dirname = dirname(fileURLToPath(import.meta.url));
+
 // Use cors middleware to allow cross-origin requests
 app.use(cors());
 
@@ -29,6 +28,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Mount admin authentication routes at /api/v1/auth
 app.use("/api/v1/auth", adminAuthRouter);
+// Mount admin features routes at /api/v1/admin
+app.use("/api/v1/admin", adminFeaturesRouter);
 // Mount company authentication routes at /api/v1/company
 app.use("/api/v1/company", companyRouter);
 // Mount student authentication routes at /api/v1/auth
@@ -36,7 +37,6 @@ app.use("/api/v1/student", studentAuthRouter);
 
 // Mount middleware for handling 404 not found errors
 app.use(notFoundMiddleware);
-
 // Mount middleware for handling all other errors
 app.use(errorHandlerMiddleware);
 

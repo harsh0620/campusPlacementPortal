@@ -7,7 +7,7 @@ import {
   updatePersonalDetailsStudent,
   updateAcademicDetailsStudent,
   updateProfessionalDetailsStudent,
-  updateDocuments,
+  updateDocumentStudent,
 } from "../controller/studentAuthController.js";
 import authenticateUser from "../middleware/auth.js";
 /**
@@ -55,5 +55,5 @@ router
  * @route PUT /api/v1/student/documentDetails
  * @access Private
  */
-router.route("/documentDetails").patch(authenticateUser, updateDocuments);
+router.route("/documentDetails").patch(authenticateUser, updateDocumentStudent);
 export default router;
