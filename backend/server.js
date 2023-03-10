@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import adminAuthRouter from "./routes/adminAuthRoute.js";
 import adminFeaturesRouter from "./routes/adminFeaturesRoute.js";
 import companyRouter from "./routes/companyRoute.js";
+import jobDriveRouter from "./routes/jobDriveRoute.js";
 import studentAuthRouter from "./routes/studentAuthRoute.js";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
@@ -34,6 +35,8 @@ app.use("/api/v1/admin", adminFeaturesRouter);
 app.use("/api/v1/company", companyRouter);
 // Mount student authentication routes at /api/v1/auth
 app.use("/api/v1/student", studentAuthRouter);
+// Mount jobDrives routes at /api/v1/jobDrive
+app.use("/api/v1/jobDrive", jobDriveRouter);
 
 // Mount middleware for handling 404 not found errors
 app.use(notFoundMiddleware);

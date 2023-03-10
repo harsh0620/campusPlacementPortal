@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
 
 const jobDriveSchema = mongoose.Schema({
+  verified: {
+    type: Boolean,
+    default: false,
+  },
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
-    required: [true, "Please provide company id"],
+    required: [true, "Please provide company."],
   },
   designations: {
     type: [String],
@@ -46,7 +50,7 @@ const jobDriveSchema = mongoose.Schema({
     type: Date,
     required: [true, "Please provide the job drive date"],
   },
-  package: {
+  packageValue: {
     type: {
       min: {
         type: Number,
@@ -65,6 +69,12 @@ const jobDriveSchema = mongoose.Schema({
     type: String,
     required: [true, "Please provide the link to the job description PDF"],
   },
+  appliedBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

@@ -3,6 +3,7 @@ const router = express.Router();
 import authenticateUser from "../middleware/auth.js";
 // // Import Admin Feature Controllers
 import {
+  verifyJobDrive,
   // createCompany,
   // updateCompany,
   // deleteCompany,
@@ -61,7 +62,9 @@ import {
 router
   .route("/verifyStudent/:studentId")
   .patch(authenticateUser, verifyStudent);
-// router.route("/verifycompany/:id").put(verifyCompanyDetails);
+router
+  .route("/verifyJobDrive/:jobDriveId")
+  .patch(authenticateUser, verifyJobDrive);
 
 // // Filter Students and Companies
 // router.route("/filterstudents").get(filterStudents);
