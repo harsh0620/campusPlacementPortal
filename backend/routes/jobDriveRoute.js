@@ -28,20 +28,20 @@ router.route("/all").get(authenticateUser, getJobDrives);
  * @route GET /api/v1/jobDrive/:id
  * @access Private
  */
-router.route("/:id").get(authenticateUser, getJobDriveById);
+router.route("/:jobDriveId").get(authenticateUser, getJobDriveById);
 
 /**
  * @desc Update a jobDrive
  * @route POST /api/v1/jobDrive/edit/:id
  * @access Private
  */
-router.route("/edit/:id").patch(authenticateUser, updateJobDrive);
+router.route("/edit/:jobDriveId").patch(authenticateUser, updateJobDrive);
 
 /**
  * @desc Delete a jobDrive
  * @route POST /api/v1/jobDrive/delete/:id
  * @access Private
  */
-router.route("/delete/:id").delete(authenticateUser, deleteJobDrive);
+router.route("/delete/:jobDriveId").delete(authenticateUser, deleteJobDrive);
 
 export default router;

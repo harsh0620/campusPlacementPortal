@@ -1,5 +1,4 @@
 import JobDrive from "../models/jobDrive.js";
-import checkPermissions from "../utils/checkPermissions.js";
 import {
   BadRequestError,
   NotFoundError,
@@ -10,7 +9,11 @@ import Company from "../models/Company.js";
 import { StatusCodes } from "http-status-codes";
 import Students from "../models/students.js";
 
-// CREATE
+/**
+ * @desc Create jobDrive
+ * @route POST /api/v1/jobDrive/create
+ * @access Private
+ */
 const createJobDrive = async (req, res, next) => {
   try {
     const {
@@ -68,7 +71,11 @@ const createJobDrive = async (req, res, next) => {
   }
 };
 
-// READ ALL
+/**
+ * @desc Get all jobDrives based on categories
+ * @route GET /api/v1/jobDrive/all
+ * @access Private
+ */
 const getJobDrives = async (req, res, next) => {
   try {
     const requester = req.user.userId;
@@ -152,10 +159,14 @@ const getJobDrives = async (req, res, next) => {
   }
 };
 
-// READ ONE
+/**
+ * @desc Get jobDrive by id
+ * @route POST /api/v1/jobDrive/:jobDriveId
+ * @access Private
+ */
 const getJobDriveById = async (req, res, next) => {
   try {
-    const jobDriveId = req.params.id;
+    const jobDriveId = req.params.jobDriveId;
     const requester = req.user.userId;
     const jobDrives = await JobDrive.findById(jobDriveId);
     if (!jobDrives) {
@@ -193,7 +204,11 @@ const getJobDriveById = async (req, res, next) => {
   }
 };
 
-// UPDATE
+/**
+ * @desc Update jobDrive
+ * @route PUT /api/v1/jobDrive/edit/:jobDriveId
+ * @access Private
+ */
 const updateJobDrive = async (req, res, next) => {
   try {
     const {
@@ -224,7 +239,7 @@ const updateJobDrive = async (req, res, next) => {
     ) {
       throw new BadRequestError("Please provide all the required fields");
     }
-    const jobDriveId = req.params.id;
+    const jobDriveId = req.params.jobDriveId;
     const requester = req.user.userId;
     const jobDrive = await JobDrive.findById(jobDriveId);
     if (!jobDrive) {
@@ -262,10 +277,14 @@ const updateJobDrive = async (req, res, next) => {
   }
 };
 
-// DELETE
+/**
+ * @desc Delete jobDrive by id
+ * @route DELETE /api/v1/jobDrive/delete/:jobDriveId
+ * @access Private
+ */
 const deleteJobDrive = async (req, res, next) => {
   try {
-    const jobDriveId = req.params.id;
+    const jobDriveId = req.params.jobDriveId;
     const requester = req.user.userId;
     const ifAdmin = await Admin.findOne({ _id: requester });
     const ifCompany = await Company.findOne({ _id: jobDriveId });
