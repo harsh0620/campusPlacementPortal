@@ -24,10 +24,12 @@
     "express-rate-limit": "^6.7.0",
     "fs": "^0.0.1-security",
     "http-status-codes": "^2.2.0",
+    "jsonexport": "^3.2.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
     "path": "^0.12.7",
     "twilio": "^4.8.0",
     "validator": "^13.9.0"

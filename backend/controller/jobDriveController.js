@@ -173,7 +173,7 @@ const getJobDriveById = async (req, res, next) => {
       throw new NotFoundError(`No jobDrive with id :${jobDriveId}`);
     }
     const ifCompany = await Company.findOne({ _id: requester });
-    if (ifCompany) {
+    if (ifCompany && ifCompany._id == jobDrives.company) {
       const jobDrive = await JobDrive.findById({
         _id: req.params.id,
       });
@@ -313,6 +313,95 @@ const deleteJobDrive = async (req, res, next) => {
     next(error);
   }
 };
+/**
+ * @desc Apply to jobDrive
+ * @route POST /api/v1/jobDrive/apply/:jobDriveId
+ * @access Private
+ */
+const applyToJobDrive = async (req, res, next) => {
+  try {
+    const jobDriveId = req.params.jobDriveId;
+    const requester = req.user.userId;
+    const jobDrive = await JobDrive.findById(jobDriveId);
+    if (!jobDrive) {
+      throw new NotFoundError(`No jobDrive with id :${jobDriveId}`);
+    }
+    const ifStudent = await Students.findOne({ _id: requester });
+    if (!ifStudent || ifStudent.verified === false) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to apply to this job drive"
+      );
+    }
+    const ifApplied = await JobDrive.findOne({
+      _id: jobDriveId,
+      appliedBy: requester,
+    });
+    if (ifApplied) {
+      throw new BadRequestError("You have already applied to this job drive");
+    }
+    const updatedJobDrive = await JobDrive.findOneAndUpdate(
+      { _id: jobDriveId },
+      { $push: { appliedBy: requester } },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Applied successfully", updatedJobDrive });
+  } catch (error) {
+    next(error);
+  }
+};
+/**
+ * @desc Get Applied student in jobDrive by id
+ * @route GET /api/v1/getAppliedStudent/:jobDriveId
+ * @access Private
+ */
+const getAppliedStudentForJob = async (req, res, next) => {
+  try {
+    const jobDriveId = req.params.jobDriveId;
+    const requester = req.user.userId;
+    const jobDrives = await JobDrive.findById(jobDriveId);
+    if (!jobDrives) {
+      throw new NotFoundError(`No jobDrive with id :${jobDriveId}`);
+    }
+    const ifStudent = await Students.findOne({ _id: requester });
+    if (ifStudent) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to view applied student in this job drive"
+      );
+    }
+    const ifCompany = await Company.findOne({ _id: requester });
+    if (ifCompany && ifCompany._id == jobDrives.company) {
+      const appliedStudentIds = jobDrives.appliedBy;
+      const appliedStudents = await Promise.all(
+        appliedStudentIds.map(async (studentId) => {
+          const student = await Students.findById(studentId).select(
+            "-password"
+          );
+          return student;
+        })
+      );
+      res.status(StatusCodes.OK).json({ appliedStudents });
+    } else {
+      const appliedStudentIds = jobDrives.appliedBy;
+      const appliedStudents = await Promise.all(
+        appliedStudentIds.map(async (studentId) => {
+          const student = await Students.findById(studentId).select(
+            "-password"
+          );
+          return student;
+        })
+      );
+
+      res.status(StatusCodes.OK).json({ appliedStudents });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 export {
   createJobDrive,
@@ -320,4 +409,6 @@ export {
   getJobDriveById,
   updateJobDrive,
   deleteJobDrive,
+  applyToJobDrive,
+  getAppliedStudentForJob,
 };
