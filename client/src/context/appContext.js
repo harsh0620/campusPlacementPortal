@@ -10,23 +10,26 @@ import {
 const token = localStorage.getItem("token");
 const user = localStorage.getItem("user");
 
-export const initialState = {};
+export const initialState = {
+  email: "",
+  password: "",
+};
 const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  //const [state, dispatch] = useReducer(reducer, initialState);
   const registerUser = async (user) => {
-    dispatch({ type: REGISTER_USER_BEGIN });
-    try {
-      const response = await axios.post("/api/v1/auth/register", user);
-      dispatch({ type: REGISTER_USER_SUCCESS, payload: response.data });
-    } catch (error) {
-      dispatch({ type: REGISTER_USER_ERROR, payload: error.response.data });
-    }
+    // dispatch({ type: REGISTER_USER_BEGIN });
+    // try {
+    //   const response = await axios.post("/api/v1/auth/register", user);
+    //   dispatch({ type: REGISTER_USER_SUCCESS, payload: response.data });
+    // } catch (error) {
+    //   dispatch({ type: REGISTER_USER_ERROR, payload: error.response.data });
+    // }
   };
   return (
     <AppContext.Provider
       value={{
-        ...state,
+        // ...state,
         registerUser,
       }}
     >

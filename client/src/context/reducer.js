@@ -25,7 +25,6 @@ const reducer = (state, action) => {
       };
     default:
       throw new Error(`no such action :${action.type}`);
-      return state;
   }
 };
 export default reducer;

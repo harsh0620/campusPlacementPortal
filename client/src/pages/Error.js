@@ -10,10 +10,7 @@ const Error = () => {
       <p className="text-gray-500 mb-8">
         The page you are looking for could not be found. Please try again later.
       </p>
-      <a
-        href="/"
-        className="bg-indigo-500 text-white font-bold py-2 px-4 rounded"
-      >
+      <a href="/" className="bg-blueg text-white font-bold py-2 px-4 rounded">
         Go Back Home
       </a>
     </div>

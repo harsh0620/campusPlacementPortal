@@ -1,10 +1,12 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Error, Landing, Login, Register } from "./pages";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         {/* <Route
           path="/"
@@ -29,7 +31,19 @@ function App() {
         <Route path="/landing" element={<Landing />} />
         <Route path="*" element={<Error />} />
       </Routes>
-    </BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+    </Router>
   );
 }
 
