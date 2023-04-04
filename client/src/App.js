@@ -1,14 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Error, Landing, Login, Register } from "./pages";
+import { Error, Landing, Login, ProtectedRoute, Register } from "./pages";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import Dashboard from "./components/Dashboard";
+import SharedLayout from "./components/Dashboard/SharedLayout";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route
+        <Route
           path="/"
           element={
             <ProtectedRoute>
@@ -16,15 +18,15 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Stats />} />
-          <Route path="all-jobs" element={<AllJobs />}></Route>
+          <Route index element={<Dashboard />} />
+          {/* <Route path="all-jobs" element={<AllJobs />}></Route>
           <Route path="add-job" element={<AddJob />}></Route>
           <Route path="add-bookmark" element={<AddBookMark />}></Route>
           <Route path="profile" element={<Profile />}></Route>
           <Route path="todo" element={<Todo />}></Route>
           <Route path="log" element={<Log />}></Route>
-          <Route path="pomodoro" element={<Pomodoro />}></Route>
-        </Route> */}
+          <Route path="pomodoro" element={<Pomodoro />}></Route> */}
+        </Route>
         <Route path="/" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
