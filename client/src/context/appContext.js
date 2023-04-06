@@ -73,16 +73,14 @@ const AppProvider = ({ children }) => {
       });
     }, 3000);
   };
-  const addUserToLocalStorage = ({ user, token, location }) => {
+  const addUserToLocalStorage = ({ user, token }) => {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
-    localStorage.setItem("location", location);
   };
 
   const removeUserFromLocalStorage = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.removeItem("location");
   };
   const handleChange = ({ name, value }) => {
     dispatch({
@@ -95,20 +93,18 @@ const AppProvider = ({ children }) => {
     try {
       const response = await axios.post("/api/v1/auth/register", currentUser);
       console.log(response);
-      const { user, token, location } = response.data;
+      const { user, token } = response.data;
       dispatch({
         type: REGISTER_USER_SUCCESS,
         payload: {
           user,
           token,
-          location,
         },
       });
 
       addUserToLocalStorage({
         user,
         token,
-        location,
       });
     } catch (error) {
       console.log(error.response);
@@ -120,21 +116,23 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
   const loginUser = async (currentUser) => {
+    console.log("appContext", currentUser);
     dispatch({ type: LOGIN_USER_BEGIN });
     try {
       const { data } = await axios.post("/api/v1/auth/login", currentUser);
-      const { user, token, location } = data;
+      const { user, token } = data;
 
       dispatch({
         type: LOGIN_USER_SUCCESS,
-        payload: { user, token, location },
+        payload: { user, token },
       });
 
-      addUserToLocalStorage({ user, token, location });
+      addUserToLocalStorage({ user, token });
     } catch (error) {
+      console.log(error.response.data);
       dispatch({
         type: LOGIN_USER_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: error.response.data.message },
       });
     }
     clearAlert();

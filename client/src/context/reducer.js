@@ -47,8 +47,8 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         showAlert: true,
-        alertType: "danger",
-        error: action.payload.msg,
+        alertType: "error",
+        alertText: action.payload.msg,
       };
     case LOGIN_USER_BEGIN:
       return {
@@ -70,8 +70,8 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         showAlert: true,
-        alertType: "danger",
-        error: action.payload.msg,
+        alertType: "error",
+        alertText: action.payload.msg,
       };
     case LOGOUT_USER:
       return {

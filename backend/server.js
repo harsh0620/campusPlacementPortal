@@ -3,8 +3,8 @@ import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
-import adminAuthRouter from "./routes/adminAuthRoute.js";
-import adminFeaturesRouter from "./routes/adminFeaturesRoute.js";
+import adminRouter from "./routes/adminRoute.js";
+import authRouter from "./routes/authRoute.js";
 import companyRouter from "./routes/companyRoute.js";
 import jobDriveRouter from "./routes/jobDriveRoute.js";
 import studentAuthRouter from "./routes/studentAuthRoute.js";
@@ -27,13 +27,13 @@ app.use(cors());
 // Parse incoming JSON data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// Mount admin authentication routes at /api/v1/auth
-app.use("/api/v1/auth", adminAuthRouter);
-// Mount admin features routes at /api/v1/admin
-app.use("/api/v1/admin", adminFeaturesRouter);
-// Mount company authentication routes at /api/v1/company
+// Mount auth routes at /api/v1/auth
+app.use("/api/v1/auth", authRouter);
+// Mount admin routes at /api/v1/admin
+app.use("/api/v1/admin", adminRouter);
+// Mount company routes at /api/v1/company
 app.use("/api/v1/company", companyRouter);
-// Mount student authentication routes at /api/v1/auth
+// Mount student routes at /api/v1/auth
 app.use("/api/v1/student", studentAuthRouter);
 // Mount jobDrives routes at /api/v1/jobDrive
 app.use("/api/v1/jobDrive", jobDriveRouter);

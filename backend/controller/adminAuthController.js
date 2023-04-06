@@ -46,50 +46,6 @@ const registerAdmin = async (req, res, next) => {
 };
 
 /**
- * @desc Login an existing admin user
- * @route POST /api/v1/auth/admin/login
- * @access Public
- */
-// Define an asynchronous function called loginAdmin that takes in two parameters: req and res
-const loginAdmin = async (req, res) => {
-  try {
-    // Extract the email and password properties from the request body using destructuring
-    const { email, password } = req.body;
-
-    // Check if both email and password fields are present
-    if (!email || !password) {
-      // If either email or password fields are missing, throw a BadRequestError with an error message
-      throw new BadRequestError("Please provide all values");
-    }
-
-    // Check if an admin with the given email exists in the database
-    const admin = await Admin.findOne({ email }).select("+password");
-    if (!admin) {
-      // If no admin is found, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("Invalid Credentials");
-    }
-
-    // Check if the provided password matches the password stored in the database for the admin
-    const isPasswordCorrect = await admin.comparePassword(password);
-    if (!isPasswordCorrect) {
-      // If the password is incorrect, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("Invalid Credentials");
-    }
-
-    // Generate a JSON web token (JWT) for the authenticated admin
-    const token = admin.createJWT();
-
-    // Remove the password field from the admin object to prevent it from being sent to the client
-    admin.password = undefined;
-
-    // Send a response to the client with a 200 (OK) status code, including the authenticated admin object and the generated token
-    res.status(StatusCodes.OK).json({ admin, token });
-  } catch (err) {
-    next(err);
-  }
-};
-
-/**
  * @desc Update an existing admin user's profile
  * @route PUT /api/v1/auth/admin/profile
  * @access Private
@@ -135,4 +91,4 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-export { registerAdmin, loginAdmin, updateAdmin };
+export { registerAdmin, updateAdmin };

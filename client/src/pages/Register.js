@@ -40,8 +40,8 @@ const Register = () => {
   }, [user, navigate]);
   return (
     <div
-      className="flex justify-center flex-wrap items-center
-      px-6 py-2 max-w-6xl m-auto"
+      className="flex justify-center  items-center
+      px-6 py-2 max-w-6xl m-auto h-screen"
     >
       <div className="lg:p-[36px]  p-4 lg:mt-8 mt-14   w-full  md:w-[100%] lg:w-[40%] md:mx-0 mx-auto border border-black rounded-lg shadow-xl">
         <div className="w-full h-full ">

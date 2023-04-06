@@ -8,6 +8,7 @@ import Alert from "../components/Alert";
 const initialState = {
   email: "",
   password: "",
+  userType: "admin",
   showAlert: true,
 };
 const Login = () => {
@@ -17,16 +18,23 @@ const Login = () => {
   const { user, isLoading, showAlert, displayAlert, loginUser } =
     useAppContext();
   const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+    const name = e.target.name;
+    const value =
+      e.target.type === "select"
+        ? e.target.selectedOptions[0].value
+        : e.target.value;
+    setValues({ ...values, [name]: value });
   };
+
   async function onSubmit(e) {
     e.preventDefault();
-    const { email, password } = values;
-    if (!email || !password) {
+    console.log(values);
+    const { email, password, userType } = values;
+    if (!email || !password || !userType) {
       displayAlert("danger", "Please enter email and password");
       return;
     }
-    loginUser({ email, password });
+    loginUser({ email, password, userType });
     console.log(values);
   }
   useEffect(() => {
@@ -38,8 +46,8 @@ const Login = () => {
   }, [user, navigate]);
   return (
     <div
-      className="flex justify-center flex-wrap items-center
-      px-6 py-2 max-w-6xl m-auto"
+      className="flex justify-center items-center
+      px-6 py-2 max-w-6xl m-auto h-screen"
     >
       <div className="lg:p-[36px]  p-4 lg:mt-8 mt-14   w-full  md:w-[100%] lg:w-[40%] md:mx-0 mx-auto border border-black rounded-lg shadow-xl">
         <div className="w-full h-full ">
@@ -49,6 +57,27 @@ const Login = () => {
             className="flex flex-col items-center w-full mt-3"
             onSubmit={onSubmit}
           >
+            <div className="flex flex-col items-center w-full mb-4">
+              <label
+                className="text-left w-full text-black text-lg font-medium"
+                htmlFor="userType"
+              >
+                User Type
+              </label>
+              <select
+                className="mt-2 w-full h-10 border border-gray-300 rounded
+      transition duration-150 ease-in-out focus:text-gray-700
+      focus:bg-white focus:border-slate-600 p-2"
+                id="userType"
+                name="userType"
+                value={values.userType}
+                onChange={handleChange}
+              >
+                <option value="admin">Admin</option>
+                <option value="company">Company</option>
+                <option value="student">Student</option>
+              </select>
+            </div>
             <div className="flex flex-col items-center w-full mb-4">
               <label
                 className="text-left w-full text-black text-lg font-medium"

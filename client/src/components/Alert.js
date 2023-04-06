@@ -12,7 +12,7 @@ const Alert = () => {
           : alertType === "error"
           ? "bg-red-500"
           : "bg-yellow-500"
-      } text-white p-2 rounded-md`}
+      } text-white p-2 rounded-md mt-2 mb-2`}
     >
       {alertText}
     </div>
