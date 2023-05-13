@@ -11,6 +11,7 @@ class ColorConst {
   static const secondaryYellow = Color(0xFFFFBB0D);
   static const grey = Color(0xFFE2E2E2);
   static const headline = Color(0xFF2E4063);
+  static const red = Colors.red;
 
   static const lightGrey = Color(0xFF57636C);
 
