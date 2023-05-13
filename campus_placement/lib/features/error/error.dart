@@ -28,7 +28,10 @@ class ErrorPageWidget extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               message,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: TextStyle(
+                  color: ColorConst.red,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
