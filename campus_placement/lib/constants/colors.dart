@@ -7,7 +7,8 @@ class ColorConst {
   static const labelDark = Color(0xFF3C527D);
   static const labelLight = Color(0xFF79808D);
   static const black = Colors.black;
-  static const pink = Color(0xFFFF1A5B);
+  static const primaryPink = Color(0xFFFF1A5B);
+  static const secondaryYellow = Color(0xFFFFBB0D);
   static const grey = Color(0xFFE2E2E2);
   static const headline = Color(0xFF2E4063);
 
