@@ -12,6 +12,8 @@ import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
   HANDLE_CHANGE,
+  GET_STUDENTSBYADMIN_BEGIN,
+  GET_STUDENTSBYADMIN_SUCCESS,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -26,6 +28,7 @@ export const initialState = {
   token: token,
   email: "",
   password: "",
+  studentsByAdmin: [],
 };
 const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
@@ -50,6 +53,7 @@ const AppProvider = ({ children }) => {
       return response;
     },
     (error) => {
+      console.log(error);
       if (error.response.status === 401) {
         // logoutUser();
       }
@@ -141,6 +145,33 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
   };
+
+  const searchStudentsByAdmin = async (req, res) => {
+    const { name, enrollmentNo, email, gender, stream, verified, selected } =
+      req.body;
+    console.log(req.body);
+
+    let url = `/admin/students?name=${name == null ? "" : name}`;
+    //&email=${email}&enrollmentNo=${enrollmentNo}&gender=${gender}&stream=${stream}&verified=${verified}&selected=${selected}`;
+    console.log(url);
+    dispatch({ type: GET_STUDENTSBYADMIN_BEGIN });
+    try {
+      const { data } = await authFetch(url);
+      console.log(data);
+      const { students } = data;
+      dispatch({
+        type: GET_STUDENTSBYADMIN_SUCCESS,
+        payload: {
+          students,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      logoutUser();
+    }
+    clearAlert();
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -150,6 +181,7 @@ const AppProvider = ({ children }) => {
         registerUser,
         loginUser,
         logoutUser,
+        searchStudentsByAdmin,
       }}
     >
       {children}

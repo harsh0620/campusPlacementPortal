@@ -10,7 +10,7 @@ import jobDriveRouter from "./routes/jobDriveRoute.js";
 import studentAuthRouter from "./routes/studentAuthRoute.js";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
-
+import authenticateAdmin from "./middleware/authAdmin.js";
 // Load environment variables from .env file
 dotenv.config();
 
@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 // Mount auth routes at /api/v1/auth
 app.use("/api/v1/auth", authRouter);
 // Mount admin routes at /api/v1/admin
-app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/admin", authenticateAdmin, adminRouter);
 // Mount company routes at /api/v1/company
 app.use("/api/v1/company", companyRouter);
 // Mount student routes at /api/v1/auth

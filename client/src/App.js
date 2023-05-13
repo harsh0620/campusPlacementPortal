@@ -5,13 +5,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import Dashboard from "./components/Dashboard";
 import SharedLayout from "./components/Dashboard/SharedLayout";
+import AdminStudents from "./components/Admin/AdminStudents";
+import AdminJobs from "./components/Admin/AdminJobs";
+import AdminCompany from "./components/Admin/AdminCompany";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route
-          path="/dashboard"
+          path="/"
           element={
             <ProtectedRoute>
               <SharedLayout />
@@ -19,6 +22,9 @@ function App() {
           }
         >
           <Route index element={<Dashboard />} />
+          <Route path="students" element={<AdminStudents />} />
+          <Route path="companies" element={<AdminCompany />} />
+          <Route path="jobs" element={<AdminJobs />} />
           {/* <Route path="all-jobs" element={<AllJobs />}></Route>
           <Route path="add-job" element={<AddJob />}></Route>
           <Route path="add-bookmark" element={<AddBookMark />}></Route>
@@ -27,7 +33,6 @@ function App() {
           <Route path="log" element={<Log />}></Route>
           <Route path="pomodoro" element={<Pomodoro />}></Route> */}
         </Route>
-        <Route path="/" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/landing" element={<Landing />} />

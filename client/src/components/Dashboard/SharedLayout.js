@@ -1,19 +1,20 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
+import BigSidebar from "./BigSidebar";
+import SmallSidebar from "./SmallSidebar";
 // import { Navbar, SmallSidebar, BigSidebar } from "../../components";
 
 const SharedLayout = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 h-screen">
-      {/* <SmallSidebar className="sm:col-start-1 sm:col-end-2" />
-      <BigSidebar className="hidden sm:block col-start-2 col-end-3" /> */}
-      <div className="flex flex-col h-full">
-        {/* <Navbar /> */}
-        <div className="flex-grow p-8">
-          <Outlet />
-        </div>
+    <main className="flex md:flex-row flex-col-reverse ">
+      <div className="w-[25%] md:h-screen">
+        <BigSidebar />
+        <SmallSidebar />
       </div>
-    </div>
+      <div className="md:h-screen pt-5 w-full scroll-smooth overflow-y-auto outlet  mx-auto pb-20 md:px-16 px-4">
+        <Outlet />
+      </div>
+    </main>
   );
 };
 

@@ -1,10 +1,186 @@
 import { StatusCodes } from "http-status-codes";
 import { NotFoundError, UnAuthenticatedError } from "../errors/index.js";
 import Admin from "../models/admin.js";
+import Student from "../models/students.js";
 import JobDrive from "../models/jobDrive.js";
 import Students from "../models/students.js";
 import nodemailer from "nodemailer";
 import Company from "../models/Company.js";
+
+/**
+
+@desc Get all companies based on query parameters
+@route GET /api/v1/admin/students
+@access Private
+*/
+// Define an asynchronous function called getAllCompanies that takes in three parameters: req, res, and next
+const getAllStudents = async (req, res, next) => {
+  try {
+    // Extract the userId property from the request object
+    const userId = req.user.userId;
+
+    // Check if the authenticated user is a admin; if so, throw an UnAuthenticatedError
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (!ifAdmin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to view all students"
+      );
+    }
+    const {
+      name,
+      email,
+      enrollmentNo,
+      gender,
+      stream,
+      verified,
+      selected,
+      yearOfPassing,
+      company,
+      cgpa,
+    } = req.body;
+
+    // Define the filter object for the search query
+    const filter = {};
+
+    if (name) {
+      filter.name = { $regex: name, $options: "i" };
+    }
+
+    if (email) {
+      filter.email = { $regex: email, $options: "i" };
+    }
+
+    if (enrollmentNo) {
+      filter.enrollmentNo = { $regex: enrollmentNo, $options: "i" };
+    }
+
+    if (gender) {
+      filter.gender = gender;
+    }
+
+    if (stream) {
+      filter.stream = stream;
+    }
+
+    if (verified) {
+      filter.verified = verified;
+    }
+
+    if (selected) {
+      filter.selected = selected;
+    }
+
+    if (yearOfPassing) {
+      filter.yearOfPassing = yearOfPassing;
+    }
+    if (cgpa) {
+      filter.cgpa = cgpa;
+    }
+
+    if (company) {
+      filter.company = { $regex: company, $options: "i" };
+    }
+
+    // Search for students based on the filter
+    const students = await Student.find(filter);
+
+    // Send a response to the client with a 200 (OK) status code, including an array of company objects that match the query criteria
+    res.status(StatusCodes.OK).json(students);
+  } catch (error) {
+    // Pass any caught errors to the error handling middleware
+    next(error);
+  }
+};
+
+const getStudents = async (req, res, next) => {
+  try {
+    // Extract the userId property from the request object
+    const userId = req.user.userId;
+
+    // Check if the authenticated user is a admin; if so, throw an UnAuthenticatedError
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (!ifAdmin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to view all students"
+      );
+    }
+    const {
+      name,
+      email,
+      enrollmentNo,
+      gender,
+      stream,
+      verified,
+      selected,
+      yearOfPassing,
+      selectedIn,
+      cgpa,
+    } = req.query;
+    console.log(req.query);
+    const query = {};
+
+    if (name) {
+      query["personalDetails.name"] = { $regex: name, $options: "i" };
+    }
+    if (email) {
+      query["personalDetails.email"] = { $regex: email, $options: "i" };
+    }
+    if (enrollmentNo) {
+      query["personalDetails.enrollmentNo"] = {
+        $regex: enrollmentNo,
+        $options: "i",
+      };
+    }
+    if (gender) {
+      query["personalDetails.gender"] = { $regex: gender, $options: "i" };
+    }
+    if (yearOfPassing) {
+      query["academicDetails"] = {
+        $elemMatch: { yearOfPassing: { $regex: yearOfPassing, $options: "i" } },
+      };
+    }
+    if (stream) {
+      query["academicDetails"] = {
+        $elemMatch: { stream: { $regex: stream, $options: "i" } },
+      };
+    }
+    if (cgpa) {
+      query["academicDetails"] = {
+        $elemMatch: { "result.value": { $gte: cgpa } },
+      };
+    }
+    if (selected !== undefined) {
+      query["placementDetails"] = {
+        $elemMatch: { selected: selected },
+      };
+    }
+    if (selectedIn) {
+      query["placementDetails"] = {
+        $elemMatch: { selectedIn: { $regex: selectedIn, $options: "i" } },
+      };
+    }
+    if (verified !== undefined) {
+      query["verified"] = verified;
+    }
+    console.log(query);
+    const students = await Student.find(query)
+      .select(
+        "personalDetails.name personalDetails.enrollmentNo academicDetails.stream verified placementDetails.selected"
+      )
+      .populate({
+        path: "placementDetails.selectedIn.company",
+        select: "name",
+      });
+
+    res.status(StatusCodes.OK).json({
+      students,
+    });
+  } catch (error) {
+    // Pass any caught errors to the error handling middleware
+    next(error);
+  }
+};
+
 /**
 @desc Verify or unverify a student's account
 @route PUT /api/v1/admin/verifyStudent/:studentId
@@ -234,4 +410,70 @@ const sendMessage = (req, res, next) => {
     next(error);
   }
 };
-export { verifyStudent, verifyJobDrive, sendMailToGoogleGroups, sendMessage };
+const getStudentById = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const studentId = req.params.studentId;
+    const student = await Student.findOne({ _id: studentId });
+    if (!student) {
+      throw new NotFoundError(`No student with ID: ${studentId}`);
+    }
+    return res.status(StatusCodes.OK).json({
+      student,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+//Send mail to specific student
+const sendMailToSelectedStudent = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const studentId = req.params.studentId;
+    const student = await Student.findOne({ _id: studentId });
+    if (!student) {
+      throw new NotFoundError(`No student with ID: ${studentId}`);
+    }
+    await sendMail({
+      fromEmail: admin.email,
+      toEmail: student.email,
+      mailSubject: `Mail from ${admin.name}`,
+      senderDetails: {
+        name: admin.name,
+        email: admin.email,
+      },
+      receiverDetails: {
+        name: student.name,
+        email: student.email,
+      },
+      mailBody: `
+      <div>
+      <h1>Message from ${admin?.name}</h1>
+      <p>${req?.body?.message}</p>
+      </div>`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export {
+  verifyStudent,
+  verifyJobDrive,
+  sendMailToGoogleGroups,
+  sendMessage,
+  getStudents,
+  getStudentById,
+  sendMailToSelectedStudent,
+};

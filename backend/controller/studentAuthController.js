@@ -57,53 +57,6 @@ const registerStudent = async (req, res, next) => {
 };
 
 /**
- * @desc Login an existing student user
- * @route POST /api/v1/auth/student/login
- * @access Public
- */
-// Define an asynchronous function called loginstudent that takes in two parameters: req and res
-const loginStudent = async (req, res, next) => {
-  try {
-    // Extract the email and password properties from the request body using destructuring
-    const { email, password } = req.body;
-    // Check if both email and password fields are present
-    if (!email || !password) {
-      // If either email or password fields are missing, throw a BadRequestError with an error message
-      throw new BadRequestError("Please provide all values");
-    }
-    // Check if an student with the given email exists in the database
-    const student = await Student.findOne({
-      "personalDetails.email": email,
-    }).select("+personalDetails.password");
-    if (!student) {
-      // If no student is found, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("Invalid Credentials");
-    }
-    // Check if the provided password matches the password stored in the database for the student
-    const isPasswordCorrect = await student.comparePassword(password);
-    if (!isPasswordCorrect) {
-      // If the password is incorrect, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("Invalid Credentials");
-    }
-    // Generate a JSON web token (JWT) for the authenticated student
-    const token = student.createJWT();
-    // Remove the password field from the student object to prevent it from being sent to the client
-    student.password = undefined;
-    // Send a response to the client with a 200 (OK) status code, including the authenticated student object and the generated token
-    res.status(StatusCodes.OK).json({
-      student: {
-        email: student.personalDetails.email,
-        name: student.personalDetails.name,
-        enrollmentNo: student.personalDetails.enrollmentNo,
-      },
-      token,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-/**
-
 @desc Update an existing student user's personal details
 @route PUT /api/v1/student/updatePersonalDetailsStudent
 @access Private
@@ -376,7 +329,6 @@ const updateDocumentStudent = async (req, res, next) => {
 
 export {
   registerStudent,
-  loginStudent,
   updatePersonalDetailsStudent,
   updateAcademicDetailsStudent,
   updateProfessionalDetailsStudent,

@@ -9,6 +9,8 @@ import {
   LOGOUT_USER,
   DISPLAY_ALERT,
   CLEAR_ALERT,
+  GET_STUDENTSBYADMIN_BEGIN,
+  GET_STUDENTSBYADMIN_SUCCESS,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -87,6 +89,14 @@ const reducer = (state, action) => {
       return {
         ...state,
         [action.payload.name]: action.payload.value,
+      };
+    case GET_STUDENTSBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_STUDENTSBYADMIN_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        studentsByAdmin: action.payload.students,
       };
     default:
       throw new Error(`no such action :${action.type}`);

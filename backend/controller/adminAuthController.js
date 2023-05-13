@@ -1,6 +1,7 @@
 import Admin from "../models/admin.js";
 import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
+import { sendMail } from "./communication.js";
 
 /**
  * @desc Register a new admin user
@@ -8,8 +9,18 @@ import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
  * @access Public
  */
 // Define an asynchronous function called registerAdmin that takes in three parameters: req, res, and next
-const registerAdmin = async (req, res, next) => {
+const createAdmin = async (req, res, next) => {
   try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    //get email of all the admins
+
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+
     // Extract the name, email, and password properties from the request body using destructuring
     const { name, email, password } = req.body;
 
@@ -27,18 +38,44 @@ const registerAdmin = async (req, res, next) => {
     }
 
     // If the admin does not exist, create a new admin object in the database with the provided name, email, and password
-    const admin = await Admin.create({ name, email, password });
-
-    // Generate a JSON web token (JWT) for the newly created admin
-    const token = admin.createJWT();
-
+    const newAdmin = await Admin.create({ name, email, password });
+    if (!newAdmin) {
+      // If the admin is not created, throw a BadRequestError with an error message
+      throw new BadRequestError("Admin could not be created");
+    }
+    const allAdmins = await Admin.find({});
+    const allAdminsEmail = allAdmins?.map((admin) => {
+      return { email: admin.email, name: admin.name };
+    });
+    console.log(allAdminsEmail);
+    for (let i = 0; i < allAdminsEmail.length; i++) {
+      const sendMailToAllAdmins = await sendMail({
+        fromEmail: admin.email,
+        toEmail: allAdminsEmail[i].email,
+        mailSubject: `New Admin created`,
+        senderDetails: {
+          name: admin.name,
+          email: admin.email,
+        },
+        receiverDetails: {
+          name: allAdminsEmail[i].name,
+          email: allAdminsEmail[i].email,
+        },
+        mailBody: `
+        <div>
+        <h1>New Admin created</h1>
+        <p>Admin details are as follows:</p>
+        <p>Name: <strong>${newAdmin?.name}</strong></p>
+        <p>Email: <strong>${newAdmin?.email}</strong></p>
+        <p>Admin who created the new admin:</p>
+        <p>Name: <strong>${admin.name}</strong></p>
+        <p>Email: <strong>${admin.email}</strong></p>
+        </div>`,
+      });
+    }
     // Send a response to the client with a 201 (Created) status code, including the admin's email and name, and the generated token
     res.status(StatusCodes.CREATED).json({
-      admin: {
-        email: admin.email,
-        name: admin.name,
-      },
-      token,
+      message: "Admin created successfully",
     });
   } catch (err) {
     next(err);
@@ -63,8 +100,7 @@ const updateAdmin = async (req, res) => {
     }
 
     // Find the user in the database using the user ID stored in the request object
-    //@TO_CHANGE
-    const userId = "64047f984f4d420bffcf429a";
+    const userId = req.user.userId;
     const user = await Admin.findOne({ _id: userId });
 
     // Update the user's email, name, gender, designation, phone, and aadharno properties with the values from the request body
@@ -91,4 +127,4 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-export { registerAdmin, updateAdmin };
+export { createAdmin, updateAdmin };
