@@ -1,19 +1,18 @@
 import React from "react";
 import { MdDashboard, MdOutlineDashboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/logo1.png";
-import { sidebarItems } from "../../utils/constants";
+import { adminSidebarItems } from "../../utils/constants";
 const BigSidebar = () => {
   const navigate = useNavigate();
   return (
-    <div className="md:block hidden h-full w-full border-r-2">
+    <div className="md:block hidden h-full w-full pr-2 border-r">
       {/* RENDERING THE APP LOGO */}
       <header className="pt-4">
-        <div className="flex items-center">
+        <div className="flex items-center object-cover pl-4">
           <img
-            src={logo}
+            src={"/assets/images/logo.png"}
             alt="logo"
-            className="w-64 h-16 object-cover"
+            className="w-32 h-8 flex justify-center "
             onClick={() => navigate("/")}
           ></img>
         </div>
@@ -25,19 +24,20 @@ const BigSidebar = () => {
           onClick={() => {
             navigate("/");
           }}
-          className={`flex items-center py-3 px-6 ${
+          className={`flex items-center py-2 px-4 ${
             (window.location.pathname === "/" ||
               window.location.pathname === "/") &&
-            "bg-blue-200 rounded-r-[32px] text-black"
+            "bg-blue-200 rounded-r-[32px] text-[#001D35] hover:bg-blue-200 font-bold"
           }
-              md:text-xl
-              text-lg
-              font-semibold
-              hover:bg-gray-200 hover:rounded-r-[32px] cursor-pointer text-gray-600`}
+              md:text-base
+              text-md
+              font-medium
+              text-gray-600
+              hover:bg-gray-200 hover:rounded-r-[32px] cursor-pointer`}
         >
           <div className="mr-3 ">
-            {window.location.pathname === "/dashboard" ||
-            window.location.pathname === "/dashboard/" ? (
+            {window.location.pathname === "/" ||
+            window.location.pathname === "/" ? (
               <MdDashboard />
             ) : (
               <MdOutlineDashboard />
@@ -46,23 +46,23 @@ const BigSidebar = () => {
           <div>Home</div>
         </div>
         {/* ALL OTHER OPTIONS */}
-        {sidebarItems.map((item, index) => {
+        {adminSidebarItems.map((item, index) => {
           const { iconAbled, iconDisabled, title, link } = item;
-
           return (
             <div
               onClick={() => {
                 navigate(link);
               }}
               key={index}
-              className={`flex items-center py-3 px-6 ${
+              className={`flex items-center py-2 px-4 ${
                 window.location.pathname.indexOf(link) !== -1 &&
-                "bg-blue-200 rounded-r-[32px] text-black"
+                "bg-blue-200 rounded-r-[32px] text-[#001D35] hover:bg-blue-200 font-bold"
               }
-              md:text-xl
-              text-lg
-              font-semibold
-              hover:bg-gray-200 hover:rounded-r-[32px] cursor-pointer text-gray-600`}
+                  md:text-base
+                  text-md
+                  font-medium
+                  text-gray-600
+                  hover:bg-gray-200 hover:rounded-r-[32px] cursor-pointer`}
             >
               <div className="mr-3 ">
                 {window.location.pathname.indexOf(link) !== -1

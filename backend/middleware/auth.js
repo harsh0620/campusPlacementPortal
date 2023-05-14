@@ -1,6 +1,5 @@
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
-import UnAuthenticatedError from "../errors/unauthenticated.js";
 const auth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer")) {

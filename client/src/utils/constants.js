@@ -48,8 +48,8 @@ import {
   BsBuildingsFill,
   BsBuildings,
 } from "react-icons/bs";
-
-const sidebarItems = [
+import { FaCog, FaUserCircle } from "react-icons/fa";
+const adminSidebarItems = [
   {
     title: "Companies",
     iconAbled: <BsBuildingsFill />,
@@ -67,6 +67,18 @@ const sidebarItems = [
     iconAbled: <BsBriefcaseFill />,
     iconDisabled: <BsBriefcase />,
     link: "/jobs",
+  },
+  {
+    title: "Settings",
+    iconAbled: <FaCog />,
+    iconDisabled: <FaCog color="#bbb" />,
+    link: "/settings",
+  },
+  {
+    title: "Profile",
+    iconAbled: <FaUserCircle />,
+    iconDisabled: <FaUserCircle color="#bbb" />,
+    link: "/profile",
   },
 ];
 // enum: [
@@ -142,4 +154,4 @@ const streamsList = [
     value: "Textile",
   },
 ];
-export { sidebarItems, genderList, streamsList };
+export { adminSidebarItems, genderList, streamsList };

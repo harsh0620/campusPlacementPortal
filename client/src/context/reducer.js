@@ -11,6 +11,14 @@ import {
   CLEAR_ALERT,
   GET_STUDENTSBYADMIN_BEGIN,
   GET_STUDENTSBYADMIN_SUCCESS,
+  GET_PROFILE_BEGIN,
+  GET_PROFILE_SUCCESS,
+  UPDATE_PROFILE_BEGIN,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_ERROR,
+  CREATE_ADMIN_ERROR,
+  CREATE_ADMIN_SUCCESS,
+  CREATE_ADMIN_BEGIN,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -60,7 +68,14 @@ const reducer = (state, action) => {
     case LOGIN_USER_SUCCESS:
       return {
         ...state,
-        user: action.payload.user,
+        user: action?.payload?.user,
+        name: action?.payload?.user?.name,
+        email: action?.payload?.user?.email,
+        avatar: action?.payload?.user?.avatar,
+        gender: action?.payload?.user?.gender,
+        designation: action?.payload?.user?.designation,
+        phone: action?.payload?.user?.phone,
+        aadharno: action?.payload?.user?.aadharno,
         token: action.payload.token,
         isLoading: false,
         showAlert: true,
@@ -89,6 +104,89 @@ const reducer = (state, action) => {
       return {
         ...state,
         [action.payload.name]: action.payload.value,
+      };
+    case GET_PROFILE_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_PROFILE_SUCCESS:
+      return {
+        ...state,
+        name:
+          action?.payload?.user?.name === undefined
+            ? ""
+            : action?.payload?.user?.name,
+        email:
+          action?.payload?.user?.email === undefined
+            ? ""
+            : action?.payload?.user?.email,
+        avatar:
+          action?.payload?.user?.avatar === undefined
+            ? ""
+            : action?.payload?.user?.avatar,
+        gender:
+          action?.payload?.user?.gender === undefined
+            ? "Male"
+            : action?.payload?.user?.gender,
+        designation:
+          action?.payload?.user?.designation === undefined
+            ? ""
+            : action?.payload?.user?.designation,
+        phone:
+          action?.payload?.user?.phone === undefined
+            ? ""
+            : action?.payload?.user?.phone,
+        aadharno:
+          action?.payload?.user?.aadharno === undefined
+            ? ""
+            : action?.payload?.user?.aadharno,
+        isLoading: false,
+      };
+    case UPDATE_PROFILE_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case UPDATE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        user: action?.payload?.user,
+        name: action?.payload?.user?.name,
+        email: action?.payload?.user?.email,
+        avatar: action?.payload?.user?.avatar,
+        gender: action?.payload?.user?.gender,
+        designation: action?.payload?.user?.designation,
+        phone: action?.payload?.user?.phone,
+        aadharno: action?.payload?.user?.aadharno,
+        token: action?.payload?.token,
+        password: "",
+        confirmPassword: "",
+        newPassword: "",
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "User profile updated successfully! Redirecting...",
+      };
+    case UPDATE_PROFILE_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case CREATE_ADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case CREATE_ADMIN_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        name: "",
+        email: "",
+        password: "",
+      };
+    case CREATE_ADMIN_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
       };
     case GET_STUDENTSBYADMIN_BEGIN:
       return { ...state, isLoading: true, showAlert: false };

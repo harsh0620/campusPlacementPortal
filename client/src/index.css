@@ -14,3 +14,6 @@ body::-webkit-scrollbar {
 .outlet::-webkit-scrollbar{
     display: none;
 }
+.h-screen-4 {
+  height: calc(100vh - 1rem * 3);
+}

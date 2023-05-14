@@ -1,6 +1,10 @@
 import express from "express";
 const router = express.Router();
-import { createAdmin, updateAdmin } from "../controller/adminAuthController.js";
+import {
+  createAdmin,
+  updateAdmin,
+  getAdminProfileDetails,
+} from "../controller/adminAuthController.js";
 import {
   verifyJobDrive,
   verifyStudent,
@@ -13,10 +17,11 @@ import {
 
 /**
  * @desc Update an existing admin user's profile
- * @route PUT /api/v1/admin/profile
+ * @route PATCH /api/v1/admin/profile
+ * @route GET /api/v1/admin/profile
  * @access Private
  */
-router.route("/profile").patch(updateAdmin);
+router.route("/profile").patch(updateAdmin).get(getAdminProfileDetails);
 /**
  * Create a new admin user
  *
