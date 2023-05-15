@@ -1,6 +1,9 @@
+import 'package:campus_placement/core/locator/locator.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  initLocator();
   runApp(const MyApp());
 }
 
