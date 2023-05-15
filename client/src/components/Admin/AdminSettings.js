@@ -1,6 +1,6 @@
 import React from "react";
 import ActionCard from "../ActionCard";
-import { FaUserPlus } from "react-icons/fa";
+import { FaBuilding, FaUserPlus } from "react-icons/fa";
 import { useAppContext } from "../../context/appContext";
 import Loader from "../Loader";
 
@@ -96,6 +96,12 @@ const AdminSettings = () => {
         title={"Create Admin"}
         bgColor={"bg-green-500"}
         icon={<FaUserPlus />}
+        dropDownComponent={<CreateAdminForm />}
+      />
+      <ActionCard
+        title={"Create Company"}
+        bgColor={"bg-violet-500"}
+        icon={<FaBuilding />}
         dropDownComponent={<CreateAdminForm />}
       />
     </div>

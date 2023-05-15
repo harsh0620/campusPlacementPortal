@@ -4,6 +4,7 @@ import {
   createAdmin,
   updateAdmin,
   getAdminProfileDetails,
+  createCompany,
 } from "../controller/adminAuthController.js";
 import {
   verifyJobDrive,
@@ -29,6 +30,13 @@ router.route("/profile").patch(updateAdmin).get(getAdminProfileDetails);
  * @access Private
  */
 router.route("/createAdmin").post(createAdmin);
+/**
+ * Create a new company user
+ *
+ * @route POST /api/v1/admin/createCompany
+ * @access Private
+ */
+router.route("/createCompany").post(createCompany);
 
 /**
  * Get students

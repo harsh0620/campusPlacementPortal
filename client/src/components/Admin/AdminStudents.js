@@ -31,6 +31,10 @@ const AdminStudents = () => {
         : e.target.value;
     setValues({ ...values, [name]: value });
   };
+  const handleSearch = (e) => {
+    e.preventDefault();
+    searchStudentsByAdmin({ ...values });
+  };
   // useEffect(() => {
   //   searchStudentsByAdmin({ ...values });
   //   // eslint-disable-next-line
@@ -268,7 +272,7 @@ const AdminStudents = () => {
               </div>
               <div className="my-8  mx-2">
                 <button
-                  type="submit"
+                  onClick={handleSearch}
                   className="bg-blue-500 text-white p-2 rounded-md"
                 >
                   Search
@@ -278,9 +282,9 @@ const AdminStudents = () => {
           </div>
         }
       />
-      {/* <div className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border-gray-300 hover:drop-shadow-md shadow  rounded-lg  bg-white md:p-2 p-1 mb-4"> */}
+      <div className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border-gray-300 hover:drop-shadow-md shadow  rounded-lg  bg-white md:p-2 p-1 mb-4">
       <AdminStudentTable students={studentsByAdmin} />
-      {/* </div> */}
+      </div>
     </div>
   );
 };

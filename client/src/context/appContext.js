@@ -273,7 +273,7 @@ const AppProvider = ({ children }) => {
     verified,
     selectedIn,
   }) => {
-    let url = `/admin/students?name=${name}@enrollmentNo=${enrollmentNo}@email=${email}&gender=${gender}&stream=${stream}&
+    let url = `/admin/students?name=${name}&enrollmentNo=${enrollmentNo}&email=${email}&gender=${gender}&stream=${stream}&
     verified=${verified}&selectedIn=${selectedIn}`;
     console.log(url);
     dispatch({ type: GET_STUDENTSBYADMIN_BEGIN });
