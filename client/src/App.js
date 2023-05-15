@@ -8,6 +8,8 @@ import SharedLayout from "./components/Dashboard/SharedLayout";
 import AdminStudents from "./components/Admin/AdminStudents";
 import AdminJobs from "./components/Admin/AdminJobs";
 import AdminCompany from "./components/Admin/AdminCompany";
+import AdminSettings from "./components/Admin/AdminSettings";
+import AdminProfile from "./components/Admin/AdminProfile";
 
 function App() {
   return (
@@ -25,13 +27,8 @@ function App() {
           <Route path="students" element={<AdminStudents />} />
           <Route path="companies" element={<AdminCompany />} />
           <Route path="jobs" element={<AdminJobs />} />
-          {/* <Route path="all-jobs" element={<AllJobs />}></Route>
-          <Route path="add-job" element={<AddJob />}></Route>
-          <Route path="add-bookmark" element={<AddBookMark />}></Route>
-          <Route path="profile" element={<Profile />}></Route>
-          <Route path="todo" element={<Todo />}></Route>
-          <Route path="log" element={<Log />}></Route>
-          <Route path="pomodoro" element={<Pomodoro />}></Route> */}
+          <Route path="settings" element={<AdminSettings />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

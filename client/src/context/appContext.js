@@ -14,7 +14,16 @@ import {
   HANDLE_CHANGE,
   GET_STUDENTSBYADMIN_BEGIN,
   GET_STUDENTSBYADMIN_SUCCESS,
+  GET_PROFILE_BEGIN,
+  GET_PROFILE_SUCCESS,
+  UPDATE_PROFILE_BEGIN,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_ERROR,
+  CREATE_ADMIN_BEGIN,
+  CREATE_ADMIN_SUCCESS,
+  CREATE_ADMIN_ERROR,
 } from "./actions";
+import { toast } from "react-toastify";
 
 const token = localStorage.getItem("token");
 const user = localStorage.getItem("user");
@@ -26,8 +35,16 @@ export const initialState = {
   alertType: "",
   user: user ? JSON.parse(user) : null,
   token: token,
+  name: "",
   email: "",
   password: "",
+  newPassword: "",
+  confirmPassword: "",
+  avatar: "",
+  gender: "Male",
+  designation: "",
+  phone: "",
+  aadharno: "",
   studentsByAdmin: [],
 };
 const AppContext = React.createContext();
@@ -40,7 +57,9 @@ const AppProvider = ({ children }) => {
   // response interceptor
   authFetch.interceptors.request.use(
     (config) => {
-      config.headers.common["Authorization"] = `Bearer ${state.token}`;
+      if (config.headers.common) {
+        config.headers.common["Authorization"] = `Bearer ${state.token}`;
+      }
       return config;
     },
     (error) => {
@@ -48,14 +67,14 @@ const AppProvider = ({ children }) => {
     }
   );
   // response interceptor
+
   authFetch.interceptors.response.use(
     (response) => {
       return response;
     },
     (error) => {
-      console.log(error);
-      if (error.response.status === 401) {
-        // logoutUser();
+      if (error.response && error.response.status === 401) {
+        logoutUser();
       }
       return Promise.reject(error);
     }
@@ -114,13 +133,12 @@ const AppProvider = ({ children }) => {
       console.log(error.response);
       dispatch({
         type: REGISTER_USER_ERROR,
-        payload: { msg: error.response.data.msg },
+        payload: { msg: error.response.data.message },
       });
     }
     clearAlert();
   };
   const loginUser = async (currentUser) => {
-    console.log("appContext", currentUser);
     dispatch({ type: LOGIN_USER_BEGIN });
     try {
       const { data } = await axios.post("/api/v1/auth/login", currentUser);
@@ -132,6 +150,7 @@ const AppProvider = ({ children }) => {
       });
 
       addUserToLocalStorage({ user, token });
+      clearAlert();
     } catch (error) {
       console.log(error.response.data);
       dispatch({
@@ -145,14 +164,117 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
   };
-
-  const searchStudentsByAdmin = async (req, res) => {
-    const { name, enrollmentNo, email, gender, stream, verified, selected } =
-      req.body;
-    console.log(req.body);
-
-    let url = `/admin/students?name=${name == null ? "" : name}`;
-    //&email=${email}&enrollmentNo=${enrollmentNo}&gender=${gender}&stream=${stream}&verified=${verified}&selected=${selected}`;
+  const getAdminDetails = async (userType) => {
+    dispatch({ type: GET_PROFILE_BEGIN });
+    try {
+      const { data } = await authFetch.get(`/${userType}/profile`);
+      const { user } = data;
+      dispatch({
+        type: GET_PROFILE_SUCCESS,
+        payload: {
+          user,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const updateProfile = async (userType) => {
+    dispatch({ type: UPDATE_PROFILE_BEGIN });
+    try {
+      const { name, designation, phone, aadharno, gender } = state;
+      const { data } = await authFetch.patch(`/${userType}/profile`, {
+        name,
+        designation,
+        phone,
+        aadharno,
+        gender,
+      });
+      const { user, token } = data;
+      dispatch({
+        type: UPDATE_PROFILE_SUCCESS,
+        payload: {
+          user,
+          token,
+        },
+      });
+      toast.success("Profile Updated Successfully");
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: UPDATE_PROFILE_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Updating Profile: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const updatePassword = async () => {
+    dispatch({ type: UPDATE_PROFILE_BEGIN });
+    try {
+      const { password, newPassword, confirmPassword } = state;
+      const { data } = await authFetch.patch(`/auth/password`, {
+        oldPassword: password,
+        newPassword,
+        confirmPassword,
+        userId: state.user._id,
+      });
+      const { user, token } = data;
+      dispatch({
+        type: UPDATE_PROFILE_SUCCESS,
+        payload: {
+          user,
+          token,
+        },
+      });
+      toast.success("Password Updated Successfully");
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: UPDATE_PROFILE_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Updating Profile: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const createAdmin = async () => {
+    dispatch({ type: CREATE_ADMIN_BEGIN });
+    try {
+      const { name, email, password } = state;
+      const { data } = await authFetch.post(`/admin/createAdmin`, {
+        name,
+        email,
+        password,
+      });
+      const { message } = data;
+      dispatch({
+        type: CREATE_ADMIN_SUCCESS,
+      });
+      toast.success(message);
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: CREATE_ADMIN_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Creating Admin: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const searchStudentsByAdmin = async ({
+    name,
+    enrollmentNo,
+    email,
+    gender,
+    stream,
+    verified,
+    selectedIn,
+  }) => {
+    let url = `/admin/students?name=${name}@enrollmentNo=${enrollmentNo}@email=${email}&gender=${gender}&stream=${stream}&
+    verified=${verified}&selectedIn=${selectedIn}`;
     console.log(url);
     dispatch({ type: GET_STUDENTSBYADMIN_BEGIN });
     try {
@@ -167,7 +289,7 @@ const AppProvider = ({ children }) => {
       });
     } catch (error) {
       console.log(error);
-      logoutUser();
+      //logoutUser();
     }
     clearAlert();
   };
@@ -182,6 +304,10 @@ const AppProvider = ({ children }) => {
         loginUser,
         logoutUser,
         searchStudentsByAdmin,
+        getAdminDetails,
+        updateProfile,
+        updatePassword,
+        createAdmin,
       }}
     >
       {children}

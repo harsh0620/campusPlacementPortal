@@ -149,16 +149,6 @@ const getStudents = async (req, res, next) => {
         $elemMatch: { "result.value": { $gte: cgpa } },
       };
     }
-    if (selected !== undefined) {
-      query["placementDetails"] = {
-        $elemMatch: { selected: selected },
-      };
-    }
-    if (selectedIn) {
-      query["placementDetails"] = {
-        $elemMatch: { selectedIn: { $regex: selectedIn, $options: "i" } },
-      };
-    }
     if (verified !== undefined) {
       query["verified"] = verified;
     }

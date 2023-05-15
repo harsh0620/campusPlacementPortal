@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { loginUser } from "../controller/authController.js";
+import { changePassword, loginUser } from "../controller/authController.js";
 
 /**
  * @desc Login an existing user
@@ -9,4 +9,10 @@ import { loginUser } from "../controller/authController.js";
  */
 router.route("/login").post(loginUser);
 
+/**
+ * @desc Change an user's password
+ * @route PATCH /api/v1/auth/password
+ * @access Private
+ */
+router.route("/password").patch(changePassword);
 export default router;

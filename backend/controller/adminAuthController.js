@@ -88,13 +88,13 @@ const createAdmin = async (req, res, next) => {
  * @access Private
  */
 // Define an asynchronous function called updateUser that takes in two parameters: req and res
-const updateAdmin = async (req, res) => {
+const updateAdmin = async (req, res, next) => {
   try {
-    // Extract the email, name, gender, designation, phone, and aadharno properties from the request body using destructuring
-    const { email, name, gender, designation, phone, aadharno } = req.body;
-
+    // Extract the name, gender, designation, phone, and aadharno properties from the request body using destructuring
+    const { name, gender, designation, phone, aadharno } = req.body;
+    console.log(req.body);
     // Check if all the required fields are present
-    if (!email || !name || !gender || !designation || !phone || !aadharno) {
+    if (!name || !gender || !designation || !phone || !aadharno) {
       // If any of the fields are missing, throw a BadRequestError with an error message
       throw new BadRequestError("Please provide all values");
     }
@@ -103,8 +103,7 @@ const updateAdmin = async (req, res) => {
     const userId = req.user.userId;
     const user = await Admin.findOne({ _id: userId });
 
-    // Update the user's email, name, gender, designation, phone, and aadharno properties with the values from the request body
-    user.email = email;
+    // Update the user's name, gender, designation, phone, and aadharno properties with the values from the request body
     user.name = name;
     user.gender = gender;
     user.designation = designation;
@@ -127,4 +126,26 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-export { createAdmin, updateAdmin };
+/**
+ * @desc Get an admin user's profile details
+ * @route GET /api/v1/auth/admin/profile
+ * @access Private
+ */
+const getAdminProfileDetails = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    res.status(StatusCodes.OK).json({
+      user: admin,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export { createAdmin, updateAdmin, getAdminProfileDetails };

@@ -1,7 +1,7 @@
 import React from "react";
 import { MdDashboard, MdOutlineDashboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { sidebarItems } from "../../utils/constants";
+import { adminSidebarItems } from "../../utils/constants";
 
 const SmallSidebar = () => {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const SmallSidebar = () => {
         <div className="text-xs hidden xs:block font-semibold">Home</div>
       </div>
       {/* ALL OTHER OPTIONS */}
-      {sidebarItems.map((item, index) => {
+      {adminSidebarItems.map((item, index) => {
         const { iconAbled, iconDisabled, title, link } = item;
         return (
           <div

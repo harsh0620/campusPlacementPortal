@@ -3,6 +3,10 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        base: ["Roboto", "sans-serif"],
+        heading: ["Montserrat", "sans-serif"],
+      },
       colors: {
         redg: "#e04235",
         blueg: "#1a73e8",
@@ -10,6 +14,7 @@ module.exports = {
         greeng: "#34a853",
         yellowg: "#fbbc05",
         orangeg: "#FF8C00",
+        gmailbg: "#F6F8FC",
       },
       screens: {
         xs: "328px",
