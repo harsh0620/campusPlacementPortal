@@ -7,15 +7,11 @@ const hrSchema = mongoose.Schema({
     type: String,
     required: [true, "Please provide HR name"],
     minlength: 3,
-    maxlength: 20,
+    maxlength: 50,
   },
   email: {
     type: String,
     required: [true, "Please provide HR email"],
-    validate: {
-      validator: validator.isEmail,
-      message: "Please provide valid email",
-    },
   },
   phone: {
     type: String,
@@ -32,7 +28,7 @@ const companySchema = mongoose.Schema({
   role: {
     type: String,
     required: true,
-    default: "admin",
+    default: "company",
   },
   name: {
     type: String,
@@ -44,10 +40,6 @@ const companySchema = mongoose.Schema({
   email: {
     type: String,
     required: [true, "Please provide company email"],
-    validate: {
-      validator: validator.isEmail,
-      message: "Please provide valid email",
-    },
     unique: true,
   },
   password: {
@@ -58,10 +50,6 @@ const companySchema = mongoose.Schema({
   },
   website: {
     type: String,
-    validate: {
-      validator: validator.isURL,
-      message: "Please provide valid website URL",
-    },
   },
   description: {
     type: String,
@@ -75,10 +63,6 @@ const companySchema = mongoose.Schema({
   },
   linkedin: {
     type: String,
-    validate: {
-      validator: validator.isURL,
-      message: "Please provide valid LinkedIn URL",
-    },
   },
   address: {
     type: String,

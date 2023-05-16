@@ -22,6 +22,9 @@ import {
   CREATE_ADMIN_BEGIN,
   CREATE_ADMIN_SUCCESS,
   CREATE_ADMIN_ERROR,
+  CREATE_COMPANY_ERROR,
+  CREATE_COMPANY_SUCCESS,
+  CREATE_COMPANY_BEGIN,
 } from "./actions";
 import { toast } from "react-toastify";
 
@@ -46,6 +49,25 @@ export const initialState = {
   phone: "",
   aadharno: "",
   studentsByAdmin: [],
+  //company
+  companyName: "",
+  companyEmail: "",
+  companyPassword: "",
+  companyPhone: "",
+  companyAddress: "",
+  companyLogo: "",
+  companyWebsite: "",
+  companyDescription: "",
+  companyLinkedin: "",
+  companyPrograms: [],
+  companyStreams: [],
+  hrName: "",
+  hrEmail: "",
+  hrPhone: "",
+  //custom messages
+  mailsArray: [],
+  mailSubject: "",
+  mailBody: "",
 };
 const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
@@ -114,7 +136,7 @@ const AppProvider = ({ children }) => {
   const registerUser = async (currentUser) => {
     dispatch({ type: REGISTER_USER_BEGIN });
     try {
-      const response = await axios.post("/api/v1/auth/register", currentUser);
+      const response = await axios.post("/api/v1/student/auth/register", currentUser);
       console.log(response);
       const { user, token } = response.data;
       dispatch({
@@ -264,6 +286,54 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+  const createCompany = async () => {
+    dispatch({ type: CREATE_COMPANY_BEGIN });
+    try {
+      const {
+        companyName,
+        companyEmail,
+        companyPassword,
+        companyAddress,
+        companyLogo,
+        companyWebsite,
+        companyDescription,
+        companyPrograms,
+        companyLinkedin,
+        companyStreams,
+        hrName,
+        hrEmail,
+        hrPhone,
+      } = state;
+      const { data } = await authFetch.post(`/admin/createCompany`, {
+        name: companyName,
+        email: companyEmail,
+        password: companyPassword,
+        website: companyWebsite,
+        description: companyDescription,
+        logo: companyLogo,
+        linkedin: companyLinkedin,
+        address: companyAddress,
+        programs: companyPrograms,
+        streams: companyStreams,
+        hrName,
+        hrEmail,
+        hrPhone,
+      });
+      const { message } = data;
+      dispatch({
+        type: CREATE_COMPANY_SUCCESS,
+      });
+      toast.success(message);
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: CREATE_COMPANY_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Creating Admin: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
   const searchStudentsByAdmin = async ({
     name,
     enrollmentNo,
@@ -308,6 +378,7 @@ const AppProvider = ({ children }) => {
         updateProfile,
         updatePassword,
         createAdmin,
+        createCompany
       }}
     >
       {children}

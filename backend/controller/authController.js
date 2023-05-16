@@ -3,7 +3,8 @@ import { StatusCodes } from "http-status-codes";
 import { BadRequestError, UnAuthenticatedError } from "../errors/index.js";
 import Company from "../models/Company.js";
 import Student from "../models/students.js";
-
+import crypto from "crypto";
+import { sendMail } from "./communication.js";
 /**
  * @desc Login an existing user
  * @route POST /api/v1/auth/login
@@ -122,6 +123,24 @@ const changePassword = async (req, res, next) => {
     const token = user.createJWT();
     // Remove the password field from the user object to prevent it from being sent to the client
     user.password = undefined;
+    await sendMail({
+      fromEmail: process.env.NODEMAILER_AUTH_USER,
+      toEmail: user?.email,
+      mailSubject: `Password Changed-Campus Placement Portal CTAE`,
+      senderDetails: {
+        name: "Campus Placement Portal CTAE",
+        email: process.env.NODEMAILER_AUTH_USER,
+      },
+      receiverDetails: {
+        name:  user?.name,
+        email:  user?.email,
+      },
+      mailBody: `
+      <div>
+      <h1>Your password is changed.</h1>
+      <p>If not done by you reach us.</p>
+      </div>`,
+    });
     // Send a response to the client with a 200 (OK) status code, including the updated user object
     res.status(StatusCodes.OK).json({
       message: "Password changed successfully",
@@ -132,4 +151,63 @@ const changePassword = async (req, res, next) => {
     next(err);
   }
 };
-export { loginUser, changePassword };
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email, userType } = req.body;
+    if (!email || !userType) {
+      throw new BadRequestError("Please provide all values");
+    }
+    let user;
+    switch (userType) {
+      case "admin":
+        // Check if an admin with the given email exists in the database
+        user= await Admin.findOne({ email });
+        break;
+      case "student":
+        // Check if a student with the given email exists in the database
+        user=await Student.findOne({ email });
+        break;
+      case "company":
+        // Check if a company with the given email exists in the database
+        user=await Company.findOne({ email });
+        break;
+      default:
+        // If an invalid userType is provided, throw a BadRequestError with an error message
+        throw new BadRequestError("Invalid user type");
+    }
+    if (!user) {
+      // If no user is found, throw an UnAuthenticatedError with an error message
+      throw new UnAuthenticatedError("Invalid Credentials");
+    }
+    const length = 8; // Length of the password
+
+  // Generate a random password
+  const password = crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
+    user.password = password;
+    await user.save();
+    await sendMail({
+      fromEmail: process.env.NODEMAILER_AUTH_USER,
+      toEmail: email,
+      mailSubject: `Forgot Password-Campus Placement Portal CTAE`,
+      senderDetails: {
+        name: "Campus Placement Portal CTAE",
+        email: process.env.NODEMAILER_AUTH_USER,
+      },
+      receiverDetails: {
+        name: email,
+        email: email,
+      },
+      mailBody: `
+      <div>
+      <h1>Forgot Password</h1>
+      <p>Your password is changed temporarily.</p>
+      <p>Your new password: <strong>${password}</strong></p>
+      <p>Do not forget to change your password after login with this new password.</p>
+      </div>`,
+    });
+    res.status(StatusCodes.OK).json({ message:"Check your mail for further assitance for password." });
+  } catch (err) {
+    next(err);
+  }
+};
+export { loginUser, changePassword,forgotPassword };

@@ -19,6 +19,9 @@ import {
   CREATE_ADMIN_ERROR,
   CREATE_ADMIN_SUCCESS,
   CREATE_ADMIN_BEGIN,
+  CREATE_COMPANY_BEGIN,
+  CREATE_COMPANY_SUCCESS,
+  CREATE_COMPANY_ERROR,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -181,6 +184,35 @@ const reducer = (state, action) => {
         password: "",
       };
     case CREATE_ADMIN_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case CREATE_COMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case CREATE_COMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        companyName: "",
+        companyEmail: "",
+        companyPassword: "",
+        companyPhone: "",
+        companyAddress: "",
+        companyLogo: "",
+        companyWebsite: "",
+        companyDescription: "",
+        companyLinkedin: "",
+        companyPrograms: [],
+        companyStreams: [],
+        hrName: "",
+        hrEmail: "",
+        hrPhone: "",
+      };
+    case CREATE_COMPANY_ERROR:
       return {
         ...state,
         isLoading: false,

@@ -108,6 +108,41 @@ const genderList = [
     value: "other",
   },
 ];
+// "B.Tech", "M.Tech", "MBA", "MCA", "BBA", "BCA", "B.Sc", "M.Sc"
+const programsList = [
+  {
+    title: "B.Tech",
+    value: "B.Tech",
+  },
+  {
+    title: "M.Tech",
+    value: "M.Tech",
+  },
+  {
+    title: "MBA",
+    value: "MBA",
+  },
+  {
+    title: "MCA",
+    value: "MCA",
+  },
+  {
+    title: "BBA",
+    value: "BBA",
+  },
+  {
+    title: "BCA",
+    value: "BCA",
+  },
+  {
+    title: "B.Sc",
+    value: "B.Sc",
+  },
+  {
+    title: "M.Sc",
+    value: "M.Sc",
+  },
+];
 const streamsList = [
   {
     title: "Computer Science",
@@ -154,4 +189,4 @@ const streamsList = [
     value: "Textile",
   },
 ];
-export { adminSidebarItems, genderList, streamsList };
+export { adminSidebarItems, genderList, streamsList,programsList };

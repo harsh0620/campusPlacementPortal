@@ -38,17 +38,17 @@ const registerStudent = async (req, res, next) => {
       password,
       enrollmentNo,
     };
+    console.log(newStudent);
     // If the student does not exist, create a new student object in the database with the provided name, email,enrollmentNo, and password
-    const student = await Student.create({ personalDetails: newStudent });
+    const student = await Student.create({ name,
+      email,
+      password,
+      enrollmentNo, });
     // Generate a JSON web token (JWT) for the newly created student
     const token = student.createJWT();
     // Send a response to the client with a 201 (Created) status code, including the student's email and name, and the generated token
     res.status(StatusCodes.CREATED).json({
-      student: {
-        email: student.personalDetails.email,
-        name: student.personalDetails.name,
-        enrollmentNo: student.personalDetails.enrollmentNo,
-      },
+      user: student,
       token,
     });
   } catch (err) {

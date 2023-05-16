@@ -12,6 +12,32 @@ const studentSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  enrollmentNo: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
+    type: String,
+    required: [true, "Please provide name"],
+    minlength: 3,
+    maxlength: 20,
+  },
+  email: {
+    type: String,
+    required: [true, "Please provide email"],
+    validate: {
+      validator: validator.isEmail,
+      message: "Please provide valid email",
+    },
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: [true, "Please provide password"],
+    minlength: 8,
+    select: false,
+  },
   placementDetails: {
     applied: {
       type: Boolean,
@@ -52,32 +78,6 @@ const studentSchema = mongoose.Schema({
     profileImage: {
       type: String,
     },
-    enrollmentNo: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    name: {
-      type: String,
-      required: [true, "Please provide name"],
-      minlength: 3,
-      maxlength: 20,
-    },
-    email: {
-      type: String,
-      required: [true, "Please provide email"],
-      validate: {
-        validator: validator.isEmail,
-        message: "Please provide valid email",
-      },
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Please provide password"],
-      minlength: 8,
-      select: false,
-    },
     dob: {
       type: Date,
     },
@@ -93,13 +93,11 @@ const studentSchema = mongoose.Schema({
       },
       minlength: 10,
       maxlength: 10,
-      unique: true,
     },
     aadharNo: {
       type: String,
       minlength: 12,
       maxlength: 12,
-      unique: true,
     },
     program: {
       type: String,
@@ -319,10 +317,10 @@ const studentSchema = mongoose.Schema({
 });
 // Hash password before saving the user
 studentSchema.pre("save", async function () {
-  if (!this.isModified("personalDetails.password")) return;
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
-  this.personalDetails.password = await bcrypt.hash(
-    this.personalDetails.password,
+  this.password = await bcrypt.hash(
+    this.password,
     salt
   );
 });
@@ -338,7 +336,7 @@ studentSchema.methods.createJWT = function () {
 studentSchema.methods.comparePassword = async function (candidatePassword) {
   const isMatch = await bcrypt.compare(
     candidatePassword,
-    this.personalDetails.password
+    this.password
   );
   return isMatch;
 };

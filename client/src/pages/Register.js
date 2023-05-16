@@ -24,12 +24,12 @@ const Register = () => {
   };
   async function onSubmit(e) {
     e.preventDefault();
-    const { email, password } = values;
-    if (!email || !password) {
+    const { name,enrollmentNo,email, password } = values;
+    if (!email || !password || !name || !enrollmentNo) {
       displayAlert("danger", "Please enter email and password");
       return;
     }
-    registerUser({ email, password });
+    registerUser({ name,enrollmentNo,email, password });
     console.log(values);
   }
   useEffect(() => {

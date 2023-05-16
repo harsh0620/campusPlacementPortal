@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { changePassword, loginUser } from "../controller/authController.js";
+import { changePassword, loginUser,forgotPassword } from "../controller/authController.js";
 
 /**
  * @desc Login an existing user
@@ -8,6 +8,12 @@ import { changePassword, loginUser } from "../controller/authController.js";
  * @access Public
  */
 router.route("/login").post(loginUser);
+/**
+ * @desc Login an existing user
+ * @route POST /api/v1/auth/forgotPassword
+ * @access Public
+ */
+router.route("/forgotPassword").post(forgotPassword);
 
 /**
  * @desc Change an user's password

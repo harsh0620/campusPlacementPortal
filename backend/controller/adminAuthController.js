@@ -178,7 +178,6 @@ const createCompany = async (req, res, next) => {
       address,
       programs,
       streams,
-      createdBy,
     } = req.body;
     // Extract the HR information from the request body
     const { hrName, hrEmail, hrPhone } = req.body;
@@ -204,7 +203,7 @@ const createCompany = async (req, res, next) => {
     }
 
     // Set the createdBy field of the request body to the user ID
-    req.body.createdBy = req.user.userId;
+    const createdBy = req.user.userId;
 
     // Create a new HR instance using the HR information from the request body
     const newHr = {
