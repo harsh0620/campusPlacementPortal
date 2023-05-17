@@ -81,6 +81,58 @@ const adminSidebarItems = [
     link: "/profile",
   },
 ];
+const studentSidebarItems = [
+  {
+    title: "Companies",
+    iconAbled: <BsBuildingsFill />,
+    iconDisabled: <BsBuildings />,
+    link: "/companies",
+  },
+  {
+    title: "Alumni",
+    iconAbled: <BsPeopleFill />,
+    iconDisabled: <BsPeople />,
+    link: "/alumni",
+  },
+  {
+    title: "Jobs",
+    iconAbled: <BsBriefcaseFill />,
+    iconDisabled: <BsBriefcase />,
+    link: "/jobs",
+  },
+  {
+    title: "Settings",
+    iconAbled: <FaCog />,
+    iconDisabled: <FaCog color="#bbb" />,
+    link: "/settings",
+  },
+  {
+    title: "Profile",
+    iconAbled: <FaUserCircle />,
+    iconDisabled: <FaUserCircle color="#bbb" />,
+    link: "/profile",
+  },
+];
+const companySidebarItems = [
+  {
+    title: "Jobs",
+    iconAbled: <BsBriefcaseFill />,
+    iconDisabled: <BsBriefcase />,
+    link: "/jobs",
+  },
+  {
+    title: "Settings",
+    iconAbled: <FaCog />,
+    iconDisabled: <FaCog color="#bbb" />,
+    link: "/settings",
+  },
+  {
+    title: "Profile",
+    iconAbled: <FaUserCircle />,
+    iconDisabled: <FaUserCircle color="#bbb" />,
+    link: "/profile",
+  },
+];
 // enum: [
 //     "Computer Science",
 //     "Electronics",
@@ -189,4 +241,4 @@ const streamsList = [
     value: "Textile",
   },
 ];
-export { adminSidebarItems, genderList, streamsList,programsList };
+export { adminSidebarItems, companySidebarItems,studentSidebarItems,genderList, streamsList,programsList };

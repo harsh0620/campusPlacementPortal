@@ -35,17 +35,14 @@ const AdminStudents = () => {
     e.preventDefault();
     searchStudentsByAdmin({ ...values });
   };
-  // useEffect(() => {
-  //   searchStudentsByAdmin({ ...values });
-  //   // eslint-disable-next-line
-  // }, []);
+  useEffect(() => {
+    searchStudentsByAdmin({ ...values });
+    // eslint-disable-next-line
+  }, []);
   if (isLoading) {
     return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" />;
   }
 
-  //   if (studentsByAdmin.length === 0) {
-  //     return <h2>No jobs to display...</h2>;
-  //   }
   return (
     <div className="bg-white w-full">
       <ActionCard
@@ -198,8 +195,8 @@ const AdminStudents = () => {
                   onChange={handleChange}
                 >
                   <option value="">Verified</option>
-                  <option value={true}>Yes</option>
-                  <option value={false}>No</option>
+                  <option value="verified">Yes</option>
+                  <option value="unverified">No</option>
                 </select>
               </div>
               <div className="my-2 w-full">
@@ -220,8 +217,8 @@ const AdminStudents = () => {
                   onChange={handleChange}
                 >
                   <option value="">Selected in Company</option>
-                  <option value={true}>Yes</option>
-                  <option value={false}>No</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
               </div>
               <div className="my-2 w-full">
@@ -251,25 +248,6 @@ const AdminStudents = () => {
                   ))}
                 </select>
               </div>
-              <div className="my-2 w-full">
-                <label
-                  className="text-left text-black text-md font-medium"
-                  htmlFor="cgpa"
-                >
-                  CGPA
-                </label>
-                <input
-                  className="mt-2 w-full h-10 border border-gray-400 rounded-md
-        transition duration-150 ease-in-out focus:text-gray-700
-        focus:bg-white focus:border-slate-600 p-2"
-                  type="number"
-                  id="cgpa"
-                  name="cgpa"
-                  placeholder="Enter Enrollment No."
-                  value={values.cgpa}
-                  onChange={handleChange}
-                />
-              </div>
               <div className="my-8  mx-2">
                 <button
                   onClick={handleSearch}
@@ -282,7 +260,7 @@ const AdminStudents = () => {
           </div>
         }
       />
-      <div className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border-gray-300 hover:drop-shadow-md shadow  rounded-lg  bg-white md:p-2 p-1 mb-4">
+      <div className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border rounded-xl mb-4">
       <AdminStudentTable students={studentsByAdmin} />
       </div>
     </div>

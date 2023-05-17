@@ -14,6 +14,12 @@ import {
   getStudents,
   getStudentById,
   sendMailToSelectedStudent,
+  sendMailToUsers,
+  getCompany,
+  getCompanyById,
+  getJob,
+  getJobById,
+  getAppliedStudents,
 } from "../controller/adminFeaturesController.js";
 
 /**
@@ -52,13 +58,53 @@ router.route("/students").get(getStudents);
  * @access Private
  * */
 router.route("/students/:studentId").get(getStudentById);
+/**
+ * Get company
+ *
+ * @route GET /api/v1/admin/company
+ * @access Private
+ */
+router.route("/company").get(getCompany);
+
+/**
+ * Get company by id
+ * @route GET /api/v1/admin/company/:companyId
+ * @access Private
+ * */
+router.route("/company/:companyId").get(getCompanyById);
+/**
+ * Get job
+ *
+ * @route GET /api/v1/admin/job
+ * @access Private
+ */
+router.route("/job").get(getJob);
+
+/**
+ * Get job by id
+ * @route GET /api/v1/admin/job/:jobId
+ * @access Private
+ * */
+router.route("/job/:jobId").get(getJobById);
+/**
+ * Get job by id
+ * @route GET /api/v1/admin/job/appliedBy/:jobId
+ * @access Private
+ * */
+router.route("/job/appliedBy/:jobId").get(getAppliedStudents);
 
 /**
  * Send mail to selected student
- * @route POST /api/v1/admin/students/sendMail/:studentId
+ * @route POST /api/v1/admin/sendMail/:studentId
  * @access Private
  * */
 router.route("/sendMail/:studentId").post(sendMailToSelectedStudent);
+/**
+ * Send mail to selected student
+ * @route POST /api/v1/admin/sendMail
+ * @access Private
+ * */
+router.route("/sendMail").post(sendMailToUsers);
 /**
  * Verify a student
  *

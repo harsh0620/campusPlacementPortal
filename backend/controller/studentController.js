@@ -36,49 +36,35 @@ const getAllStudents = async (req, res, next) => {
       verified,
       selected,
       yearOfPassing,
-      company: selectedIn,
-      cgpa,
     } = req.body;
-
+    console.log(req.body);
+console.log(req.query);
     // Define the filter object for the search query
     const filter = {};
-
     if (name) {
-      filter.name = { $regex: name, $options: "i" };
+      query["name"] = { $regex: name, $options: "i" };
     }
-
     if (email) {
-      filter.email = { $regex: email, $options: "i" };
+      query["email"] = { $regex: email, $options: "i" };
     }
-
     if (enrollmentNo) {
-      filter.enrollmentNo = { $regex: enrollmentNo, $options: "i" };
+      query["enrollmentNo"] = { $regex: enrollmentNo, $options: "i" };
     }
-
-    if (gender) {
-      filter.gender = gender;
-    }
-
-    if (stream) {
-      filter.stream = stream;
-    }
-
     if (verified) {
-      filter.verified = verified;
+      query["verified"] = { $regex: verified, $options: "i" };
     }
-
+    if (gender) {
+      query["personalDetails.gender"] = { $regex: gender, $options: "i" };
+    }
+    if (stream) {
+      query["personalDetails.stream"] = { $regex: stream, $options: "i" };
+    }
     if (selected) {
-      filter.selected = selected;
+      query["placementDetails.selected"] = { $regex: selected, $options: "i" };
     }
-
     if (yearOfPassing) {
-      filter.yearOfPassing = yearOfPassing;
+      query["academicDetails.yearOfPassing"] = { $regex: yearOfPassing, $options: "i" };
     }
-
-    if (company) {
-      filter.company = { $regex: company, $options: "i" };
-    }
-
     // Search for students based on the filter
     const students = await Student.find(filter);
 

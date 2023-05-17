@@ -1,10 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminStudentTable = ({ students }) => {
+  console.log(students);
+  const navigate=useNavigate();
   return (
     <div className="flex flex-col w-full">
-      <div className="my-2 overflow-x-auto sm:mx-4 lg:mx-6">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+      <div className="overflow-x-auto ">
+        <div className="align-middle inline-block min-w-full ">
           <div className="shadow overflow-hidden border-b border-gray-200 rounded-lg">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -31,12 +34,6 @@ const AdminStudentTable = ({ students }) => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    CGPA
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
                     Verified
                   </th>
                   <th
@@ -47,31 +44,26 @@ const AdminStudentTable = ({ students }) => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200" >
                 {students?.map((student, index) => (
                   <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap cursor-pointer" onClick={()=>navigate(`/students/${student?._id}`)}>
                       <div className="text-sm font-medium text-gray-900">
-                        {student?.personalDetails?.name}
+                        {student?.name}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {student?.personalDetails?.enrollmentNo}
+                        {student?.enrollmentNo}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {student?.stream}
+                        {student?.personalDetails?.stream}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {student?.cgpa}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {student?.verified ? (
+                      {student?.applicationStatus==="verified" ? (
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                           Verified
                         </span>
@@ -82,7 +74,7 @@ const AdminStudentTable = ({ students }) => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {student?.placementDetails?.selected ? (
+                      {student?.placementDetails?.selected==="yes" ? (
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                           Placed
                         </span>

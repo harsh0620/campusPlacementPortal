@@ -8,9 +8,9 @@ const studentSchema = mongoose.Schema({
     required: true,
     default: "student",
   },
-  verified: {
-    type: Boolean,
-    default: false,
+  applicationStatus: {
+    type: String,
+    default: "unverified",
   },
   enrollmentNo: {
     type: String,
@@ -44,8 +44,8 @@ const studentSchema = mongoose.Schema({
       default: false,
     },
     selected: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: "no",
     },
     selectedIn: {
       company: {

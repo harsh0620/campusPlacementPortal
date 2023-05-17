@@ -6,6 +6,10 @@ import JobDrive from "../models/jobDrive.js";
 import Students from "../models/students.js";
 import nodemailer from "nodemailer";
 import Company from "../models/Company.js";
+import { sendMail } from "./communication.js";
+import jobDrive from "../models/jobDrive.js";
+import { Parser } from 'json2csv';
+import fs from 'fs';
 
 /**
 
@@ -14,84 +18,6 @@ import Company from "../models/Company.js";
 @access Private
 */
 // Define an asynchronous function called getAllCompanies that takes in three parameters: req, res, and next
-const getAllStudents = async (req, res, next) => {
-  try {
-    // Extract the userId property from the request object
-    const userId = req.user.userId;
-
-    // Check if the authenticated user is a admin; if so, throw an UnAuthenticatedError
-    const ifAdmin = await Admin.findOne({ _id: userId });
-    if (!ifAdmin) {
-      throw new UnAuthenticatedError(
-        "You are not authorized to view all students"
-      );
-    }
-    const {
-      name,
-      email,
-      enrollmentNo,
-      gender,
-      stream,
-      verified,
-      selected,
-      yearOfPassing,
-      company,
-      cgpa,
-    } = req.body;
-
-    // Define the filter object for the search query
-    const filter = {};
-
-    if (name) {
-      filter.name = { $regex: name, $options: "i" };
-    }
-
-    if (email) {
-      filter.email = { $regex: email, $options: "i" };
-    }
-
-    if (enrollmentNo) {
-      filter.enrollmentNo = { $regex: enrollmentNo, $options: "i" };
-    }
-
-    if (gender) {
-      filter.gender = gender;
-    }
-
-    if (stream) {
-      filter.stream = stream;
-    }
-
-    if (verified) {
-      filter.verified = verified;
-    }
-
-    if (selected) {
-      filter.selected = selected;
-    }
-
-    if (yearOfPassing) {
-      filter.yearOfPassing = yearOfPassing;
-    }
-    if (cgpa) {
-      filter.cgpa = cgpa;
-    }
-
-    if (company) {
-      filter.company = { $regex: company, $options: "i" };
-    }
-
-    // Search for students based on the filter
-    const students = await Student.find(filter);
-
-    // Send a response to the client with a 200 (OK) status code, including an array of company objects that match the query criteria
-    res.status(StatusCodes.OK).json(students);
-  } catch (error) {
-    // Pass any caught errors to the error handling middleware
-    next(error);
-  }
-};
-
 const getStudents = async (req, res, next) => {
   try {
     // Extract the userId property from the request object
@@ -110,58 +36,86 @@ const getStudents = async (req, res, next) => {
       enrollmentNo,
       gender,
       stream,
-      verified,
+      applicationStatus,
       selected,
       yearOfPassing,
       selectedIn,
       cgpa,
     } = req.query;
     console.log(req.query);
-    const query = {};
+    // const query = {};
 
-    if (name) {
-      query["personalDetails.name"] = { $regex: name, $options: "i" };
-    }
-    if (email) {
-      query["personalDetails.email"] = { $regex: email, $options: "i" };
-    }
-    if (enrollmentNo) {
-      query["personalDetails.enrollmentNo"] = {
-        $regex: enrollmentNo,
-        $options: "i",
-      };
-    }
-    if (gender) {
-      query["personalDetails.gender"] = { $regex: gender, $options: "i" };
-    }
-    if (yearOfPassing) {
-      query["academicDetails"] = {
-        $elemMatch: { yearOfPassing: { $regex: yearOfPassing, $options: "i" } },
-      };
-    }
-    if (stream) {
-      query["academicDetails"] = {
-        $elemMatch: { stream: { $regex: stream, $options: "i" } },
-      };
-    }
-    if (cgpa) {
-      query["academicDetails"] = {
-        $elemMatch: { "result.value": { $gte: cgpa } },
-      };
-    }
-    if (verified !== undefined) {
-      query["verified"] = verified;
-    }
-    console.log(query);
-    const students = await Student.find(query)
-      .select(
-        "personalDetails.name personalDetails.enrollmentNo academicDetails.stream verified placementDetails.selected"
-      )
-      .populate({
-        path: "placementDetails.selectedIn.company",
-        select: "name",
-      });
+    // if (name) {
+    //   query["name"] = { $regex: name, $options: "i" };
+    // }
+    // if (email) {
+    //   query["email"] = { $regex: email, $options: "i" };
+    // }
+    // if (enrollmentNo) {
+    //   query["enrollmentNo"] = { $regex: enrollmentNo, $options: "i" };
+    // }
+    // if (applicationStatus) {
+    //   query["applicationStatus"] = { $regex: applicationStatus, $options: "i" };
+    // }
+    // if (gender) {
+    //   query["personalDetails.gender"] = { $regex: gender, $options: "i" };
+    // }
+    // if (stream) {
+    //   query["personalDetails.stream"] = { $regex: stream, $options: "i" };
+    // }
+    // if (selected) {
+    //   query["placementDetails.selected"] = { $regex: selected, $options: "i" };
+    // }
+    // if (yearOfPassing) {
+    //   query["academicDetails.yearOfPassing"] = { $regex: yearOfPassing, $options: "i" };
+    // }
+    // const students = await Student.find(query);
+    //   .select(
+    //     "name enrollmentNo personalDetails.stream applicationStatus placementDetails.selected"
+    //   ).populate();
 
+    // res.status(StatusCodes.OK).json({
+    //   students,
+    // });
+    const fields = [
+      "name",
+      "email",
+      "enrollmentNo",
+      "applicationStatus",
+      "personalDetails.gender",
+      "personalDetails.stream",
+      "placementDetails.selected",
+      "academicDetails.yearOfPassing",
+    ];
+
+    const query = fields.reduce((acc, field) => {
+      if(field==="applicationStatus" && req.query[field]==="verified"){
+        acc = {
+          $and: [acc, { "applicationStatus": { $regex: "verified", $options: "i" } }]
+        }
+      }
+      else if(field==="applicationStatus" && req.query[field]==="unverified"){
+        acc = {
+          $and: [acc, { "applicationStatus": { $regex: "unverified", $options: "i" } }]
+        }
+      }
+      else{
+      if (req.query[field]) {
+        acc = {
+          $and: [acc, { [field]: { $regex: req.query[field], $options: "i" } }],
+        };
+      }
+    }
+      return acc;
+    }, {});
+console.log(query);
+    const students = await Student.find(query);
+      // .select(
+      //   "name enrollmentNo personalDetails.stream applicationStatus placementDetails.selected"
+      // )
+      // .populate();
+const check=await Student.find({applicationStatus:"verified"});
+console.log(check);
     res.status(StatusCodes.OK).json({
       students,
     });
@@ -171,6 +125,122 @@ const getStudents = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Get a student by id
+ *
+ * @route GET /api/v1/admin/students/:studentId
+ * @access Private
+ */
+const getStudentById = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const studentId = req.params.studentId;
+    const student = await Student.findOne({ _id: studentId });
+    if (!student) {
+      throw new NotFoundError(`No student with ID: ${studentId}`);
+    }
+    return res.status(StatusCodes.OK).json({
+      student,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getCompany = async (req, res, next) => {
+  try {
+    // Extract the userId property from the request object
+    const userId = req.user.userId;
+
+    // Check if the authenticated user is a admin; if so, throw an UnAuthenticatedError
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (!ifAdmin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to view all students"
+      );
+    }
+    const companies = await Company.find({}).select("name email logo");
+    res.status(StatusCodes.OK).json({
+      companies,
+    });
+  } catch (error) {
+    // Pass any caught errors to the error handling middleware
+    next(error);
+  }
+};
+const getCompanyById = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const companyId = req.params.companyId;
+    const company = await Company.findOne({ _id: companyId });
+    if (!company) {
+      throw new NotFoundError(`No company with ID: ${companyId}`);
+    }
+    return res.status(StatusCodes.OK).json({
+      company,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getJob = async (req, res, next) => {
+  try {
+    // Extract the userId property from the request object
+    const userId = req.user.userId;
+
+    // Check if the authenticated user is a admin; if so, throw an UnAuthenticatedError
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (!ifAdmin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to view all students"
+      );
+    }
+    const jobs = await jobDrive
+      .find({})
+      .select("company designations locations")
+      .populate("company", "name");
+    res.status(StatusCodes.OK).json({
+      jobs,
+    });
+  } catch (error) {
+    // Pass any caught errors to the error handling middleware
+    next(error);
+  }
+};
+const getJobById = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const jobId = req.params.jobId;
+    const job = await jobDrive
+      .findOne({ _id: jobId })
+      .populate("company", "name");
+    if (!job) {
+      throw new NotFoundError(`No job with ID: ${jobId}`);
+    }
+    return res.status(StatusCodes.OK).json({
+      job,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 /**
 @desc Verify or unverify a student's account
 @route PUT /api/v1/admin/verifyStudent/:studentId
@@ -195,8 +265,12 @@ const verifyStudent = async (req, res, next) => {
       throw new NotFoundError(`No student with id :${studentId}`);
     }
     // Toggle the verified status of the student's account
-    var flag = student.verified;
-    student.verified = !student.verified;
+    if(student?.verified==="verified"){
+    student.verified = "unverified";
+    }
+    else{
+      student.verified = "verified";
+    }
     // Save the updated student object in the database
     await student.save();
     // Return a success message with the updated verification status of the student's account
@@ -400,27 +474,7 @@ const sendMessage = (req, res, next) => {
     next(error);
   }
 };
-const getStudentById = async (req, res, next) => {
-  try {
-    const adminId = req.user.userId;
-    const admin = await Admin.findOne({ _id: adminId });
-    if (!admin) {
-      throw new UnAuthenticatedError(
-        "You are not authorized to perform this action"
-      );
-    }
-    const studentId = req.params.studentId;
-    const student = await Student.findOne({ _id: studentId });
-    if (!student) {
-      throw new NotFoundError(`No student with ID: ${studentId}`);
-    }
-    return res.status(StatusCodes.OK).json({
-      student,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+
 //Send mail to specific student
 const sendMailToSelectedStudent = async (req, res, next) => {
   try {
@@ -439,7 +493,7 @@ const sendMailToSelectedStudent = async (req, res, next) => {
     await sendMail({
       fromEmail: admin.email,
       toEmail: student.email,
-      mailSubject: `Mail from ${admin.name}`,
+      mailSubject: `${req?.body?.mailSubject}-Mail from ${admin.name}`,
       senderDetails: {
         name: admin.name,
         email: admin.email,
@@ -451,8 +505,73 @@ const sendMailToSelectedStudent = async (req, res, next) => {
       mailBody: `
       <div>
       <h1>Message from ${admin?.name}</h1>
-      <p>${req?.body?.message}</p>
+      <p>${req?.body?.mailMessage}</p>
       </div>`,
+    });
+    return res.status(StatusCodes.OK).json({
+      message: `Message sent successfully`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+//Send mail to many users
+const sendMailToUsers = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const mailArray = req.body.mailArray;
+    for (let i = 0; i < mailArray.length; i++) {
+      await sendMail({
+        fromEmail: admin.email,
+        toEmail: mailArray[i],
+        mailSubject: req.body.mailSubject,
+        senderDetails: {
+          name: admin.name,
+          email: admin.email,
+        },
+        receiverDetails: {
+          name: mailArray[i],
+          email: mailArray[i],
+        },
+        mailBody: `
+      <div>
+      <h1>Message from ${admin?.name}</h1>
+      <p>${req?.body?.mailMessage}</p>
+      </div>`,
+      });
+    }
+    return res.status(StatusCodes.OK).json({
+      message: `Message sent successfully`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const getAppliedStudents = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const jobDriveId = req.params.jobId;
+    const jobDrive = await JobDrive.findOne({ _id: jobDriveId });
+    if (!jobDrive) {
+      throw new NotFoundError(`No job drive with ID: ${jobDriveId}`);
+    }
+    const appliedStudents = await JobDrive.findOne({
+      _id: jobDriveId,
+    }).populate("appliedBy");
+    return res.status(StatusCodes.OK).json({
+      appliedStudents,
     });
   } catch (error) {
     next(error);
@@ -465,5 +584,11 @@ export {
   sendMessage,
   getStudents,
   getStudentById,
+  getCompany,
+  getCompanyById,
+  getJob,
+  getJobById,
+  sendMailToUsers,
   sendMailToSelectedStudent,
+  getAppliedStudents,
 };

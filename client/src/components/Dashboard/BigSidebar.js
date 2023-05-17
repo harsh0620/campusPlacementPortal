@@ -1,9 +1,11 @@
 import React from "react";
 import { MdDashboard, MdOutlineDashboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { adminSidebarItems } from "../../utils/constants";
+import { adminSidebarItems, companySidebarItems, studentSidebarItems } from "../../utils/constants";
+import { useAppContext } from "../../context/appContext";
 const BigSidebar = () => {
   const navigate = useNavigate();
+  const {user}=useAppContext();
   return (
     <div className="md:block hidden h-full w-full pr-2 border-r">
       {/* RENDERING THE APP LOGO */}
@@ -46,7 +48,61 @@ const BigSidebar = () => {
           <div>Home</div>
         </div>
         {/* ALL OTHER OPTIONS */}
-        {adminSidebarItems.map((item, index) => {
+        {user?.role==="admin" && adminSidebarItems.map((item, index) => {
+          const { iconAbled, iconDisabled, title, link } = item;
+          return (
+            <div
+              onClick={() => {
+                navigate(link);
+              }}
+              key={index}
+              className={`flex items-center py-2 px-4 ${
+                window.location.pathname.indexOf(link) !== -1 &&
+                "bg-blue-200 rounded-r-[32px] text-[#001D35] hover:bg-blue-200 font-bold"
+              }
+                  md:text-base
+                  text-md
+                  font-medium
+                  text-gray-600
+                  hover:bg-gray-200 hover:rounded-r-[32px] cursor-pointer`}
+            >
+              <div className="mr-3 ">
+                {window.location.pathname.indexOf(link) !== -1
+                  ? iconAbled
+                  : iconDisabled}
+              </div>
+              <div>{title}</div>
+            </div>
+          );
+        })}
+        {user?.role==="student" && studentSidebarItems.map((item, index) => {
+          const { iconAbled, iconDisabled, title, link } = item;
+          return (
+            <div
+              onClick={() => {
+                navigate(link);
+              }}
+              key={index}
+              className={`flex items-center py-2 px-4 ${
+                window.location.pathname.indexOf(link) !== -1 &&
+                "bg-blue-200 rounded-r-[32px] text-[#001D35] hover:bg-blue-200 font-bold"
+              }
+                  md:text-base
+                  text-md
+                  font-medium
+                  text-gray-600
+                  hover:bg-gray-200 hover:rounded-r-[32px] cursor-pointer`}
+            >
+              <div className="mr-3 ">
+                {window.location.pathname.indexOf(link) !== -1
+                  ? iconAbled
+                  : iconDisabled}
+              </div>
+              <div>{title}</div>
+            </div>
+          );
+        })}
+        {user?.role==="company" && companySidebarItems.map((item, index) => {
           const { iconAbled, iconDisabled, title, link } = item;
           return (
             <div
