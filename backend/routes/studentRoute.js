@@ -10,6 +10,7 @@ import {
 } from "../controller/studentAuthController.js";
 import authenticateUser from "../middleware/auth.js";
 import { loginUser } from "../controller/authController.js";
+import { applyToJobDrive } from "../controller/studentController.js";
 /**
  * @desc Register a new student user
  * @route POST /api/v1/student/auth/register
@@ -26,7 +27,7 @@ router.route("/auth/login").post(loginUser);
 
 /**
  * @desc Update an existing student user's personalDetails
- * @route PUT /api/v1/student/personalDetails
+ * @route PATCH /api/v1/student/personalDetails
  * @access Private
  */
 router
@@ -35,7 +36,7 @@ router
 
 /**
  * @desc Update an existing student user's academicDetails
- * @route PUT /api/v1/student/academicDetails
+ * @route PATCH /api/v1/student/academicDetails
  * @access Private
  */
 router
@@ -44,7 +45,7 @@ router
 
 /**
  * @desc Update an existing student user's professionalDetails
- * @route PUT /api/v1/student/professionalDetails
+ * @route PATCH /api/v1/student/professionalDetails
  * @access Private
  */
 router
@@ -52,8 +53,15 @@ router
   .patch(authenticateUser, updateProfessionalDetailsStudent);
 /**
  * @desc Update an existing student user's documentDetails
- * @route PUT /api/v1/student/documentDetails
+ * @route PATCH /api/v1/student/documentDetails
  * @access Private
  */
 router.route("/documentDetails").patch(authenticateUser, updateDocumentStudent);
+
+/**
+ * @desc Apply to jobDrive
+ * @route PATCH /api/v1/student/apply/:jobDriveId
+ * @access Private
+ */
+router.route("/apply/:jobDriveId").patch(authenticateUser, applyToJobDrive);
 export default router;

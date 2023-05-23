@@ -7,7 +7,7 @@ import adminRouter from "./routes/adminRoute.js";
 import authRouter from "./routes/authRoute.js";
 import companyRouter from "./routes/companyRoute.js";
 import jobDriveRouter from "./routes/jobDriveRoute.js";
-import studentAuthRouter from "./routes/studentAuthRoute.js";
+import studentAuthRouter from "./routes/studentRoute.js";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 import authenticateAdmin from "./middleware/authAdmin.js";

@@ -22,6 +22,8 @@ import {
   CREATE_COMPANY_BEGIN,
   CREATE_COMPANY_SUCCESS,
   CREATE_COMPANY_ERROR,
+  GET_STUDENTSBYIDBYADMIN_BEGIN,
+  GET_STUDENTSBYIDBYADMIN_SUCCESS,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -227,6 +229,14 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         studentsByAdmin: action.payload.students,
+      };
+    case GET_STUDENTSBYIDBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_STUDENTSBYIDBYADMIN_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        specificStudent: action.payload.student,
       };
     default:
       throw new Error(`no such action :${action.type}`);

@@ -25,6 +25,8 @@ import {
   CREATE_COMPANY_ERROR,
   CREATE_COMPANY_SUCCESS,
   CREATE_COMPANY_BEGIN,
+  GET_STUDENTSBYIDBYADMIN_BEGIN,
+  GET_STUDENTSBYIDBYADMIN_SUCCESS,
 } from "./actions";
 import { toast } from "react-toastify";
 
@@ -68,6 +70,109 @@ export const initialState = {
   mailsArray: [],
   mailSubject: "",
   mailBody: "",
+  specificStudent: {
+    applicationStatus: "unverified",
+  enrollmentNo: "",
+  name: "",
+  email: "",
+  password: "",
+  placementDetails: {
+    applied: false,
+    selected: "no",
+    selectedIn: {
+      company: null,
+      jobProfile: "",
+      package: null,
+      joiningDate: null,
+    },
+    appliedIn: [],
+  },
+  personalDetails: {
+    profileImage: "",
+    dob: null,
+    gender: "Male",
+    contactNo: "",
+    aadharNo: "",
+    program: "",
+    stream: "",
+    collegeName: "",
+    universityName: "",
+    fatherName: "",
+    motherName: "",
+    currentAddress: "",
+    permanentAddress: "",
+    homeCity: "",
+    homeState: "",
+    homeCountry: "",
+    pincode: "",
+  },
+  academicDetails: [
+    {
+      degree: "",
+      specialization: "",
+      institute: "",
+      yearOfPassing: null,
+      board: "",
+      result: {
+        option: "CGPA",
+        value: null,
+      },
+      numberOfSemesters: null,
+      semesters: [
+        {
+          count: null,
+          result: {
+            option: "CGPA",
+            value: null,
+          },
+          backlogSubjects: null,
+        },
+      ],
+    },
+  ],
+  professionalDetails: {
+    experiences: [
+      {
+        companyName: "",
+        designation: "",
+        duration: null,
+        location: "",
+        jobDescription: "",
+        from: null,
+        to: null,
+      },
+    ],
+    projects: [
+      {
+        projectName: "",
+        projectDescription: "",
+        sourceCodeLink: "",
+        liveLink: "",
+      },
+    ],
+    skills: [],
+    certifications: [
+      {
+        certificationName: "",
+        certificationAuthority: "",
+        certificationLink: "",
+      },
+    ],
+    others: "",
+    links: [],
+  },
+  documents: {
+    resume: "",
+    photo: "",
+    aadhar: "",
+    marksheets: [
+      {
+        marksheetName: "",
+        marksheetLink: "",
+      },
+    ],
+  },
+  },
 };
 const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
@@ -362,7 +467,40 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+const getStudentById=async(id)=>{
+  dispatch({ type: GET_STUDENTSBYIDBYADMIN_BEGIN });
+  try {
+    const { data } = await authFetch(`/admin/students/${id}`);
+    console.log(data);
+    const { student } = data;
+    dispatch({
+      type: GET_STUDENTSBYIDBYADMIN_SUCCESS,
+      payload: {
+        student,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    //logoutUser();
+  }
+  clearAlert();
+}
+const getRandomColor = () => {
+  const colors = [
+    'bg-red-500',
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-indigo-500',
+    'bg-teal-500',
+    // Add more Tailwind CSS color classes as needed
+  ];
 
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  return colors[randomIndex];
+};
   return (
     <AppContext.Provider
       value={{
@@ -377,7 +515,9 @@ const AppProvider = ({ children }) => {
         updateProfile,
         updatePassword,
         createAdmin,
-        createCompany
+        createCompany,
+        getStudentById,
+        getRandomColor
       }}
     >
       {children}

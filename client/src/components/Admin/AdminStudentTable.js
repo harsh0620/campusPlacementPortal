@@ -47,8 +47,8 @@ const AdminStudentTable = ({ students }) => {
               <tbody className="bg-white divide-y divide-gray-200" >
                 {students?.map((student, index) => (
                   <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap cursor-pointer" onClick={()=>navigate(`/students/${student?._id}`)}>
-                      <div className="text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap cursor-pointer " onClick={()=>navigate(`/students/${student?._id}`)}>
+                      <div className="text-sm font-medium text-gray-900 hover:text-blue-500">
                         {student?.name}
                       </div>
                     </td>

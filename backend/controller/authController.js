@@ -11,7 +11,6 @@ import { sendMail } from "./communication.js";
  * @access Public
  */
 const loginUser = async (req, res, next) => {
-  console.log("loginUser", req.body);
   try {
     // Extract the email and password properties from the request body using destructuring
     const { email, password, userType } = req.body;

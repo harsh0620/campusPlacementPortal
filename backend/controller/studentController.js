@@ -4,76 +4,49 @@ import {
   NotFoundError,
   UnAuthenticatedError,
 } from "../errors/index.js";
-import Admin from "../models/admin.js";
-import Company from "../models/Company.js";
 import Student from "../models/students.js";
+import JobDrive from "../models/jobDrive.js";
 
 /**
-
-@desc Get all companies based on query parameters
-@route GET /api/v1/company/all
-@access Private
-*/
-// Define an asynchronous function called getAllCompanies that takes in three parameters: req, res, and next
-const getAllStudents = async (req, res, next) => {
+ * @desc Apply to jobDrive
+ * @route POST /api/v1/student/apply/:jobDriveId
+ * @access Private
+ */
+const applyToJobDrive = async (req, res, next) => {
   try {
-    // Extract the userId property from the request object
-    const userId = req.user.userId;
-
-    // Check if the authenticated user is a company; if so, throw an UnAuthenticatedError
-    const ifAdmin = await Admin.findOne({ _id: userId });
-    if (!ifAdmin) {
+    const jobDriveId = req.params.jobDriveId;
+    const requester = req.user.userId;
+    const jobDrive = await JobDrive.findById(jobDriveId);
+    if (!jobDrive) {
+      throw new NotFoundError(`No jobDrive with id :${jobDriveId}`);
+    }
+    const ifStudent = await Student.findOne({ _id: requester });
+    if (!ifStudent || ifStudent.verified === false) {
       throw new UnAuthenticatedError(
-        "You are not authorized to view all students"
+        "You are not authorized to apply to this job drive"
       );
     }
-    const {
-      name,
-      email,
-      enrollmentNo,
-      gender,
-      stream,
-      verified,
-      selected,
-      yearOfPassing,
-    } = req.body;
-    console.log(req.body);
-console.log(req.query);
-    // Define the filter object for the search query
-    const filter = {};
-    if (name) {
-      query["name"] = { $regex: name, $options: "i" };
+    const ifApplied = await JobDrive.findOne({
+      _id: jobDriveId,
+      appliedBy: requester,
+    });
+    if (ifApplied) {
+      throw new BadRequestError("You have already applied to this job drive");
     }
-    if (email) {
-      query["email"] = { $regex: email, $options: "i" };
-    }
-    if (enrollmentNo) {
-      query["enrollmentNo"] = { $regex: enrollmentNo, $options: "i" };
-    }
-    if (verified) {
-      query["verified"] = { $regex: verified, $options: "i" };
-    }
-    if (gender) {
-      query["personalDetails.gender"] = { $regex: gender, $options: "i" };
-    }
-    if (stream) {
-      query["personalDetails.stream"] = { $regex: stream, $options: "i" };
-    }
-    if (selected) {
-      query["placementDetails.selected"] = { $regex: selected, $options: "i" };
-    }
-    if (yearOfPassing) {
-      query["academicDetails.yearOfPassing"] = { $regex: yearOfPassing, $options: "i" };
-    }
-    // Search for students based on the filter
-    const students = await Student.find(filter);
-
-    // Send a response to the client with a 200 (OK) status code, including an array of company objects that match the query criteria
-    res.status(StatusCodes.OK).json(students);
+    const updatedJobDrive = await JobDrive.findOneAndUpdate(
+      { _id: jobDriveId },
+      { $push: { appliedBy: requester } },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Applied successfully", updatedJobDrive });
   } catch (error) {
-    // Pass any caught errors to the error handling middleware
     next(error);
   }
 };
 
-export { getAllStudents };
+export { applyToJobDrive };

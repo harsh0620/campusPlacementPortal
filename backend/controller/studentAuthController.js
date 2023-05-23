@@ -38,7 +38,6 @@ const registerStudent = async (req, res, next) => {
       password,
       enrollmentNo,
     };
-    console.log(newStudent);
     // If the student does not exist, create a new student object in the database with the provided name, email,enrollmentNo, and password
     const student = await Student.create({ name,
       email,
@@ -68,39 +67,19 @@ const updatePersonalDetailsStudent = async (req, res, next) => {
     const userId = req.user.userId;
     // Check if the user is a student
     const ifCompany = await Company.findOne({ _id: userId });
-    if (ifCompany) {
-      // If the user is not a student, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("You are not a student");
-    }
-
     // Check if the user is an admin
     const ifAdmin = await Admin.findOne({ _id: userId });
-    if (ifAdmin) {
-      // If the user is an admin, update the student specified in the request body
-      userId = req.body.studentId;
+    if (ifCompany || ifAdmin) {
+      // If the user is not a student, throw an UnAuthenticatedError with an error message
+      throw new UnAuthenticatedError("You are not authorized to perform this action");
     }
-
-    // Extract the email, name, and enrollment number properties from the request body using destructuring
-    const { email, name, enrollmentNo } = req.body;
-
-    // Check if all the required fields are present
-    if (!email || !name || !enrollmentNo) {
-      // If any of the fields are missing, throw a BadRequestError with an error message
-      throw new BadRequestError("Please provide all values");
-    }
-
     // Find the student user in the database using the user ID stored in the request object
-    const student = await Student.findOne({ _id: userId }).select(
-      "+personalDetails.password"
-    );
+    const student = await Student.findOne({ _id: userId });
 
     // If no student is found with the provided user ID, throw a NotFoundError with an error message
     if (!student) {
       throw new NotFoundError(`No student with id :${userId}`);
     }
-
-    // Set the password field of the request body to the current password value of the student user
-    req.body.password = student.personalDetails.password;
 
     // Update the student user's personal details in the database
     const updatedStudent = await Student.findOneAndUpdate(
@@ -111,22 +90,14 @@ const updatePersonalDetailsStudent = async (req, res, next) => {
         runValidators: true, // Run model validators on the updated object
       }
     );
-
-    if (ifAdmin) {
-      // If the user is an admin, send a response to the client with a 200 (OK) status code, including the updated student object
-      res.status(StatusCodes.OK).json({
-        student: updatedStudent.personalDetails,
-      });
-    } else {
       // Generate a new JSON web token (JWT) for the updated student object
       const token = updatedStudent.createJWT();
 
       // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
       res.status(StatusCodes.OK).json({
-        student: updatedStudent.personalDetails,
+        user: updatedStudent,
         token,
       });
-    }
   } catch (err) {
     // Pass any errors to the error handling middleware
     next(err);
@@ -143,35 +114,22 @@ const updateAcademicDetailsStudent = async (req, res, next) => {
   try {
     // Find the student user in the database using the user ID stored in the request object
     const userId = req.user.userId;
-
     // Check if the user is a student
     const ifCompany = await Company.findOne({ _id: userId });
-    if (ifCompany) {
-      // If the user is not a student, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("You are not a student");
-    }
-
     // Check if the user is an admin
     const ifAdmin = await Admin.findOne({ _id: userId });
-    if (ifAdmin) {
-      // If the user is an admin, update the student specified in the request body
-      userId = req.body.studentId;
+    if (ifCompany || ifAdmin) {
+      // If the user is not a student, throw an UnAuthenticatedError with an error message
+      throw new UnAuthenticatedError("You are not authorized to perform this action");
     }
-
-    // Find the student with the specified user ID and select the password field
-    const student = await Student.findOne({ _id: userId }).select(
-      "+personalDetails.password"
-    );
+    // Find the student user in the database using the user ID stored in the request object
+    const student = await Student.findOne({ _id: userId });
 
     // If no student is found with the provided user ID, throw a NotFoundError with an error message
     if (!student) {
       throw new NotFoundError(`No student with id :${userId}`);
     }
-
-    // Set the password field of the request body to the current password value of the student user
-    req.body.password = student.personalDetails.password;
-
-    // Update the student user's academic details in the database
+    // Update the student user's personal details in the database
     const updatedStudent = await Student.findOneAndUpdate(
       { _id: userId },
       { academicDetails: req.body },
@@ -180,22 +138,14 @@ const updateAcademicDetailsStudent = async (req, res, next) => {
         runValidators: true, // Run model validators on the updated object
       }
     );
-
-    if (ifAdmin) {
-      // If the user is an admin, send a response to the client with a 200 (OK) status code, including the updated student object
-      res.status(StatusCodes.OK).json({
-        student: updatedStudent.academicDetails,
-      });
-    } else {
       // Generate a new JSON web token (JWT) for the updated student object
       const token = updatedStudent.createJWT();
 
       // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
       res.status(StatusCodes.OK).json({
-        student: updatedStudent.academicDetails,
+        user: updatedStudent,
         token,
       });
-    }
   } catch (err) {
     // Pass any errors to the error handling middleware
     next(err);
@@ -210,54 +160,41 @@ const updateAcademicDetailsStudent = async (req, res, next) => {
 // Define an asynchronous function called updateProfessionalDetailsStudent that takes in three parameters: req, res, and next
 const updateProfessionalDetailsStudent = async (req, res, next) => {
   try {
-    // Find the student user in the database using the user ID stored in the request object
-    const userId = req.user.userId;
-    // Check if the user is a student
-    const ifCompany = await Company.findOne({ _id: userId });
-    if (ifCompany) {
-      // If the user is not a student, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("You are not a student");
-    }
+   // Find the student user in the database using the user ID stored in the request object
+   const userId = req.user.userId;
+   // Check if the user is a student
+   const ifCompany = await Company.findOne({ _id: userId });
+   // Check if the user is an admin
+   const ifAdmin = await Admin.findOne({ _id: userId });
+   if (ifCompany || ifAdmin) {
+     // If the user is not a student, throw an UnAuthenticatedError with an error message
+     throw new UnAuthenticatedError("You are not authorized to perform this action");
+   }
+   // Find the student user in the database using the user ID stored in the request object
+   const student = await Student.findOne({ _id: userId });
 
-    // Check if the user is an admin
-    const ifAdmin = await Admin.findOne({ _id: userId });
-    if (ifAdmin) {
-      // If the user is an admin, update the student specified in the request body
-      userId = req.body.studentId;
-    }
-    // Find the student in the database by ID and select their password
-    const student = await Student.findOne({ _id: userId }).select(
-      "+personalDetails.password"
-    );
-    // Throw a NotFoundError if the student is not found
-    if (!student) {
-      throw new NotFoundError(`No student with id :${userId}`);
-    }
-    // Set the password in the request body to the student's current password
-    req.body.password = student.personalDetails.password;
-    // Update the student's professional details in the database with the data from the request body
-    const updatedStudent = await Student.findOneAndUpdate(
-      { _id: userId },
-      { professionalDetails: req.body },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    // If the user is an admin, send a response to the client with a 200 (OK) status code, including the updated student object's professional details
-    if (ifAdmin) {
-      res.status(StatusCodes.OK).json({
-        student: updatedStudent.professionalDetails,
-      });
-    } else {
-      // Generate a new JSON web token (JWT) for the updated student object
-      const token = updatedStudent.createJWT();
-      // Send a response to the client with a 200 (OK) status code, including the updated student object's professional details and the new JWT token
-      res.status(StatusCodes.OK).json({
-        student: updatedStudent.professionalDetails,
-        token,
-      });
-    }
+   // If no student is found with the provided user ID, throw a NotFoundError with an error message
+   if (!student) {
+     throw new NotFoundError(`No student with id :${userId}`);
+   }
+
+   // Update the student user's personal details in the database
+   const updatedStudent = await Student.findOneAndUpdate(
+     { _id: userId },
+     { professionalDetails: req.body },
+     {
+       new: true, // Return the updated student user object
+       runValidators: true, // Run model validators on the updated object
+     }
+   );
+     // Generate a new JSON web token (JWT) for the updated student object
+     const token = updatedStudent.createJWT();
+
+     // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
+     res.status(StatusCodes.OK).json({
+       user: updatedStudent,
+       token,
+     });
   } catch (err) {
     // Pass any errors to the next middleware function
     next(err);
@@ -273,54 +210,41 @@ const updateProfessionalDetailsStudent = async (req, res, next) => {
 // Define an asynchronous function called updateDocumentStudent that takes in three parameters: req, res, and next
 const updateDocumentStudent = async (req, res, next) => {
   try {
-    // Find the student user in the database using the user ID stored in the request object
-    const userId = req.user.userId;
-    // Check if the user is a student
-    const ifCompany = await Company.findOne({ _id: userId });
-    if (ifCompany) {
-      // If the user is not a student, throw an UnAuthenticatedError with an error message
-      throw new UnAuthenticatedError("You are not a student");
-    }
+   // Find the student user in the database using the user ID stored in the request object
+   const userId = req.user.userId;
+   // Check if the user is a student
+   const ifCompany = await Company.findOne({ _id: userId });
+   // Check if the user is an admin
+   const ifAdmin = await Admin.findOne({ _id: userId });
+   if (ifCompany || ifAdmin) {
+     // If the user is not a student, throw an UnAuthenticatedError with an error message
+     throw new UnAuthenticatedError("You are not authorized to perform this action");
+   }
+   // Find the student user in the database using the user ID stored in the request object
+   const student = await Student.findOne({ _id: userId });
 
-    // Check if the user is an admin
-    const ifAdmin = await Admin.findOne({ _id: userId });
-    if (ifAdmin) {
-      // If the user is an admin, update the student specified in the request body
-      userId = req.body.studentId;
-    }
-    // Find the student user in the database using the user ID stored in the request object and select the password field
-    const student = await Student.findOne({ _id: userId }).select(
-      "+personalDetails.password"
-    );
-    if (!student) {
-      // If no student is found, throw a NotFoundError with an error message
-      throw new NotFoundError(`No student with id :${userId}`);
-    }
-    // Set the password field in the request body to the password field of the found student object
-    req.body.password = student.personalDetails.password;
-    // Update the student object with the document details specified in the request body
-    const updatedStudent = await Student.findOneAndUpdate(
-      { _id: userId },
-      { documents: req.body },
-      {
-        new: true, // Return the modified document rather than the original
-        runValidators: true, // Validate the request body before updating the document
-      }
-    );
-    if (ifAdmin) {
-      // If the user is an admin, send a response to the client with a 200 (OK) status code, including the updated student object's document details
-      res.status(StatusCodes.OK).json({
-        student: updatedStudent.documents,
-      });
-    } else {
-      // Generate a new JSON web token (JWT) for the updated student object
-      const token = updatedStudent.createJWT();
-      // Send a response to the client with a 200 (OK) status code, including the updated student object's document details and the new JWT token
-      res.status(StatusCodes.OK).json({
-        student: updatedStudent.documents,
-        token,
-      });
-    }
+   // If no student is found with the provided user ID, throw a NotFoundError with an error message
+   if (!student) {
+     throw new NotFoundError(`No student with id :${userId}`);
+   }
+
+   // Update the student user's personal details in the database
+   const updatedStudent = await Student.findOneAndUpdate(
+     { _id: userId },
+     { documents: req.body },
+     {
+       new: true, // Return the updated student user object
+       runValidators: true, // Run model validators on the updated object
+     }
+   );
+     // Generate a new JSON web token (JWT) for the updated student object
+     const token = updatedStudent.createJWT();
+
+     // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
+     res.status(StatusCodes.OK).json({
+       user: updatedStudent,
+       token,
+     });
   } catch (err) {
     // Call the error handling middleware function
     next(err);

@@ -6,7 +6,6 @@ import {
   getJobDrives,
   getJobDriveById,
   updateJobDrive,
-  applyToJobDrive,
   deleteJobDrive,
   getAppliedStudentForJob,
 } from "../controller/jobDriveController.js";
@@ -46,12 +45,6 @@ router.route("/edit/:jobDriveId").patch(authenticateUser, updateJobDrive);
  */
 router.route("/delete/:jobDriveId").delete(authenticateUser, deleteJobDrive);
 
-/**
- * @desc Apply to jobDrive
- * @route POST /api/v1/jobDrive/apply/:jobDriveId
- * @access Private
- */
-router.route("/apply/:jobDriveId").patch(authenticateUser, applyToJobDrive);
 /**
  * @desc Get Applied student in jobDrive by id
  * @route GET /api/v1/getAppliedStudent/:jobDriveId

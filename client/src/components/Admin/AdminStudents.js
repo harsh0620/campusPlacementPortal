@@ -44,7 +44,7 @@ const AdminStudents = () => {
   }
 
   return (
-    <div className="bg-white w-full">
+    <div className="bg-white w-full pb-16">
       <ActionCard
         title={"Search Students"}
         bgColor={"bg-bluegg"}

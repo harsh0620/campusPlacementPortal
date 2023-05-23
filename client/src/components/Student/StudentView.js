@@ -1,14 +1,51 @@
-import React from 'react'
+import React, { useRef,useEffect } from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import StudentViewHeader from './StudentViewHeader'
 import { useParams } from 'react-router-dom';
+import TestComp from '../TestComp';
+import { useAppContext } from '../../context/appContext';
+import StudentViewPersonal from './StudentViewPersonal';
+import StudentViewExperience from './StudentViewExperience';
+import StudentViewEducation from './StudentViewEducation';
+import StudentViewSkill from './StudentViewSkill';
+import StudentViewProject from './StudentViewProject';
+import StudentViewCertification from './StudentViewCertification';
+import StudentViewLink from './StudentViewLink';
+import Loader from '../Loader';
+import StudentViewOther from './StudentViewOther';
 
 const StudentView = () => {
+  const {getStudentById,isLoading}=useAppContext();
     const params=useParams();
     const {id}=params;
-    console.log(id);
+    const componentRef = useRef(null);
+
+    const handleCapture = () => {
+      const component = componentRef.current;
+      html2canvas(component, { scrollY: -window.scrollY }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'pt', [canvas.width, canvas.height]);
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height, null, 'FAST');
+        pdf.save('component.pdf');
+      });
+    };
+    useEffect(() => {
+      getStudentById(id);
+    }, [])
+
+    if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" />
   return (
-    <div>
-        <StudentViewHeader/>
+    <div className='pb-16' ref={componentRef}>
+        <StudentViewHeader handleCapture={handleCapture} componentRef={componentRef}/>
+        <StudentViewPersonal/>
+        <StudentViewExperience/>
+        <StudentViewEducation/>
+        <StudentViewProject/>
+        <StudentViewSkill/>
+        <StudentViewCertification/>
+        <StudentViewLink/>
+        <StudentViewOther/>
     </div>
   )
 }
