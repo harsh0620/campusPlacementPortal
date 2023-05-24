@@ -1,5 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { NotFoundError, UnAuthenticatedError } from "../errors/index.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnAuthenticatedError,
+} from "../errors/index.js";
 import Admin from "../models/admin.js";
 import Student from "../models/students.js";
 import JobDrive from "../models/jobDrive.js";
@@ -8,8 +12,8 @@ import nodemailer from "nodemailer";
 import Company from "../models/Company.js";
 import { sendMail } from "./communication.js";
 import jobDrive from "../models/jobDrive.js";
-import { Parser } from 'json2csv';
-import fs from 'fs';
+import { Parser } from "json2csv";
+import fs from "fs";
 
 /**
 
@@ -89,33 +93,43 @@ const getStudents = async (req, res, next) => {
     ];
 
     const query = fields.reduce((acc, field) => {
-      if(field==="applicationStatus" && req.query[field]==="verified"){
+      if (field === "applicationStatus" && req.query[field] === "verified") {
         acc = {
-          $and: [acc, { "applicationStatus": { $regex: "verified", $options: "i" } }]
-        }
-      }
-      else if(field==="applicationStatus" && req.query[field]==="unverified"){
-        acc = {
-          $and: [acc, { "applicationStatus": { $regex: "unverified", $options: "i" } }]
-        }
-      }
-      else{
-      if (req.query[field]) {
-        acc = {
-          $and: [acc, { [field]: { $regex: req.query[field], $options: "i" } }],
+          $and: [
+            acc,
+            { applicationStatus: { $regex: "verified", $options: "i" } },
+          ],
         };
+      } else if (
+        field === "applicationStatus" &&
+        req.query[field] === "unverified"
+      ) {
+        acc = {
+          $and: [
+            acc,
+            { applicationStatus: { $regex: "unverified", $options: "i" } },
+          ],
+        };
+      } else {
+        if (req.query[field]) {
+          acc = {
+            $and: [
+              acc,
+              { [field]: { $regex: req.query[field], $options: "i" } },
+            ],
+          };
+        }
       }
-    }
       return acc;
     }, {});
-console.log(query);
+    console.log(query);
     const students = await Student.find(query);
-      // .select(
-      //   "name enrollmentNo personalDetails.stream applicationStatus placementDetails.selected"
-      // )
-      // .populate();
-const check=await Student.find({applicationStatus:"verified"});
-console.log(check);
+    // .select(
+    //   "name enrollmentNo personalDetails.stream applicationStatus placementDetails.selected"
+    // )
+    // .populate();
+    const check = await Student.find({ applicationStatus: "verified" });
+    console.log(check);
     res.status(StatusCodes.OK).json({
       students,
     });
@@ -164,7 +178,7 @@ const getCompany = async (req, res, next) => {
         "You are not authorized to view all students"
       );
     }
-    const companies = await Company.find({}).select("name email logo");
+    const companies = await Company.find({}).select("name email logo website");
     res.status(StatusCodes.OK).json({
       companies,
     });
@@ -183,7 +197,14 @@ const getCompanyById = async (req, res, next) => {
       );
     }
     const companyId = req.params.companyId;
-    const company = await Company.findOne({ _id: companyId });
+    const company = await Company.findOne({ _id: companyId })
+  .populate({
+    path: "placementDrives",
+    populate: {
+      path: "company",
+    },
+  });
+
     if (!company) {
       throw new NotFoundError(`No company with ID: ${companyId}`);
     }
@@ -206,10 +227,7 @@ const getJob = async (req, res, next) => {
         "You are not authorized to view all students"
       );
     }
-    const jobs = await jobDrive
-      .find({})
-      .select("company designations locations")
-      .populate("company", "name");
+    const jobs = await jobDrive.find({}).populate("company", "name");
     res.status(StatusCodes.OK).json({
       jobs,
     });
@@ -230,7 +248,8 @@ const getJobById = async (req, res, next) => {
     const jobId = req.params.jobId;
     const job = await jobDrive
       .findOne({ _id: jobId })
-      .populate("company", "name");
+      .populate("company", "name")
+      .populate("appliedBy", "name enrollmentNo personalDetails.stream applicationStatus placementDetails.selected");
     if (!job) {
       throw new NotFoundError(`No job with ID: ${jobId}`);
     }
@@ -265,17 +284,16 @@ const verifyStudent = async (req, res, next) => {
       throw new NotFoundError(`No student with id :${studentId}`);
     }
     // Toggle the verified status of the student's account
-    if(student?.verified==="verified"){
-    student.verified = "unverified";
-    }
-    else{
-      student.verified = "verified";
+    if (student?.applicationStatus === "verified") {
+      student.applicationStatus = "unverified";
+    } else {
+      student.applicationStatus = "verified";
     }
     // Save the updated student object in the database
     await student.save();
     // Return a success message with the updated verification status of the student's account
     return res.status(StatusCodes.OK).json({
-      message: ` Student ${!flag ? "verified" : "unverified"} successfully`,
+      message: ` Student ${student?.applicationStatus==="verified" ? "verified" : "unverified"} successfully`,
     });
   } catch (err) {
     next(err);
@@ -405,8 +423,9 @@ const sendMailToGoogleGroups = async (req, res, next) => {
         "You are not authorized to perform this action"
       );
     }
-    const { fromEmail, toEmail, mailSubject } = req.body;
-    if (!fromEmail || !toEmail || !mailSubject) {
+    const fromEmail = ifAdmin.email;
+    const { toEmail } = req.body;
+    if (!toEmail) {
       throw new BadRequestError("Please provide all the required fields");
     }
     // Extract the job drive ID from the request object
@@ -414,12 +433,13 @@ const sendMailToGoogleGroups = async (req, res, next) => {
 
     // Find the job drive in the database using the job drive ID
     const jobDrive = await JobDrive.findOne({ _id: jobDriveId });
-
     // If no job drive is found, throw an error
     if (!jobDrive) {
       throw new NotFoundError(`No job drive with ID: ${jobDriveId}`);
     }
-
+    if(!jobDrive.verified){
+      throw new BadRequestError("Please verify the job drive first");
+    }
     // Convert the job drive object to a plain JavaScript object
     const jobDriveObj = jobDrive.toObject();
 
@@ -430,36 +450,85 @@ const sendMailToGoogleGroups = async (req, res, next) => {
 
     // Update the jobDriveObj company property with the company name
     jobDriveObj.company = companyName.name;
-
-    // Create a nodemailer transporter object with the defined credentials
-    const transporter = nodemailer.createTransport({
-      service: process.env.NODEMAILER_SERVICE,
-      auth: {
-        user: process.env.NODEMAILER_AUTH_USER,
-        pass: process.env.NODEMAILER_AUTH_PASS,
+    console.log(jobDriveObj);
+    await sendMail({
+      fromEmail: fromEmail,
+      toEmail: toEmail,
+      mailSubject: `New Job Drive- ${jobDriveObj.company} @${jobDriveObj.driveDate}}`,
+      senderDetails: {
+        name: ifAdmin.name,
+        email: ifAdmin.email,
       },
+      receiverDetails: {
+        name: "To Google Groups",
+        email: toEmail,
+      },
+      mailBody: `
+    <div>
+    <h1>Job Drive Details</h1>
+
+    <table>
+      <tr>
+        <th>Company</th>
+        <td>${jobDriveObj?.company}</td>
+      </tr>
+      <tr>
+        <th>Designations</th>
+        <td>${jobDriveObj?.designations}</td>
+      </tr>
+      <tr>
+        <th>Locations</th>
+        <td>${jobDriveObj?.locations}</td>
+      </tr>
+      <tr>
+        <th>Streams</th>
+        <td>${jobDriveObj?.streams}</td>
+      </tr>
+      <tr>
+        <th>Program</th>
+        <td>${jobDriveObj?.program}</td>
+      </tr>
+      <tr>
+        <th>Start Date</th>
+        <td>${jobDriveObj?.startDate}</td>
+      </tr>
+      <tr>
+        <th>Last Date</th>
+        <td>${jobDriveObj?.lastDate}</td>
+      </tr>
+      <tr>
+        <th>Eligibility Criteria</th>
+        <td>
+          <p>Backlog: ${jobDriveObj?.eligibilityCriteria.backlog}</p>
+          <p>CGPA: ${jobDriveObj?.eligibilityCriteria.cgpa}</p>
+        </td>
+      </tr>
+      <tr>
+        <th>Drive Date</th>
+        <td>${jobDriveObj?.driveDate}</td>
+      </tr>
+      <tr>
+        <th>Package Value</th>
+        <td>
+          <p>Min: ${jobDriveObj?.packageValue.min}</p>
+          <p>Max: ${jobDriveObj?.packageValue.max}</p>
+        </td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>${jobDriveObj?.description}</td>
+      </tr>
+      <tr>
+        <th>PDF Link</th>
+        <td>${jobDriveObj?.pdfLink}</td>
+      </tr>
+    </table>
+    </div>
+`,
     });
 
-    // Use the jsonToHtml function to generate the HTML email body from the job drive object
-    let htmlBody = jsonToHtml(jobDriveObj);
-    // setup email data with unicode symbols
-    const mailOptions = {
-      from: fromEmail, // sender address
-      to: toEmail, // list of receivers
-      subject: mailSubject, // Subject line
-      html: htmlBody,
-    };
-
-    //send mail with defined transport object
-    const reply = transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        // Send a response indicating that the job drive's verified status was updated successfully
-        return res.status(StatusCodes.OK).json({
-          message: "Mail sent successfully",
-        });
-      }
+    return res.status(StatusCodes.OK).json({
+      message: "Mail sent successfully",
     });
   } catch (err) {
     // Call the error handling middleware function

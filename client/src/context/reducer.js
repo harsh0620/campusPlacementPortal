@@ -24,6 +24,23 @@ import {
   CREATE_COMPANY_ERROR,
   GET_STUDENTSBYIDBYADMIN_BEGIN,
   GET_STUDENTSBYIDBYADMIN_SUCCESS,
+  GET_COMPANIESBYIDBYADMIN_BEGIN,
+  GET_COMPANIESBYIDBYADMIN_SUCCESS,
+  GET_COMPANIESBYADMIN_BEGIN,
+  GET_COMPANIESBYADMIN_SUCCESS,
+  GET_JOBSBYADMIN_BEGIN,
+  GET_JOBSBYADMIN_SUCCESS,
+  GET_JOBSBYIDBYADMIN_BEGIN,
+  GET_JOBSBYIDBYADMIN_SUCCESS,
+  VERIFY_JOB_BEGIN,
+  VERIFY_JOB_SUCCESS,
+  VERIFY_JOB_ERROR,
+  SEND_NOTIFICATION_BEGIN,
+  SEND_NOTIFICATION_ERROR,
+  SEND_NOTIFICATION_SUCCESS,
+  VERIFY_STUDENT_BEGIN,
+  VERIFY_STUDENT_SUCCESS,
+  VERIFY_STUDENT_ERROR,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -238,6 +255,86 @@ const reducer = (state, action) => {
         isLoading: false,
         specificStudent: action.payload.student,
       };
+    case GET_COMPANIESBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_COMPANIESBYADMIN_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        companiesByAdmin: action.payload.companies,
+      };
+    case GET_COMPANIESBYIDBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_COMPANIESBYIDBYADMIN_SUCCESS:
+      console.log(action.payload.company);
+      return {
+        ...state,
+        isLoading: false,
+        specificCompany: action.payload.company,
+      };
+    case GET_JOBSBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_JOBSBYADMIN_SUCCESS:
+      console.log(action.payload.jobs);
+      return {
+        ...state,
+        isLoading: false,
+        jobsByAdmin: action.payload.jobs,
+      };
+    case GET_JOBSBYIDBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_JOBSBYIDBYADMIN_SUCCESS:
+      console.log(action.payload.job);
+      return {
+        ...state,
+        isLoading: false,
+        specificJob: action.payload.job,
+      };
+      case VERIFY_JOB_BEGIN:
+        return { ...state, isLoading: true, showAlert: false };
+      case VERIFY_JOB_SUCCESS:
+        return {
+          ...state,
+          isLoading: false,
+        };
+      case VERIFY_JOB_ERROR:
+        return {
+          ...state,
+          isLoading: false,
+          showAlert: true,
+          alertType: "error",
+          alertText: action.payload.msg,
+        };
+      case VERIFY_STUDENT_BEGIN:
+        return { ...state, isLoading: true, showAlert: false };
+      case VERIFY_STUDENT_SUCCESS:
+        return {
+          ...state,
+          isLoading: false,
+        };
+      case VERIFY_STUDENT_ERROR:
+        return {
+          ...state,
+          isLoading: false,
+          showAlert: true,
+          alertType: "error",
+          alertText: action.payload.msg,
+        };
+      case SEND_NOTIFICATION_BEGIN:
+        return { ...state, isLoading: true, showAlert: false };
+      case SEND_NOTIFICATION_SUCCESS:
+        return {
+          ...state,
+          isLoading: false,
+        };
+      case SEND_NOTIFICATION_ERROR:
+        return {
+          ...state,
+          isLoading: false,
+          showAlert: true,
+          alertType: "error",
+          alertText: action.payload.msg,
+        };
     default:
       throw new Error(`no such action :${action.type}`);
   }

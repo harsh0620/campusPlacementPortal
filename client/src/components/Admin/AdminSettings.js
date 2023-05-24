@@ -1,6 +1,6 @@
 import React from "react";
 import ActionCard from "../ActionCard";
-import { FaBuilding, FaPaperPlane, FaUserPlus } from "react-icons/fa";
+import { FaBuilding, FaUserPlus } from "react-icons/fa";
 import { useAppContext } from "../../context/appContext";
 import Loader from "../Loader";
 import { programsList, streamsList } from "../../utils/constants";
@@ -512,12 +512,12 @@ const AdminSettings = () => {
         icon={<FaBuilding />}
         dropDownComponent={<CreateCompanyForm />}
       />
-      <ActionCard
+      {/* <ActionCard
         title={"Send Custom Message to students"}
         bgColor={"bg-orange-500"}
         icon={<FaPaperPlane />}
         dropDownComponent={<SendCustomMessageForm />}
-      />
+      /> */}
     </div>
   );
 };

@@ -40,6 +40,15 @@ const sendMail = ({
 			line-height: 1.5;
 			background-color: #F5F5F5;
 		}
+		  table {
+			width: 100%;
+			border-collapse: collapse;
+		  }
+		  th, td {
+			padding: 8px;
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+		  }
 		h1, h2, h3, h4, h5, h6 {
 			font-weight: bold;
 		}
@@ -107,8 +116,7 @@ const sendMail = ({
 			padding: 1rem;
 			text-align: center;
 			border-radius: 0 0 0.5rem 0.5rem;
-			font-size: 0.875rem;
-			line-height: 1.25rem;
+			font-size: 0.475rem;
 		}
 		.email-footer a {
 			color: #9CA3AF;
@@ -125,11 +133,10 @@ const sendMail = ({
 
 		<!-- Main content section -->
 		<main class="email-content">
-    <p style="border-width: 1px; border-style: solid; border-color: #e2e8f0; border-radius: 0.375rem; padding: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">Dear ${receiverDetails?.name} / ${receiverDetails?.email}</p>
     <div style="border-width: 1px; border-style: solid; border-color: #e2e8f0; border-radius: 0.375rem; padding: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
     ${mailBody}
     </div>
-    <div style="border-width: 1px; border-style: solid; border-color: #e2e8f0; border-radius: 0.375rem; padding: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
+    <div style="border-width: 1px; border-style: solid; border-color: #e2e8f0; border-radius: 0.375rem; padding: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem; font-size: 0.475rem;">
     Best regards,
     <br/>
 		Campus Placement Portal,

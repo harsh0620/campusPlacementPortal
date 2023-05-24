@@ -20,6 +20,8 @@ import StudentAlumni from "./components/Student/StudentAlumni";
 import { useAppContext } from "./context/appContext";
 import StudentCompany from "./components/Student/StudentCompany";
 import StudentView from "./components/Student/StudentView";
+import CompanyView from "./components/Company/CompanyView";
+import JobsView from "./components/Jobs/JobsView";
 
 function App() {
   const {user}=useAppContext();
@@ -36,10 +38,12 @@ function App() {
         >
            <Route index element={<Dashboard />} />
            <Route path="students/:id" element={<StudentView />} />
+           <Route path="company/:id" element={<CompanyView />} />
+           <Route path="jobs/:id" element={<JobsView />} />
           {user?.role==="admin" && (
             <>
             <Route path="students" element={<AdminStudents />} />
-          <Route path="companies" element={<AdminCompany />} />
+          <Route path="company" element={<AdminCompany />} />
           <Route path="jobs" element={<AdminJobs />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="profile" element={<AdminProfile />} />

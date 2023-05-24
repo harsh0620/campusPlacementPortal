@@ -26,8 +26,12 @@ const GmailHeader = () => {
             ? "Terms of Service"
             : window.location.pathname === "/students"
             ? "Search Students"
-            : window.location.pathname === "/companies"
+            : window.location.pathname.substring(10) === "/students/"
+            ? "Student"
+            : window.location.pathname === "/company"
             ? "Search Company"
+            : window.location.pathname === "/company/:id"
+            ? "Company"
             : window.location.pathname === "/jobs"
             ? "Search Jobs"
             : ""}

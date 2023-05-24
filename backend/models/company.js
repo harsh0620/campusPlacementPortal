@@ -94,7 +94,7 @@ const companySchema = mongoose.Schema({
   placementDrives: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "PlacementDrive",
+      ref: "JobDrive",
     },
   ],
   createdBy: {

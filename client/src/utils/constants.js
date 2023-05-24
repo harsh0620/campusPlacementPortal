@@ -54,7 +54,7 @@ const adminSidebarItems = [
     title: "Companies",
     iconAbled: <BsBuildingsFill />,
     iconDisabled: <BsBuildings />,
-    link: "/companies",
+    link: "/company",
   },
   {
     title: "Students",

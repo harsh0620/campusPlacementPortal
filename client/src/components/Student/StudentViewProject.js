@@ -14,18 +14,20 @@ const StudentViewProjectComp = () => {
             {project?.projectDescription}
           </div>
           <div className="flex flex-row">
-            <div
-              className="text-sm text-gray-500 cursor-pointer text-green-500"
-              onClick={() => window.location.replace(project?.liveLink)}
+            <a
+              className="text-sm  cursor-pointer text-green-500"
+              target="__blank"
+              href={project?.liveLink}
             >
              &bull; Live Link
-            </div>
-            <div
-              className="text-sm text-gray-500 cursor-pointer text-blue-500 ml-2"
-              onClick={() => window.location.replace(project?.sourceCodeLink)}
+            </a>
+            <a
+              className="text-sm  cursor-pointer text-blue-500 ml-2"
+              target="__blank"
+              href={project?.sourceCodeLink}
             >
              &bull;  Source Code Link
-            </div>
+            </a>
           </div>
         </div>
       ))}

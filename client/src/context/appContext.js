@@ -27,6 +27,23 @@ import {
   CREATE_COMPANY_BEGIN,
   GET_STUDENTSBYIDBYADMIN_BEGIN,
   GET_STUDENTSBYIDBYADMIN_SUCCESS,
+  GET_COMPANIESBYIDBYADMIN_BEGIN,
+  GET_COMPANIESBYIDBYADMIN_SUCCESS,
+  GET_COMPANIESBYADMIN_SUCCESS,
+  GET_COMPANIESBYADMIN_BEGIN,
+  GET_JOBSBYIDBYADMIN_BEGIN,
+  GET_JOBSBYIDBYADMIN_SUCCESS,
+  GET_JOBSBYADMIN_BEGIN,
+  GET_JOBSBYADMIN_SUCCESS,
+  VERIFY_JOB_SUCCESS,
+  VERIFY_JOB_ERROR,
+  VERIFY_JOB_BEGIN,
+  SEND_NOTIFICATION_BEGIN,
+  SEND_NOTIFICATION_SUCCESS,
+  SEND_NOTIFICATION_ERROR,
+  VERIFY_STUDENT_ERROR,
+  VERIFY_STUDENT_SUCCESS,
+  VERIFY_STUDENT_BEGIN,
 } from "./actions";
 import { toast } from "react-toastify";
 
@@ -51,6 +68,26 @@ export const initialState = {
   phone: "",
   aadharno: "",
   studentsByAdmin: [],
+  companiesByAdmin: [],
+  jobsByAdmin: [],
+  specificJobs: {},
+  specificCompany: {
+    name:"",
+    address:"",
+    description:"",
+    email:"",
+    hr:{
+      name:"",
+      email:"",
+      phone:"",
+    },
+    linkedin:"",
+    logo:"",
+    placementDrives:[],
+    programs:[],
+    streams:[],
+    website:"",
+  },
   //company
   companyName: "",
   companyEmail: "",
@@ -485,6 +522,137 @@ const getStudentById=async(id)=>{
   }
   clearAlert();
 }
+const searchCompaniesByAdmin = async () => {
+  dispatch({ type: GET_COMPANIESBYADMIN_BEGIN });
+  try {
+    const { data } = await authFetch(`/admin/company`);
+    const { companies } = data;
+    dispatch({
+      type: GET_COMPANIESBYADMIN_SUCCESS,
+      payload: {
+        companies,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    //logoutUser();
+  }
+  clearAlert();
+};
+const getCompanyByIdByAdmin=async(id)=>{
+  dispatch({ type: GET_COMPANIESBYIDBYADMIN_BEGIN });
+  try {
+    const { data } = await authFetch(`/admin/company/${id}`);
+    console.log(data);
+    const { company } = data;
+    console.log(company);
+    dispatch({
+      type: GET_COMPANIESBYIDBYADMIN_SUCCESS,
+      payload: {
+        company,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    //logoutUser();
+  }
+  clearAlert();
+}
+const searchJobsByAdmin = async () => {
+  dispatch({ type: GET_JOBSBYADMIN_BEGIN });
+  try {
+    const { data } = await authFetch(`/admin/job`);
+    const { jobs } = data;
+    console.log(jobs)
+    dispatch({
+      type: GET_JOBSBYADMIN_SUCCESS,
+      payload: {
+        jobs,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    //logoutUser();
+  }
+  clearAlert();
+};
+const getJobsByIdByAdmin=async(id)=>{
+  dispatch({ type: GET_JOBSBYIDBYADMIN_BEGIN });
+  try {
+    const { data } = await authFetch(`/admin/job/${id}`);
+    const { job } = data;
+    console.log(job)
+    dispatch({
+      type: GET_JOBSBYIDBYADMIN_SUCCESS,
+      payload: {
+        job,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    //logoutUser();
+  }
+  clearAlert();
+}
+const verifyJob = async (jobId) => {
+  dispatch({ type: VERIFY_JOB_BEGIN });
+  try {
+    const { data } = await authFetch.patch(`/admin/verifyJobDrive/${jobId}`);
+    const { message } = data;
+    dispatch({
+      type: VERIFY_JOB_SUCCESS,
+    });
+    toast.success(message);
+  } catch (error) {
+    if (error.response.status === 401) return;
+    dispatch({
+      type: VERIFY_JOB_ERROR,
+      payload: { msg: error.response.data.message },
+    });
+    toast.error(`Error Creating Admin: ${error.response.data.message}`);
+  }
+  clearAlert();
+};
+const verifyStudent = async (studentId) => {
+  dispatch({ type: VERIFY_STUDENT_BEGIN });
+  try {
+    const { data } = await authFetch.patch(`/admin/verifyStudent/${studentId}`);
+    const { message } = data;
+    dispatch({
+      type: VERIFY_STUDENT_SUCCESS,
+    });
+    toast.success(message);
+  } catch (error) {
+    if (error.response.status === 401) return;
+    dispatch({
+      type: VERIFY_STUDENT_ERROR,
+      payload: { msg: error.response.data.message },
+    });
+    toast.error(`Error Creating Admin: ${error.response.data.message}`);
+  }
+  clearAlert();
+};
+const sendJobNotification = async ({emails,jobId}) => {
+  dispatch({ type: SEND_NOTIFICATION_BEGIN });
+  try {
+    const { data } = await authFetch.post(`/admin/sendMails/${jobId}`,{
+      toEmail:emails
+    });
+    const { message } = data;
+    dispatch({
+      type: SEND_NOTIFICATION_SUCCESS,
+    });
+    toast.success(message);
+  } catch (error) {
+    if (error.response.status === 401) return;
+    dispatch({
+      type: SEND_NOTIFICATION_ERROR,
+      payload: { msg: error.response.data.message },
+    });
+    toast.error(`Error Creating Admin: ${error.response.data.message}`);
+  }
+  clearAlert();
+};
 const getRandomColor = () => {
   const colors = [
     'bg-red-500',
@@ -501,6 +669,17 @@ const getRandomColor = () => {
   const randomIndex = Math.floor(Math.random() * colors.length);
   return colors[randomIndex];
 };
+function isValidImageUrl(url) {
+  // Perform a simple check to determine if the URL ends with a common image file extension
+  return /\.(jpeg|jpg|gif|png|svg)$/i.test(url);
+}
+function convertToLPA(value) {
+  if (typeof value === 'number') {
+    return (value / 100000).toFixed(2); // Divide by 100000 to convert into Lakh and fix the decimal places to 2
+  }
+  return ''; // Return an empty string if the value is not a valid number
+}
+
   return (
     <AppContext.Provider
       value={{
@@ -511,13 +690,22 @@ const getRandomColor = () => {
         loginUser,
         logoutUser,
         searchStudentsByAdmin,
+        getStudentById,
+        searchCompaniesByAdmin,
+        searchJobsByAdmin,
+        getCompanyByIdByAdmin,
+        getJobsByIdByAdmin,
         getAdminDetails,
         updateProfile,
         updatePassword,
         createAdmin,
         createCompany,
-        getStudentById,
-        getRandomColor
+        getRandomColor,
+        isValidImageUrl,
+        convertToLPA,
+        verifyJob,
+        verifyStudent,
+        sendJobNotification
       }}
     >
       {children}
