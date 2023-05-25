@@ -3,9 +3,13 @@ import express from "express";
 const router = express.Router();
 import {
   registerStudent,
+  getPersonalDetailsStudent,
   updatePersonalDetailsStudent,
+  getAcademicDetailsStudent,
   updateAcademicDetailsStudent,
+  getProfessionalDetailsStudent,
   updateProfessionalDetailsStudent,
+  getDocumentDetailsStudent,
   updateDocumentStudent,
 } from "../controller/studentAuthController.js";
 import authenticateUser from "../middleware/auth.js";
@@ -32,7 +36,8 @@ router.route("/auth/login").post(loginUser);
  */
 router
   .route("/personalDetails")
-  .patch(authenticateUser, updatePersonalDetailsStudent);
+  .patch(authenticateUser, updatePersonalDetailsStudent)
+  .get(authenticateUser, getPersonalDetailsStudent);
 
 /**
  * @desc Update an existing student user's academicDetails
@@ -41,7 +46,8 @@ router
  */
 router
   .route("/academicDetails")
-  .patch(authenticateUser, updateAcademicDetailsStudent);
+  .patch(authenticateUser, updateAcademicDetailsStudent)
+  .get(authenticateUser, getAcademicDetailsStudent);
 
 /**
  * @desc Update an existing student user's professionalDetails
@@ -50,13 +56,17 @@ router
  */
 router
   .route("/professionalDetails")
-  .patch(authenticateUser, updateProfessionalDetailsStudent);
+  .patch(authenticateUser, updateProfessionalDetailsStudent)
+  .get(authenticateUser, getProfessionalDetailsStudent);
 /**
  * @desc Update an existing student user's documentDetails
  * @route PATCH /api/v1/student/documentDetails
  * @access Private
  */
-router.route("/documentDetails").patch(authenticateUser, updateDocumentStudent);
+router
+  .route("/documentDetails")
+  .patch(authenticateUser, updateDocumentStudent)
+  .get(authenticateUser, getDocumentDetailsStudent);
 
 /**
  * @desc Apply to jobDrive

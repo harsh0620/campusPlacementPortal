@@ -41,6 +41,16 @@ import {
   VERIFY_STUDENT_BEGIN,
   VERIFY_STUDENT_SUCCESS,
   VERIFY_STUDENT_ERROR,
+  UPDATE_PROFILE_PERSONAL_BEGIN,
+  UPDATE_PROFILE_PERSONAL_SUCCESS,
+  UPDATE_PROFILE_PERSONAL_ERROR,
+  GET_PROFILE_PERSONAL_BEGIN,
+  GET_PROFILE_PERSONAL_SUCCESS,
+  UPDATE_PROFILE_ACADEMIC_ERROR,
+  UPDATE_PROFILE_ACADEMIC_SUCCESS,
+  UPDATE_PROFILE_ACADEMIC_BEGIN,
+  GET_PROFILE_ACADEMIC_SUCCESS,
+  GET_PROFILE_ACADEMIC_BEGIN,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -335,6 +345,109 @@ const reducer = (state, action) => {
           alertType: "error",
           alertText: action.payload.msg,
         };
+      // STUDENT SIDE:
+      case GET_PROFILE_PERSONAL_BEGIN:
+        return {
+          ...state,
+          isLoading: true,
+        };
+      case GET_PROFILE_PERSONAL_SUCCESS:
+        return {
+          ...state,
+          dob: action?.payload?.personalDetails?.dob,
+        gender :action?.payload?.personalDetails?.gender,
+        contactNo:action?.payload?.personalDetails?.contactNo,
+        aadharNo:action?.payload?.personalDetails?.aadharNo,
+        program:action?.payload?.personalDetails?.program,
+        stream:action?.payload?.personalDetails?.stream,
+        collegeName:action?.payload?.personalDetails?.collegeName,
+        universityName:action?.payload?.personalDetails?.universityName,
+        fatherName:action?.payload?.personalDetails?.fatherName,
+        motherName:action?.payload?.personalDetails?.motherName,
+        currentAddress:action?.payload?.personalDetails?.currentAddress,
+        permanentAddress:action?.payload?.personalDetails?.permanentAddress,
+        pincode:action?.payload?.personalDetails?.pincode,
+        homeCity:action?.payload?.personalDetails?.homeCity,
+        homeState:action?.payload?.personalDetails?.homeState,
+        homeCountry:action?.payload?.personalDetails?.homeCountry,
+          isLoading: false,
+          showAlert: true,
+          alertType: "success",
+          alertText: "Profile updated successfully!",
+        };
+      case UPDATE_PROFILE_PERSONAL_BEGIN:
+        return {
+          ...state,
+          isLoading: true,
+        };
+      case UPDATE_PROFILE_PERSONAL_SUCCESS:
+        return {
+          ...state,
+          dob: action?.payload?.personalDetails?.dob,
+        gender :action?.payload?.personalDetails?.gender,
+        contactNo:action?.payload?.personalDetails?.contactNo,
+        aadharNo:action?.payload?.personalDetails?.aadharNo,
+        program:action?.payload?.personalDetails?.program,
+        stream:action?.payload?.personalDetails?.stream,
+        collegeName:action?.payload?.personalDetails?.collegeName,
+        universityName:action?.payload?.personalDetails?.universityName,
+        fatherName:action?.payload?.personalDetails?.fatherName,
+        motherName:action?.payload?.personalDetails?.motherName,
+        currentAddress:action?.payload?.personalDetails?.currentAddress,
+        permanentAddress:action?.payload?.personalDetails?.permanentAddress,
+        pincode:action?.payload?.personalDetails?.pincode,
+        homeCity:action?.payload?.personalDetails?.homeCity,
+        homeState:action?.payload?.personalDetails?.homeState,
+        homeCountry:action?.payload?.personalDetails?.homeCountry,
+          isLoading: false,
+          showAlert: true,
+          alertType: "success",
+          alertText: "Profile updated successfully!",
+        };
+      case UPDATE_PROFILE_PERSONAL_ERROR:
+        return {
+          ...state,
+          isLoading: false,
+          showAlert: true,
+          alertType: "error",
+          alertText: action.payload.msg,
+        };
+        case GET_PROFILE_ACADEMIC_BEGIN:
+          return {
+            ...state,
+            isLoading: true,
+          };
+        case GET_PROFILE_ACADEMIC_SUCCESS:
+          return {
+            ...state,
+            academicDetails: action?.payload?.academicDetails,
+            isLoading: false,
+            showAlert: true,
+            alertType: "success",
+            alertText: "Profile updated successfully!",
+          };
+        case UPDATE_PROFILE_ACADEMIC_BEGIN:
+          return {
+            ...state,
+            isLoading: true,
+          };
+        case UPDATE_PROFILE_ACADEMIC_SUCCESS:
+          return {
+            ...state,
+            academicDetails: action?.payload?.academicDetails,
+            isLoading: false,
+            showAlert: true,
+            alertType: "success",
+            alertText: "Profile updated successfully!",
+          };
+        case UPDATE_PROFILE_ACADEMIC_ERROR:
+          return {
+            ...state,
+            isLoading: false,
+            showAlert: true,
+            alertType: "error",
+            alertText: action.payload.msg,
+          };
     default:
       throw new Error(`no such action :${action.type}`);
   }

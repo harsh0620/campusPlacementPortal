@@ -54,10 +54,42 @@ const registerStudent = async (req, res, next) => {
     next(err);
   }
 };
+/**
+@desc GET an existing student user's personal details
+@route GET /api/v1/student/personalDetails
+@access Private
+*/
+const getPersonalDetailsStudent = async (req, res, next) => {
+  try {
+    // Find the student user in the database using the user ID stored in the request object
+    const userId = req.user.userId;
+    // Check if the user is a company
+    const ifCompany = await Company.findOne({ _id: userId });
+    // Check if the user is an admin
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (ifCompany || ifAdmin) {
+      // If the user is not a student, throw an UnAuthenticatedError with an error message
+      throw new UnAuthenticatedError("You are not authorized to perform this action");
+    }
+     // Find the student user in the database using the user ID stored in the request object
+     const student = await Student.findOne({ _id: userId });
 
+     // If no student is found with the provided user ID, throw a NotFoundError with an error message
+     if (!student) {
+       throw new NotFoundError(`No student with id :${userId}`);
+     }
+      // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
+      res.status(StatusCodes.OK).json({
+        personalDetails: student?.personalDetails,
+      });
+    } catch (err) {
+      // Pass any errors to the error handling middleware
+      next(err);
+    }
+  };
 /**
 @desc Update an existing student user's personal details
-@route PUT /api/v1/student/updatePersonalDetailsStudent
+@route PUT /api/v1/student/personalDetails
 @access Private
 */
 // Define an asynchronous function called updatePersonalDetailsStudent that takes in three parameters: req, res, next
@@ -65,7 +97,7 @@ const updatePersonalDetailsStudent = async (req, res, next) => {
   try {
     // Find the student user in the database using the user ID stored in the request object
     const userId = req.user.userId;
-    // Check if the user is a student
+    // Check if the user is a company
     const ifCompany = await Company.findOne({ _id: userId });
     // Check if the user is an admin
     const ifAdmin = await Admin.findOne({ _id: userId });
@@ -95,8 +127,7 @@ const updatePersonalDetailsStudent = async (req, res, next) => {
 
       // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
       res.status(StatusCodes.OK).json({
-        user: updatedStudent,
-        token,
+        personalDetails: updatedStudent?.personalDetails,
       });
   } catch (err) {
     // Pass any errors to the error handling middleware
@@ -105,8 +136,41 @@ const updatePersonalDetailsStudent = async (req, res, next) => {
 };
 
 /**
+@desc GET an existing student user's personal details
+@route GET /api/v1/student/academicDetails
+@access Private
+*/
+const getAcademicDetailsStudent = async (req, res, next) => {
+  try {
+    // Find the student user in the database using the user ID stored in the request object
+    const userId = req.user.userId;
+    // Check if the user is a company
+    const ifCompany = await Company.findOne({ _id: userId });
+    // Check if the user is an admin
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (ifCompany || ifAdmin) {
+      // If the user is not a student, throw an UnAuthenticatedError with an error message
+      throw new UnAuthenticatedError("You are not authorized to perform this action");
+    }
+     // Find the student user in the database using the user ID stored in the request object
+     const student = await Student.findOne({ _id: userId });
+
+     // If no student is found with the provided user ID, throw a NotFoundError with an error message
+     if (!student) {
+       throw new NotFoundError(`No student with id :${userId}`);
+     }
+      // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
+      res.status(StatusCodes.OK).json({
+        academicDetails: student?.academicDetails,
+      });
+    } catch (err) {
+      // Pass any errors to the error handling middleware
+      next(err);
+    }
+  };
+/**
  * @desc Update an existing student user's academic details
- * @route PUT /api/v1/student/updateAcademicDetailsStudent
+ * @route PUT /api/v1/student/academicDetails
  * @access Private
  */
 // Define an asynchronous function called updateAcademicDetailsStudent that takes in three parameters: req, res, next
@@ -138,23 +202,52 @@ const updateAcademicDetailsStudent = async (req, res, next) => {
         runValidators: true, // Run model validators on the updated object
       }
     );
-      // Generate a new JSON web token (JWT) for the updated student object
-      const token = updatedStudent.createJWT();
 
       // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
       res.status(StatusCodes.OK).json({
-        user: updatedStudent,
-        token,
+        academicDetails: updatedStudent?.academicDetails,
       });
   } catch (err) {
     // Pass any errors to the error handling middleware
     next(err);
   }
 };
+/**
+@desc GET an existing student user's personal details
+@route GET /api/v1/student/professionalDetails
+@access Private
+*/
+const getProfessionalDetailsStudent = async (req, res, next) => {
+  try {
+    // Find the student user in the database using the user ID stored in the request object
+    const userId = req.user.userId;
+    // Check if the user is a company
+    const ifCompany = await Company.findOne({ _id: userId });
+    // Check if the user is an admin
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (ifCompany || ifAdmin) {
+      // If the user is not a student, throw an UnAuthenticatedError with an error message
+      throw new UnAuthenticatedError("You are not authorized to perform this action");
+    }
+     // Find the student user in the database using the user ID stored in the request object
+     const student = await Student.findOne({ _id: userId });
 
+     // If no student is found with the provided user ID, throw a NotFoundError with an error message
+     if (!student) {
+       throw new NotFoundError(`No student with id :${userId}`);
+     }
+      // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
+      res.status(StatusCodes.OK).json({
+        professionalDetails: student?.professionalDetails,
+      });
+    } catch (err) {
+      // Pass any errors to the error handling middleware
+      next(err);
+    }
+  };
 /**
 @desc Update an existing student user's professional details
-@route PUT /api/v1/student/updateProfessionalDetailsStudent
+@route PUT /api/v1/student/professionalDetails
 @access Private
 */
 // Define an asynchronous function called updateProfessionalDetailsStudent that takes in three parameters: req, res, and next
@@ -187,20 +280,49 @@ const updateProfessionalDetailsStudent = async (req, res, next) => {
        runValidators: true, // Run model validators on the updated object
      }
    );
-     // Generate a new JSON web token (JWT) for the updated student object
-     const token = updatedStudent.createJWT();
 
      // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
      res.status(StatusCodes.OK).json({
-       user: updatedStudent,
-       token,
+      professionalDetails: updatedStudent?.professionalDetails,
      });
   } catch (err) {
     // Pass any errors to the next middleware function
     next(err);
   }
 };
+/**
+@desc GET an existing student user's personal details
+@route GET /api/v1/student/documentDetails
+@access Private
+*/
+const getDocumentDetailsStudent = async (req, res, next) => {
+  try {
+    // Find the student user in the database using the user ID stored in the request object
+    const userId = req.user.userId;
+    // Check if the user is a company
+    const ifCompany = await Company.findOne({ _id: userId });
+    // Check if the user is an admin
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    if (ifCompany || ifAdmin) {
+      // If the user is not a student, throw an UnAuthenticatedError with an error message
+      throw new UnAuthenticatedError("You are not authorized to perform this action");
+    }
+     // Find the student user in the database using the user ID stored in the request object
+     const student = await Student.findOne({ _id: userId });
 
+     // If no student is found with the provided user ID, throw a NotFoundError with an error message
+     if (!student) {
+       throw new NotFoundError(`No student with id :${userId}`);
+     }
+      // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
+      res.status(StatusCodes.OK).json({
+        documentDetails: student?.documentDetails,
+      });
+    } catch (err) {
+      // Pass any errors to the error handling middleware
+      next(err);
+    }
+  };
 /**
 @desc Update an existing student user's document details
 @route PUT /api/v1/student/documentDetails
@@ -237,13 +359,10 @@ const updateDocumentStudent = async (req, res, next) => {
        runValidators: true, // Run model validators on the updated object
      }
    );
-     // Generate a new JSON web token (JWT) for the updated student object
-     const token = updatedStudent.createJWT();
 
      // Send a response to the client with a 200 (OK) status code, including the updated student object and the new JWT token
      res.status(StatusCodes.OK).json({
-       user: updatedStudent,
-       token,
+      documentDetails: updatedStudent?.documentDetails,
      });
   } catch (err) {
     // Call the error handling middleware function
@@ -253,8 +372,12 @@ const updateDocumentStudent = async (req, res, next) => {
 
 export {
   registerStudent,
+  getPersonalDetailsStudent,
   updatePersonalDetailsStudent,
+  getAcademicDetailsStudent,
   updateAcademicDetailsStudent,
+  getProfessionalDetailsStudent,
   updateProfessionalDetailsStudent,
+  getDocumentDetailsStudent,
   updateDocumentStudent,
 };

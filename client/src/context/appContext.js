@@ -44,6 +44,16 @@ import {
   VERIFY_STUDENT_ERROR,
   VERIFY_STUDENT_SUCCESS,
   VERIFY_STUDENT_BEGIN,
+  UPDATE_PROFILE_PERSONAL_ERROR,
+  UPDATE_PROFILE_PERSONAL_SUCCESS,
+  UPDATE_PROFILE_PERSONAL_BEGIN,
+  GET_PROFILE_PERSONAL_BEGIN,
+  GET_PROFILE_PERSONAL_SUCCESS,
+  UPDATE_PROFILE_ACADEMIC_ERROR,
+  UPDATE_PROFILE_ACADEMIC_SUCCESS,
+  UPDATE_PROFILE_ACADEMIC_BEGIN,
+  GET_PROFILE_ACADEMIC_BEGIN,
+  GET_PROFILE_ACADEMIC_SUCCESS,
 } from "./actions";
 import { toast } from "react-toastify";
 
@@ -63,7 +73,44 @@ export const initialState = {
   newPassword: "",
   confirmPassword: "",
   avatar: "",
+  profileImage: "",
+  dob: "",
   gender: "Male",
+  contactNo: "",
+  aadharNo: "",
+  program: [],
+  stream: [],
+  collegeName: "",
+  universityName: "",
+  fatherName: "",
+  motherName: "",
+  currentAddress: "",
+  permanentAddress: "",
+  homeCity: "",
+  homeState: "",
+  homeCountry: "",
+  pincode: "",
+  academicDetails: [{
+    degree: "",
+    specialization: "",
+    institute: "",
+    yearOfPassing: "",
+    board: "",
+    result: {
+      option: "",
+      value: "",
+    },
+    numberOfSemesters: "",
+    semesters: [{
+      count: "",
+      result: {
+        option: "",
+        value: "",
+      },
+      backlogSubjects:"",
+  }],
+
+  }],
   designation: "",
   phone: "",
   aadharno: "",
@@ -679,7 +726,126 @@ function convertToLPA(value) {
   }
   return ''; // Return an empty string if the value is not a valid number
 }
-
+// STUDENT SIDE
+const getStudentProfilePersonal = async () => {
+    dispatch({ type:GET_PROFILE_PERSONAL_BEGIN });
+    try {
+      const { data } = await authFetch.get(`/student/personalDetails`);
+      const { personalDetails } = data;
+      dispatch({
+        type: GET_PROFILE_PERSONAL_SUCCESS,
+        payload: {
+          personalDetails,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+const updateStudentProfilePersonal = async () => {
+  dispatch({ type: UPDATE_PROFILE_PERSONAL_BEGIN });
+  try {
+    const {
+      profileImage,
+      dob,
+      gender,
+      contactNo,
+      aadharNo,
+      program,
+      stream,
+      collegeName,
+      universityName,
+      fatherName,
+      motherName,
+      currentAddress,
+      permanentAddress,
+      pincode,
+      homeCity,
+      homeState,
+      homeCountry,
+    }=state;
+    const { data } = await authFetch.patch(`/student/personalDetails`, {
+      profileImage,
+      dob,
+      gender,
+      contactNo,
+      aadharNo,
+      program,
+      stream,
+      collegeName,
+      universityName,
+      fatherName,
+      motherName,
+      currentAddress,
+      permanentAddress,
+      pincode,
+      homeCity,
+      homeState,
+      homeCountry,
+    });
+    const { personalDetails } =data;
+    dispatch({
+      type: UPDATE_PROFILE_PERSONAL_SUCCESS,
+      payload: {
+        personalDetails
+      },
+    });
+    toast.success('Profile Updated Successfully');
+  } catch (error) {
+    if (error.response.status === 401) return;
+    dispatch({
+      type: UPDATE_PROFILE_PERSONAL_ERROR,
+      payload: { msg: error.response.data.message },
+    });
+    toast.error(`Error Updating Profile: ${error.response.data.message}`);
+  }
+  clearAlert();
+};
+const getStudentProfileAcademic = async () => {
+  dispatch({ type:GET_PROFILE_ACADEMIC_BEGIN });
+  try {
+    const { data } = await authFetch.get(`/student/academicDetails`);
+    const { academicDetails } = data;
+    dispatch({
+      type: GET_PROFILE_ACADEMIC_SUCCESS,
+      payload: {
+        academicDetails,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    //logoutUser();
+  }
+  clearAlert();
+};
+const updateStudentProfileAcademic = async () => {
+dispatch({ type: UPDATE_PROFILE_ACADEMIC_BEGIN });
+try {
+  const {
+   academicDetails
+  }=state;
+  const { data } = await authFetch.patch(`/student/academicDetails`, {
+    academicDetails
+  });
+  dispatch({
+    type: UPDATE_PROFILE_ACADEMIC_SUCCESS,
+    payload: {
+      academicDetails:data?.academicDetails
+    },
+  });
+  toast.success('Profile Updated Successfully');
+} catch (error) {
+  if (error.response.status === 401) return;
+  dispatch({
+    type: UPDATE_PROFILE_ACADEMIC_ERROR,
+    payload: { msg: error.response.data.message },
+  });
+  toast.error(`Error Updating Profile: ${error.response.data.message}`);
+}
+clearAlert();
+};
   return (
     <AppContext.Provider
       value={{
@@ -705,7 +871,12 @@ function convertToLPA(value) {
         convertToLPA,
         verifyJob,
         verifyStudent,
-        sendJobNotification
+        sendJobNotification,
+        // STUDENT SIDE
+        getStudentProfilePersonal,
+        updateStudentProfilePersonal,
+        getStudentProfileAcademic,
+        updateStudentProfileAcademic
       }}
     >
       {children}
