@@ -17,7 +17,7 @@ const CompanyView = () => {
         getCompanyByIdByAdmin(id);
       }, [])
   
-      if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" />
+      if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>
   return (
     <div className='pb-16'>
         <CompanyViewHeader/>

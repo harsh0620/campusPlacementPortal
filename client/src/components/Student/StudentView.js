@@ -3,7 +3,6 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import StudentViewHeader from './StudentViewHeader'
 import { useParams } from 'react-router-dom';
-import TestComp from '../TestComp';
 import { useAppContext } from '../../context/appContext';
 import StudentViewPersonal from './StudentViewPersonal';
 import StudentViewExperience from './StudentViewExperience';
@@ -14,8 +13,10 @@ import StudentViewCertification from './StudentViewCertification';
 import StudentViewLink from './StudentViewLink';
 import Loader from '../Loader';
 import StudentViewOther from './StudentViewOther';
+import StudentViewAbout from './StudentViewAbout';
+import StudentViewDocuments from './StudentViewDocuments';
 
-const StudentView = () => {
+const StudentView = ({userType}) => {
   const {getStudentById,isLoading}=useAppContext();
     const params=useParams();
     const {id}=params;
@@ -31,21 +32,23 @@ const StudentView = () => {
       });
     };
     useEffect(() => {
-      getStudentById(id);
+      console.log(userType);
+      getStudentById({userType:userType,id:id});
     }, [])
 
-    if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" />
+    if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>
   return (
     <div className='pb-16' ref={componentRef}>
         <StudentViewHeader handleCapture={handleCapture} componentRef={componentRef}/>
         <StudentViewPersonal/>
+        <StudentViewAbout/>
         <StudentViewExperience/>
         <StudentViewEducation/>
         <StudentViewProject/>
         <StudentViewSkill/>
         <StudentViewCertification/>
         <StudentViewLink/>
-        <StudentViewOther/>
+        <StudentViewDocuments/>
     </div>
   )
 }

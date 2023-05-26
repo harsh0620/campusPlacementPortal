@@ -77,7 +77,7 @@ focus:bg-white focus:border-slate-600 p-2"
         disabled={isLoading}
       >
         {isLoading && (
-          <Loader backgroundColor="text-gray-300" loaderColor="fill-black" />
+          <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>
         )}
         {!isLoading && "Send Notification"}
       </button>

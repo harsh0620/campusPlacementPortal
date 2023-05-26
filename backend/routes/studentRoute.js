@@ -3,6 +3,8 @@ import express from "express";
 const router = express.Router();
 import {
   registerStudent,
+  getBasicDetailsStudent,
+  updateBasicDetailsStudent,
   getPersonalDetailsStudent,
   updatePersonalDetailsStudent,
   getAcademicDetailsStudent,
@@ -14,7 +16,7 @@ import {
 } from "../controller/studentAuthController.js";
 import authenticateUser from "../middleware/auth.js";
 import { loginUser } from "../controller/authController.js";
-import { applyToJobDrive } from "../controller/studentController.js";
+import { applyToJobDrive, getStudentById } from "../controller/studentController.js";
 /**
  * @desc Register a new student user
  * @route POST /api/v1/student/auth/register
@@ -28,6 +30,22 @@ router.route("/auth/register").post(registerStudent);
  * @access Public
  */
 router.route("/auth/login").post(loginUser);
+
+/**
+ * @desc Get a student by id
+ * @route GET /api/v1/student/students/:studentId
+ * @access Private
+ */
+router.route("/students/:studentId").get(authenticateUser, getStudentById);
+/**
+ * @desc Update an existing student user's personalDetails
+ * @route PATCH /api/v1/student/basicDetails
+ * @access Private
+ */
+router
+  .route("/basicDetails")
+  .patch(authenticateUser, updateBasicDetailsStudent)
+  .get(authenticateUser, getBasicDetailsStudent);
 
 /**
  * @desc Update an existing student user's personalDetails

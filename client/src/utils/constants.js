@@ -1,45 +1,3 @@
-// import {
-//   MdGroups,
-//   MdOutlineGroups,
-//   MdGroup,
-//   MdOutlineGroup,
-//   MdOutlineMovie,
-//   MdSportsSoccer,
-//   MdOutlineLocalGroceryStore,
-//   MdOutlineDining,
-//   MdOutlineLiquor,
-//   MdOutlineHome,
-//   MdOutlinePets,
-//   MdOutlineTrain,
-//   MdLocalFireDepartment,
-//   MdOutlineCleaningServices,
-// } from "react-icons/md";
-// import { IoMdPaper } from "react-icons/io";
-// import {
-//   IoSettingsOutline,
-//   IoSettings,
-//   IoMusicalNotesOutline,
-//   IoHammerOutline,
-//   IoGiftSharp,
-//   IoCarSportOutline,
-//   IoAirplaneOutline,
-//   IoBulbOutline,
-//   IoWater,
-// } from "react-icons/io5";
-// import { TiDivideOutline, TiDivide } from "react-icons/ti";
-// import { GrGamepad } from "react-icons/gr";
-// import { TbHanger, TbSofa } from "react-icons/tb";
-// import {
-//   FaBriefcase,
-//   FaConciergeBell,
-//   FaFootballBall,
-//   FaHome,
-//   FaHotel,
-//   FaListAlt,
-//   FaPlane,
-//   FaPumpSoap,
-// } from "react-icons/fa";
-
 import {
   BsBriefcaseFill,
   BsBriefcase,
@@ -49,6 +7,7 @@ import {
   BsBuildings,
 } from "react-icons/bs";
 import { FaCog, FaUserCircle } from "react-icons/fa";
+
 const adminSidebarItems = [
   {
     title: "Companies",
@@ -74,12 +33,12 @@ const adminSidebarItems = [
     iconDisabled: <FaCog color="#bbb" />,
     link: "/settings",
   },
-  {
-    title: "Profile",
-    iconAbled: <FaUserCircle />,
-    iconDisabled: <FaUserCircle color="#bbb" />,
-    link: "/profile",
-  },
+  // {
+  //   title: "Profile",
+  //   iconAbled: <FaUserCircle />,
+  //   iconDisabled: <FaUserCircle color="#bbb" />,
+  //   link: "/profile",
+  // },
 ];
 const studentSidebarItems = [
   {
@@ -87,12 +46,6 @@ const studentSidebarItems = [
     iconAbled: <BsBuildingsFill />,
     iconDisabled: <BsBuildings />,
     link: "/companies",
-  },
-  {
-    title: "Alumni",
-    iconAbled: <BsPeopleFill />,
-    iconDisabled: <BsPeople />,
-    link: "/alumni",
   },
   {
     title: "Jobs",
@@ -106,12 +59,12 @@ const studentSidebarItems = [
     iconDisabled: <FaCog color="#bbb" />,
     link: "/settings",
   },
-  {
-    title: "Profile",
-    iconAbled: <FaUserCircle />,
-    iconDisabled: <FaUserCircle color="#bbb" />,
-    link: "/profile",
-  },
+  // {
+  //   title: "Profile",
+  //   iconAbled: <FaUserCircle />,
+  //   iconDisabled: <FaUserCircle color="#bbb" />,
+  //   link: "/profile",
+  // },
 ];
 const companySidebarItems = [
   {
@@ -126,12 +79,12 @@ const companySidebarItems = [
     iconDisabled: <FaCog color="#bbb" />,
     link: "/settings",
   },
-  {
-    title: "Profile",
-    iconAbled: <FaUserCircle />,
-    iconDisabled: <FaUserCircle color="#bbb" />,
-    link: "/profile",
-  },
+  // {
+  //   title: "Profile",
+  //   iconAbled: <FaUserCircle />,
+  //   iconDisabled: <FaUserCircle color="#bbb" />,
+  //   link: "/profile",
+  // },
 ];
 // enum: [
 //     "Computer Science",

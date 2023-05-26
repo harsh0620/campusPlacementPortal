@@ -141,7 +141,6 @@ const getStudents = async (req, res, next) => {
 
 /**
  * @desc Get a student by id
- *
  * @route GET /api/v1/admin/students/:studentId
  * @access Private
  */

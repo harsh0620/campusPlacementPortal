@@ -6,6 +6,8 @@ import {
 } from "../errors/index.js";
 import Student from "../models/students.js";
 import JobDrive from "../models/jobDrive.js";
+import Company from "../models/Company.js";
+import Admin from "../models/admin.js";
 
 /**
  * @desc Apply to jobDrive
@@ -48,5 +50,39 @@ const applyToJobDrive = async (req, res, next) => {
     next(error);
   }
 };
-
-export { applyToJobDrive };
+/**
+ * @desc Get a student by id
+ *
+ * @route GET /api/v1/student/students/:studentId
+ * @access Private
+ */
+const getStudentById = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const admin = await Admin.findOne({ _id: userId });
+    const company = await Company.findOne({ _id: userId });
+    console.log(admin, company);
+    if (admin || company) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const studentId = req.params.studentId;
+    if(studentId!==userId)
+    {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const student = await Student.findOne({ _id: studentId });
+    if (!student) {
+      throw new NotFoundError(`No student with ID: ${studentId}`);
+    }
+    return res.status(StatusCodes.OK).json({
+      student,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export { applyToJobDrive,getStudentById };

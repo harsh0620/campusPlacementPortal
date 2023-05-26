@@ -1,6 +1,8 @@
 import React from "react";
+import { useAppContext } from "../context/appContext";
 
-const Loader = ({ backgroundColor, loaderColor, text }) => {
+const Loader = ({ backgroundColor, loaderColor }) => {
+  const {loaderText,isUploading,uploadProgress}=useAppContext();
   return (
     <div className="fixed top-0 left-0 w-full h-full z-50 flex items-center justify-center">
       <div className="absolute w-full h-full bg-gray-800 opacity-50"></div>
@@ -22,7 +24,7 @@ const Loader = ({ backgroundColor, loaderColor, text }) => {
           />
         </svg>
         <span className={`font-bold ${loaderColor} text-3xl tracking-wide`}>
-          {text}
+          {isUploading ? `Uploading...${uploadProgress}`:loaderText}
         </span>
       </div>
     </div>

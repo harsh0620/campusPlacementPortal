@@ -135,16 +135,16 @@ const StudentViewHeader = ({handleCapture,componentRef}) => {
               className="md:w-32 md:h-32 w-20 h-20 rounded-full m-4 bg-white p-1"
             />
              <div className="rounded-full w-4 h-4 md:ml-[105px] ml-[75px] mt-[-55px]">
-           {specificStudent?.applicationStatus==="verified" ? <FaCheckCircle className=" rounded-full md:text-3xl text-3xl font-bold bg-blue-500 text-white" title="applicationStatus"/>:
-            <FaTimes className=" rounded-full md:text-3xl text-xl font-bold bg-red-500 text-white" title="UnapplicationStatus"/>}
+           {specificStudent?.applicationStatus==="verified" ? <FaCheckCircle className=" rounded-full md:text-3xl text-3xl font-bold bg-blue-500 text-white" title="Verified Student"/>:
+            <FaTimes className=" rounded-full md:text-3xl text-xl font-bold bg-red-500 text-white" title="Unverified Student"/>}
             </div>
             </>
           ) : (
             <>
             <FaUserCircle className="md:w-32 md:h-32 w-20 h-20 rounded-full m-4 bg-white p-1" />
             <div className="rounded-full w-4 h-4 md:ml-[105px] ml-[75px] mt-[-55px]">
-           {specificStudent?.applicationStatus==="verified" ? <FaCheckCircle className=" rounded-full md:text-3xl text-3xl font-bold bg-blue-500 text-white" title="applicationStatus"/>:
-            <FaTimes className=" rounded-full md:text-3xl text-xl font-bold bg-red-500 text-white" title="UnapplicationStatus"/>}
+           {specificStudent?.applicationStatus==="verified" ? <FaCheckCircle className=" rounded-full md:text-3xl text-3xl font-bold bg-blue-500 text-white" title="Verified Student"/>:
+            <FaTimes className=" rounded-full md:text-3xl text-xl font-bold bg-red-500 text-white" title="Unverified Student"/>}
             </div>
             </>
           )}

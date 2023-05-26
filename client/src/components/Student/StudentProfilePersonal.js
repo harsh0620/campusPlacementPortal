@@ -56,7 +56,7 @@ const StudentProfilePersonal = () => {
           id="dob"
           name="dob"
           placeholder="Enter Date of Birth"
-          value={dob.toString().substr(0, 10)}
+          value={dob?.toString()?.substr(0, 10)}
           onChange={handleProfileChange}
         />
       </div>
@@ -72,6 +72,7 @@ const StudentProfilePersonal = () => {
   transition duration-150 ease-in-out focus:text-gray-700
   focus:bg-white focus:border-slate-600 p-2"
           type="number"
+          pattern="[0-9]{10}"
           id="contactNo"
           name="contactNo"
           placeholder="Enter Contact No"
@@ -367,7 +368,7 @@ const StudentProfilePersonal = () => {
         disabled={isLoading}
       >
         {isLoading && (
-          <Loader backgroundColor="text-gray-300" loaderColor="fill-black" />
+          <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>
         )}
         {!isLoading && "Update Profile"}
       </button>

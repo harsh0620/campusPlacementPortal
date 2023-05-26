@@ -103,7 +103,7 @@ const StudentViewPersonal = () => {
   return (
     <div>
       <StudentViewComp
-        title="Personal Information"
+        title="Personal"
         viewComponent={<StudentViewPersonalComp />}
       />
     </div>

@@ -51,6 +51,27 @@ import {
   UPDATE_PROFILE_ACADEMIC_BEGIN,
   GET_PROFILE_ACADEMIC_SUCCESS,
   GET_PROFILE_ACADEMIC_BEGIN,
+  UPDATE_STATE_VALUES,
+  UPDATE_PROFILE_PROFESSIONAL_ERROR,
+  UPDATE_PROFILE_PROFESSIONAL_SUCCESS,
+  UPDATE_PROFILE_PROFESSIONAL_BEGIN,
+  GET_PROFILE_PROFESSIONAL_SUCCESS,
+  GET_PROFILE_PROFESSIONAL_BEGIN,
+  START_LOADING,
+  STOP_LOADING,
+  SET_UPLOAD_PROGRESS,
+  SET_IMAGE_URL,
+  SET_PDF_URL,
+  UPDATE_PROFILE_DOCUMENT_ERROR,
+  UPDATE_PROFILE_DOCUMENT_SUCCESS,
+  UPDATE_PROFILE_DOCUMENT_BEGIN,
+  GET_PROFILE_DOCUMENT_SUCCESS,
+  GET_PROFILE_DOCUMENT_BEGIN,
+  UPDATE_PROFILE_BASIC_ERROR,
+  UPDATE_PROFILE_BASIC_SUCCESS,
+  UPDATE_PROFILE_BASIC_BEGIN,
+  GET_PROFILE_BASIC_SUCCESS,
+  GET_PROFILE_BASIC_BEGIN,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -69,6 +90,31 @@ const reducer = (state, action) => {
         alertText: "",
         alertType: "",
       };
+    case START_LOADING:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case STOP_LOADING:
+      return {
+        ...state,
+        isLoading: false,
+      };
+    case SET_UPLOAD_PROGRESS:
+      return {
+        ...state,
+        uploadProgress: action.payload.progress,
+      };
+    case SET_IMAGE_URL:
+      return {
+        ...state,
+        imageUrl: action.payload.downloadURL,
+      };
+    case SET_PDF_URL:
+      return {
+        ...state,
+        pdfUrl: action.payload.downloadURL,
+      };
     case REGISTER_USER_BEGIN:
       return {
         ...state,
@@ -79,6 +125,7 @@ const reducer = (state, action) => {
         ...state,
         user: action.payload.user,
         token: action.payload.token,
+        specificStudent: action?.payload?.user,
         isLoading: false,
         showAlert: true,
         alertType: "success",
@@ -108,6 +155,7 @@ const reducer = (state, action) => {
         designation: action?.payload?.user?.designation,
         phone: action?.payload?.user?.phone,
         aadharno: action?.payload?.user?.aadharno,
+        specificStudent: action?.payload?.user,
         token: action.payload.token,
         isLoading: false,
         showAlert: true,
@@ -137,6 +185,8 @@ const reducer = (state, action) => {
         ...state,
         [action.payload.name]: action.payload.value,
       };
+    case UPDATE_STATE_VALUES:
+      return { ...state, [action.payload.name]: action.payload.value };
     case GET_PROFILE_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
     case GET_PROFILE_SUCCESS:
@@ -346,6 +396,49 @@ const reducer = (state, action) => {
           alertText: action.payload.msg,
         };
       // STUDENT SIDE:
+      case GET_PROFILE_BASIC_BEGIN:
+        return {
+          ...state,
+          isLoading: true,
+        };
+      case GET_PROFILE_BASIC_SUCCESS:
+        return {
+          ...state,
+          name: action?.payload?.basicDetails?.name,
+          enrollmentNo: action?.payload?.basicDetails?.enrollmentNo,
+          about: action?.payload?.basicDetails?.about,
+          isLoading: false,
+          showAlert: true,
+          alertType: "success",
+          alertText: "Profile updated successfully!",
+        };
+      case UPDATE_PROFILE_BASIC_BEGIN:
+        return {
+          ...state,
+          isLoading: true,
+        };
+      case UPDATE_PROFILE_BASIC_SUCCESS:
+        return {
+          ...state,
+          name: action?.payload?.basicDetails?.name,
+          enrollmentNo: action?.payload?.basicDetails?.enrollmentNo,
+          about: action?.payload?.basicDetails?.about,
+          isLoading: false,
+          showAlert: true,
+          alertType: "success",
+          alertText: "Profile updated successfully!",
+        };
+      case UPDATE_PROFILE_BASIC_ERROR:
+        return {
+          ...state,
+          isLoading: false,
+          showAlert: true,
+          alertType: "error",
+          alertText: action.payload.msg,
+        };
+
+
+
       case GET_PROFILE_PERSONAL_BEGIN:
         return {
           ...state,
@@ -448,6 +541,98 @@ const reducer = (state, action) => {
             alertType: "error",
             alertText: action.payload.msg,
           };
+          case GET_PROFILE_PROFESSIONAL_BEGIN:
+            return {
+              ...state,
+              isLoading: true,
+            };
+          case GET_PROFILE_PROFESSIONAL_SUCCESS:
+            return {
+              ...state,
+              professionalDetails: action?.payload?.professionalDetails,
+              professionalExperiences:action?.payload?.professionalDetails?.experiences,
+              professionalProjects:action?.payload?.professionalDetails?.projects,
+              professionalCertifications:action?.payload?.professionalDetails?.certifications,
+              professionalSkills:action?.payload?.professionalDetails?.skills,
+              professionalLinks:action?.payload?.professionalDetails?.links,
+              isLoading: false,
+              showAlert: true,
+              alertType: "success",
+              alertText: "Profile updated successfully!",
+            };
+          case UPDATE_PROFILE_PROFESSIONAL_BEGIN:
+            return {
+              ...state,
+              isLoading: true,
+            };
+          case UPDATE_PROFILE_PROFESSIONAL_SUCCESS:
+            return {
+              ...state,
+              professionalDetails: action?.payload?.professionalDetails,
+              professionalExperiences:action?.payload?.professionalDetails?.experiences,
+              professionalProjects:action?.payload?.professionalDetails?.projects,
+              professionalCertifications:action?.payload?.professionalDetails?.certifications,
+              professionalSkills:action?.payload?.professionalDetails?.skills,
+              professionalLinks:action?.payload?.professionalDetails?.links,
+              isLoading: false,
+              showAlert: true,
+              alertType: "success",
+              alertText: "Profile updated successfully!",
+            };
+          case UPDATE_PROFILE_PROFESSIONAL_ERROR:
+            return {
+              ...state,
+              isLoading: false,
+              showAlert: true,
+              alertType: "error",
+              alertText: action.payload.msg,
+            };
+
+
+            case GET_PROFILE_DOCUMENT_BEGIN:
+              return {
+                ...state,
+                isLoading: true,
+              };
+            case GET_PROFILE_DOCUMENT_SUCCESS:
+              return {
+                ...state,
+                documentDetails: action?.payload?.documentDetails,
+                documentResume:action?.payload?.documentDetails?.resume,
+                documentPhoto:action?.payload?.documentDetails?.photo,
+                documentAadhar:action?.payload?.documentDetails?.aadhar,
+                documentAllDocument:action?.payload?.documentDetails?.allDocument,
+                isLoading: false,
+                showAlert: true,
+                alertType: "success",
+                alertText: "Profile updated successfully!",
+              };
+            case UPDATE_PROFILE_DOCUMENT_BEGIN:
+              return {
+                ...state,
+                isLoading: true,
+              };
+            case UPDATE_PROFILE_DOCUMENT_SUCCESS:
+              return {
+                ...state,
+                documentDetails: action?.payload?.documentDetails,
+                documentResume:action?.payload?.documentDetails?.resume,
+                documentPhoto:action?.payload?.documentDetails?.photo,
+                documentAadhar:action?.payload?.documentDetails?.aadhar,
+                documentAllDocument:action?.payload?.documentDetails?.allDocument,
+                isLoading: false,
+                showAlert: true,
+                alertType: "success",
+                alertText: "Profile updated successfully!",
+              };
+            case UPDATE_PROFILE_DOCUMENT_ERROR:
+              return {
+                ...state,
+                isLoading: false,
+                showAlert: true,
+                alertType: "error",
+                alertText: action.payload.msg,
+              };
     default:
       throw new Error(`no such action :${action.type}`);
   }

@@ -32,6 +32,9 @@ const studentSchema = mongoose.Schema({
     },
     unique: true,
   },
+  about:{
+    type: String,
+  },
   password: {
     type: String,
     required: [true, "Please provide password"],
@@ -179,25 +182,9 @@ const studentSchema = mongoose.Schema({
       numberOfSemesters: {
         type: Number,
       },
-      semesters: [
-        {
-          count: {
-            type: Number,
-          },
-          result: {
-            option: {
-              type: String,
-              enum: ["CGPA", "Percentage"],
-            },
-            value: {
-              type: Number,
-            },
-          },
-          backlogSubjects: {
-            type: Number,
-          },
-        },
-      ],
+      backlogSubjects: {
+        type: Number,
+      },
     },
   ],
   professionalDetails: {
@@ -270,9 +257,6 @@ const studentSchema = mongoose.Schema({
         },
       },
     ],
-    others: {
-      type: String,
-    },
     links: {
       type: [String],
     },
@@ -299,20 +283,13 @@ const studentSchema = mongoose.Schema({
         message: "Please provide valid URL",
       },
     },
-    marksheets: [
-      {
-        marksheetName: {
-          type: String,
-        },
-        marksheetLink: {
-          type: String,
-          validate: {
-            validator: validator.isURL,
-            message: "Please provide valid URL",
-          },
-        },
+    allDocument: {
+      type: String,
+      validate: {
+        validator: validator.isURL,
+        message: "Please provide valid URL",
       },
-    ],
+    },
   },
 });
 // Hash password before saving the user

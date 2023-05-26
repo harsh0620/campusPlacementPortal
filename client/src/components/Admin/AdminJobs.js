@@ -12,7 +12,7 @@ const AdminJobs = () => {
     // eslint-disable-next-line
   }, []);
   if (isLoading) {
-    return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" />;
+    return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>;
   }
  return (
     <div className='mt-8'><AdminJobDriveTable jobDrives={jobsByAdmin}/></div>
