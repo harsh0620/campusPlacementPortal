@@ -10,7 +10,8 @@ const AdminJobs = () => {
     searchJobsByAdmin();
     console.log(jobsByAdmin);
     // eslint-disable-next-line
-  }, []);
+  // eslint-disable-next-line
+    }, []);
   if (isLoading) {
     return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>;
   }

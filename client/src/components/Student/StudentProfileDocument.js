@@ -14,7 +14,6 @@ const StudentProfileDocument = () => {
     imageUpload,
     pdfUrl,
     imageUrl,
-    uploadProgress,
     user,
     isLoading,
     handleChange,
@@ -83,7 +82,8 @@ const StudentProfileDocument = () => {
   };
   useEffect(() => {
     getStudentProfileDocuments();
-  }, []);
+  // eslint-disable-next-line
+    }, []);
   // if (isLoading) {
   //   return (
   //     <Loader

@@ -407,96 +407,96 @@ focus:bg-white focus:border-slate-600 p-2"
     </form>
   );
 };
-const SendCustomMessageForm = () => {
-  const { name, email, password, 
-    mailsArray,
-    mailSubject,
-    mailBody,
-    isLoading, handleChange, createAdmin } =
-  useAppContext();
-const handleSettingsChange = (e) => {
-  handleChange({ name: e.target.name, value: e.target.value });
-};
-const onCreateAdmin = (e) => {
-  e.preventDefault();
-  createAdmin();
-};
-  return(
-    <form
-    className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border rounded-lg md:p-4 p-2"
-    onSubmit={onCreateAdmin}
-  >
-    <div className="w-full">
-      <label
-        className="text-left text-black text-md font-medium"
-        htmlFor="mailsArray"
-      >
-        Google Groups Mail/Personal Mails
-      </label>
-      <input
-        className="mt-2 mb-2 w-full h-10 border border-gray-400 rounded-md
-transition duration-150 ease-in-out focus:text-gray-700
-focus:bg-white focus:border-slate-600 p-2"
-        type="email"
-        id="mailsArray"
-        name="mailsArray"
-        placeholder="Enter Google Groups Mail/Personal Mails"
-        value={mailsArray}
-        onChange={handleSettingsChange}
-      />
-    </div>
-    <div className="w-full">
-      <label
-        className="text-left text-black text-md font-medium"
-        htmlFor="mailSubject"
-      >
-        Email Subject
-      </label>
-      <input
-        className="mt-2 mb-2 w-full h-10 border border-gray-400 rounded-md
-transition duration-150 ease-in-out focus:text-gray-700
-focus:bg-white focus:border-slate-600 p-2"
-        type="text"
-        id="mailSubject"
-        name="mailSubject"
-        placeholder="Enter Mail Subject"
-        value={mailSubject}
-        onChange={handleSettingsChange}
-      />
-    </div>
-    <div className="w-full">
-      <label
-        className="text-left text-black text-md font-medium"
-        htmlFor="mailBody"
-      >
-        Mail Content
-      </label>
-      <textarea
-      rows={5}
-        className="mt-2 mb-2 w-full  border border-gray-400 rounded-md
-transition duration-150 ease-in-out focus:text-gray-700
-focus:bg-white focus:border-slate-600 p-2"
-        type="text"
-        id="mailBody"
-        name="mailBody"
-        placeholder="Enter Mail Body"
-        value={mailBody}
-        onChange={handleSettingsChange}
-      />
-    </div>
-    <button
-      className="flex mt-2 mb-2 w-full items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
-      type="submit"
-      disabled={isLoading}
-    >
-      {isLoading && (
-        <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>
-      )}
-      {!isLoading && "Create Admin"}
-    </button>
-  </form>
-  )
-}
+// const SendCustomMessageForm = () => {
+//   const { 
+//     mailsArray,
+//     mailSubject,
+//     mailBody,
+//     isLoading, handleChange, createAdmin } =
+//   useAppContext();
+// const handleSettingsChange = (e) => {
+//   handleChange({ name: e.target.name, value: e.target.value });
+// };
+// const onCreateAdmin = (e) => {
+//   e.preventDefault();
+//   createAdmin();
+// };
+//   return(
+//     <form
+//     className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border rounded-lg md:p-4 p-2"
+//     onSubmit={onCreateAdmin}
+//   >
+//     <div className="w-full">
+//       <label
+//         className="text-left text-black text-md font-medium"
+//         htmlFor="mailsArray"
+//       >
+//         Google Groups Mail/Personal Mails
+//       </label>
+//       <input
+//         className="mt-2 mb-2 w-full h-10 border border-gray-400 rounded-md
+// transition duration-150 ease-in-out focus:text-gray-700
+// focus:bg-white focus:border-slate-600 p-2"
+//         type="email"
+//         id="mailsArray"
+//         name="mailsArray"
+//         placeholder="Enter Google Groups Mail/Personal Mails"
+//         value={mailsArray}
+//         onChange={handleSettingsChange}
+//       />
+//     </div>
+//     <div className="w-full">
+//       <label
+//         className="text-left text-black text-md font-medium"
+//         htmlFor="mailSubject"
+//       >
+//         Email Subject
+//       </label>
+//       <input
+//         className="mt-2 mb-2 w-full h-10 border border-gray-400 rounded-md
+// transition duration-150 ease-in-out focus:text-gray-700
+// focus:bg-white focus:border-slate-600 p-2"
+//         type="text"
+//         id="mailSubject"
+//         name="mailSubject"
+//         placeholder="Enter Mail Subject"
+//         value={mailSubject}
+//         onChange={handleSettingsChange}
+//       />
+//     </div>
+//     <div className="w-full">
+//       <label
+//         className="text-left text-black text-md font-medium"
+//         htmlFor="mailBody"
+//       >
+//         Mail Content
+//       </label>
+//       <textarea
+//       rows={5}
+//         className="mt-2 mb-2 w-full  border border-gray-400 rounded-md
+// transition duration-150 ease-in-out focus:text-gray-700
+// focus:bg-white focus:border-slate-600 p-2"
+//         type="text"
+//         id="mailBody"
+//         name="mailBody"
+//         placeholder="Enter Mail Body"
+//         value={mailBody}
+//         onChange={handleSettingsChange}
+//       />
+//     </div>
+//     <button
+//       className="flex mt-2 mb-2 w-full items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
+//       type="submit"
+//       disabled={isLoading}
+//     >
+//       {isLoading && (
+//         <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>
+//       )}
+//       {!isLoading && "Create Admin"}
+//     </button>
+//   </form>
+//   )
+// }
 const AdminSettings = () => {
   return (
     <div className="bg-white w-full">

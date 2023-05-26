@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { genderList, streamsList } from "../../utils/constants";
 import AdminStudentTable from "./AdminStudentTable";
 import { useAppContext } from "../../context/appContext";
@@ -38,7 +38,8 @@ const AdminStudents = () => {
   useEffect(() => {
     searchStudentsByAdmin({ ...values });
     // eslint-disable-next-line
-  }, []);
+  // eslint-disable-next-line
+    }, []);
   if (isLoading) {
     return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>;
   }

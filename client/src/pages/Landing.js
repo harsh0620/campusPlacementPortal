@@ -4,9 +4,7 @@ import {
   FaTwitter,
   FaLinkedin,
   FaGithub,
-  FaSearch,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
 // import heroImage from '../images/hero-image.jpg';
 function Landing() {
   return (
@@ -183,19 +181,19 @@ function Landing() {
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex justify-center space-x-6 md:order-2">
-              <a href="#" className="text-gray-400 hover:text-gray-500">
+              <a href="/" className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">Facebook</span>
                 <FaFacebook className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-gray-500">
+              <a href="/" className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">Twitter</span>
                 <FaTwitter className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-gray-500">
+              <a href="/" className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">LinkedIn</span>
                 <FaLinkedin className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-gray-500">
+              <a href="/" className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">GitHub</span>
                 <FaGithub className="h-6 w-6" />
               </a>

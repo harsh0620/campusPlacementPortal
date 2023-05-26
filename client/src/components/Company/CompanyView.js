@@ -15,7 +15,8 @@ const CompanyView = () => {
     const {id}=params;
     useEffect(() => {
         getCompanyByIdByAdmin(id);
-      }, [])
+      // eslint-disable-next-line
+    }, [])
   
       if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>
   return (

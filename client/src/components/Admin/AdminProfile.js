@@ -4,7 +4,6 @@ import { FaEdit } from "react-icons/fa";
 import { RiKeyFill } from "react-icons/ri";
 import { useAppContext } from "../../context/appContext";
 import Loader from "../Loader";
-import { toast } from "react-toastify";
 import UpdatePasswordForm from "../UpdatePasswordForm";
 
 const UpdateProfileForm = () => {
@@ -30,7 +29,8 @@ const UpdateProfileForm = () => {
   useEffect(() => {
     console.log("Profile Updated");
     getAdminDetails("admin");
-  }, []);
+  // eslint-disable-next-line
+    }, []);
   return (
     <form
       className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border rounded-lg md:p-4 p-2"

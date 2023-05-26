@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import { useAppContext } from "../../context/appContext";
 import Loader from "../Loader";
 import AdminCompanyTable from "./AdminCompanyTable";
@@ -10,7 +10,8 @@ const AdminCompany = () => {
   useEffect(() => {
     searchCompaniesByAdmin();
     // eslint-disable-next-line
-  }, []);
+  // eslint-disable-next-line
+    }, []);
   if (isLoading) {
     return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>;
   }

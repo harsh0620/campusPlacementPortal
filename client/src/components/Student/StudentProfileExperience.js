@@ -54,7 +54,8 @@ const StudentProfileExperience = () => {
   useEffect(() => {
     getStudentProfileProfessional();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // eslint-disable-next-line
+    }, []);
   return (
     <form
       className=" w-full m-auto flex flex-col justify-center overflow-x-auto  border rounded-lg md:p-4 p-2"

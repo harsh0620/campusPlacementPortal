@@ -24,7 +24,7 @@ const Loader = ({ backgroundColor, loaderColor }) => {
           />
         </svg>
         <span className={`font-bold ${loaderColor} text-3xl tracking-wide`}>
-          {isUploading ? `Uploading...${uploadProgress}`:loaderText}
+          {isUploading ? `Uploading...${uploadProgress}%`:loaderText}
         </span>
       </div>
     </div>

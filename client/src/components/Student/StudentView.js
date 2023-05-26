@@ -12,7 +12,6 @@ import StudentViewProject from './StudentViewProject';
 import StudentViewCertification from './StudentViewCertification';
 import StudentViewLink from './StudentViewLink';
 import Loader from '../Loader';
-import StudentViewOther from './StudentViewOther';
 import StudentViewAbout from './StudentViewAbout';
 import StudentViewDocuments from './StudentViewDocuments';
 
@@ -34,6 +33,7 @@ const StudentView = ({userType}) => {
     useEffect(() => {
       console.log(userType);
       getStudentById({userType:userType,id:id});
+      // eslint-disable-next-line
     }, [])
 
     if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>

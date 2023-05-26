@@ -6,7 +6,7 @@ import {
   BsBuildingsFill,
   BsBuildings,
 } from "react-icons/bs";
-import { FaCog, FaUserCircle } from "react-icons/fa";
+import { FaCog } from "react-icons/fa";
 
 const adminSidebarItems = [
   {
