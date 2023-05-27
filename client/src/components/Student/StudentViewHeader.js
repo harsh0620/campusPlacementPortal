@@ -26,15 +26,15 @@ const StudentViewHeader = ({handleCapture}) => {
 
           </button>
 }
-          <button className="flex flex-col justify-center items-center mx-auto border bg-white px-4 py-2 rounded-lg mr-2 text-sm font-medium" onClick={handleCapture}>
-            <FaFileDownload title="Download PDF"/>
+          <button title="Download PDF" className="flex flex-col justify-center items-center mx-auto border bg-white px-2 py-1 rounded-lg mr-2 text-sm font-medium" onClick={handleCapture}>
+            <FaFileDownload />
             <span className="font-bold text-xs">PDF</span>
           </button>
           <button
-            className="flex flex-col justify-center items-center mx-auto border bg-white px-4 py-2 rounded-lg text-sm font-medium"
+            title="Download CSV" className="flex flex-col justify-center items-center mx-auto border bg-white px-2 py-1 rounded-lg text-sm font-medium"
           >
         
-          <FaFileDownload title="Download CSV"/>
+          <FaFileDownload />
             <span className="font-bold text-xs">CSV</span>
           </button>
         </div>

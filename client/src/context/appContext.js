@@ -77,6 +77,19 @@ import {
   UPDATE_PROFILE_BASIC_BEGIN,
   GET_PROFILE_BASIC_BEGIN,
   GET_PROFILE_BASIC_SUCCESS,
+  GET_JOBSBYSTUDENT_BEGIN,
+  GET_JOBSBYSTUDENT_SUCCESS,
+  GET_JOBSBYIDBYSTUDENT_BEGIN,
+  GET_JOBSBYIDBYSTUDENT_SUCCESS,
+  GET_COMPANIESBYIDBYSTUDENT_SUCCESS,
+  GET_COMPANIESBYIDBYSTUDENT_BEGIN,
+  GET_COMPANIESBYSTUDENT_BEGIN,
+  GET_COMPANIESBYSTUDENT_SUCCESS,
+  APPLY_JOBBYSTUDENT_BEGIN,
+  APPLY_JOBBYSTUDENT_SUCCESS,
+  APPLY_JOBBYSTUDENT_ERROR,
+  GET_STATSBYSTUDENT_BEGIN,
+  GET_STATSBYSTUDENT_SUCCESS,
 } from "./actions";
 
 
@@ -89,6 +102,8 @@ export const initialState = {
   alertText: "",
   alertType: "",
   user: user ? JSON.parse(user) : null,
+  filledPercentageStudent: 0,
+  jobsCalendarStudent: [],
   token: token,
   imageUrl: "",
   pdfUrl: "",
@@ -211,13 +226,18 @@ export const initialState = {
   documentPhoto: "",
   documentAadhar: "",
   documentAllDocument: "",
+  statsForStudent:{},
   designation: "",
   phone: "",
   aadharno: "",
   studentsByAdmin: [],
   companiesByAdmin: [],
   jobsByAdmin: [],
-  specificJobs: {},
+  studentsByStudent: [],
+  companiesByStudent: [],
+  jobsByStudent: [],
+  specificJob: {},
+  specificJobApplied: {},
   specificCompany: {
     name: "",
     address: "",
@@ -255,64 +275,98 @@ export const initialState = {
   mailSubject: "",
   mailBody: "",
   specificStudent: {
-    applicationStatus: "unverified",
-    enrollmentNo: "",
-    name: "",
-    email: "",
-    password: "",
-    placementDetails: {
-      applied: false,
-      selected: "no",
-      selectedIn: {
-        company: null,
-        jobProfile: "",
-        package: null,
-        joiningDate: null,
-      },
-      appliedIn: [],
-    },
-    personalDetails: {
-      profileImage: "",
-      dob: null,
-      gender: "Male",
-      contactNo: "",
-      aadharNo: "",
-      program: "",
-      stream: "",
-      collegeName: "",
-      universityName: "",
-      fatherName: "",
-      motherName: "",
-      currentAddress: "",
-      permanentAddress: "",
-      homeCity: "",
-      homeState: "",
-      homeCountry: "",
-      pincode: "",
-    },
-    academicDetails: [
-      {
-        degree: "",
-        specialization: "",
-        institute: "",
-        yearOfPassing: new Date().getFullYear(),
-        board: "",
-        result: {
-          option: "CGPA",
-          value: null,
+      applicationStatus: "unverified",
+      enrollmentNo: "",
+      name: "",
+      email:"",
+      about:"",
+      placementDetails: {
+        applied: false,
+        selected: "no",
+        selectedIn: {
+          company: "",
+          jobProfile: "",
+          package: "",
+          joiningDate: "",
         },
-        numberOfSemesters: null,
-        backlogSubjects: null,
-        semesters: [
+        appliedIn: [
           {
-            value: null,
+            company: "",
+            jobProfile: "",
           },
         ],
       },
-    ],
-
-   
-  },
+      personalDetails: {
+        profileImage: "",
+        dob: "",
+        gender: "Male",
+        contactNo:"",
+        aadharNo: "",
+        program: "B.Tech",
+        stream: "Computer Science",
+        collegeName: "",
+        universityName: "",
+        fatherName: "",
+        motherName: "",
+        currentAddress: "",
+        permanentAddress: "",
+        homeCity: "",
+        homeState: "",
+        homeCountry: "",
+        pincode: "",
+      },
+      academicDetails: [
+        {
+          degree: "",
+          specialization: "",
+          institute: "",
+          yearOfPassing: "",
+          board: "",
+          result: {
+            option: "CGPA",
+            value: 0,
+          },
+          numberOfSemesters: 0,
+          backlogSubjects: 0,
+        },
+      ],
+      professionalDetails: {
+        experiences: [
+          {
+            companyName: "",
+            designation: "",
+            duration:0,
+            location: "",
+            jobDescription: "",
+            from: "",
+            to: ""
+          },
+        ],
+        projects: [
+          {
+            projectName: "",
+            projectDescription: "",
+            sourceCodeLink: "",
+            liveLink: "",
+          },
+        ],
+        skills: [],
+        certifications: [
+          {
+            certificationName:"",
+            certificationAuthority: "",
+            certificationLink: ""
+          },
+        ],
+        links: [],
+      },
+      documents: {
+        resume: "",
+        photo: "",
+        aadhar: "",
+        allDocument:"",
+      },
+    }
 };
 const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
@@ -733,11 +787,30 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const getStudentById = async ({userType,id}) => {
+  const getStudentByIdByAdmin = async (id) => {
     console.log(id);
     dispatch({ type: GET_STUDENTSBYIDBYADMIN_BEGIN });
     try {
-      const { data } = await authFetch(`/${userType}/students/${id}`);
+      const { data } = await authFetch(`/admin/students/${id}`);
+      console.log(data);
+      const { student } = data;
+      dispatch({
+        type: GET_STUDENTSBYIDBYADMIN_SUCCESS,
+        payload: {
+          student,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const getStudentByIdByStudent = async (id) => {
+    console.log(id);
+    dispatch({ type: GET_STUDENTSBYIDBYADMIN_BEGIN });
+    try {
+      const { data } = await authFetch(`/student/students/${id}`);
       console.log(data);
       const { student } = data;
       dispatch({
@@ -1171,6 +1244,128 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+  const searchCompaniesByStudent = async () => {
+    dispatch({ type: GET_COMPANIESBYSTUDENT_BEGIN });
+    try {
+      const { data } = await authFetch(`/student/company`);
+      const { companies } = data;
+      dispatch({
+        type: GET_COMPANIESBYSTUDENT_SUCCESS,
+        payload: {
+          companies,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const getCompanyByIdByStudent = async (id) => {
+    dispatch({ type: GET_COMPANIESBYIDBYSTUDENT_BEGIN });
+    try {
+      const { data } = await authFetch(`/student/company/${id}`);
+      console.log(data);
+      const { company } = data;
+      console.log(company);
+      dispatch({
+        type: GET_COMPANIESBYIDBYSTUDENT_SUCCESS,
+        payload: {
+          company,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const searchJobsByStudent = async () => {
+    dispatch({ type: GET_JOBSBYSTUDENT_BEGIN });
+    try {
+      const { data } = await authFetch(`/student/job`);
+      const { jobs } = data;
+      console.log(jobs);
+      dispatch({
+        type: GET_JOBSBYSTUDENT_SUCCESS,
+        payload: {
+          jobs,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const getJobsByIdByStudent = async (id) => {
+    dispatch({ type: GET_JOBSBYIDBYSTUDENT_BEGIN });
+    try {
+      const { data } = await authFetch(`/student/job/${id}`);
+      console.log(data);
+      const { job,applied } = data;
+      console.log(job);
+      console.log("Applied",applied)
+      dispatch({
+        type: GET_JOBSBYIDBYSTUDENT_SUCCESS,
+        payload: {
+          job,
+          applied,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+
+  const applyJobByStudent = async ({jobId}) => {
+    dispatch({ type: APPLY_JOBBYSTUDENT_BEGIN });
+    try {
+      const { data } = await authFetch.patch(`/student/apply/${jobId}`);
+      const { message,job } = data;
+      dispatch({
+        type: APPLY_JOBBYSTUDENT_SUCCESS,
+        payload: {
+          job,
+        },
+      });
+      toast.success(message);
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: APPLY_JOBBYSTUDENT_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Creating Admin: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const getStatsByStudent = async (id) => {
+    dispatch({ type: GET_STATSBYSTUDENT_BEGIN });
+    try {
+      const { data } = await authFetch(`/student/stats`);
+      const filledPercentage= await authFetch(`/student/calculateProfileFilledPercentage`);
+      const jobCalendar= await authFetch(`/student/jobsCalendar`);
+      console.log(jobCalendar.data);
+      console.log(jobCalendar.data.events);
+      const { stats} = data;
+      dispatch({
+        type: GET_STATSBYSTUDENT_SUCCESS,
+        payload: {
+          stats,
+          //upto 2 decimals
+          filledPercentageStudent:filledPercentage.data.filledPercentage,
+          jobsCalendarStudent:jobCalendar.data.events
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
   return (
     <AppContext.Provider
       value={{
@@ -1184,7 +1379,7 @@ const AppProvider = ({ children }) => {
         loginUser,
         logoutUser,
         searchStudentsByAdmin,
-        getStudentById,
+        getStudentByIdByAdmin,
         searchCompaniesByAdmin,
         searchJobsByAdmin,
         getCompanyByIdByAdmin,
@@ -1201,6 +1396,7 @@ const AppProvider = ({ children }) => {
         verifyStudent,
         sendJobNotification,
         // STUDENT SIDE
+        getStudentByIdByStudent,
         getStudentProfileBasics,
         updateStudentProfileBasics,
         getStudentProfilePersonal,
@@ -1211,6 +1407,12 @@ const AppProvider = ({ children }) => {
         updateStudentProfileProfessional,
         getStudentProfileDocuments,
         updateStudentProfileDocuments,
+        searchCompaniesByStudent,
+        getCompanyByIdByStudent,
+        searchJobsByStudent,
+        getJobsByIdByStudent,
+        applyJobByStudent,
+        getStatsByStudent,
       }}
     >
       {children}

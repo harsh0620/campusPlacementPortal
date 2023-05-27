@@ -72,6 +72,19 @@ import {
   UPDATE_PROFILE_BASIC_BEGIN,
   GET_PROFILE_BASIC_SUCCESS,
   GET_PROFILE_BASIC_BEGIN,
+  GET_COMPANIESBYSTUDENT_BEGIN,
+  GET_COMPANIESBYSTUDENT_SUCCESS,
+  GET_COMPANIESBYIDBYSTUDENT_BEGIN,
+  GET_COMPANIESBYIDBYSTUDENT_SUCCESS,
+  GET_JOBSBYSTUDENT_BEGIN,
+  GET_JOBSBYSTUDENT_SUCCESS,
+  GET_JOBSBYIDBYSTUDENT_BEGIN,
+  GET_JOBSBYIDBYSTUDENT_SUCCESS,
+  APPLY_JOBBYSTUDENT_BEGIN,
+  APPLY_JOBBYSTUDENT_SUCCESS,
+  APPLY_JOBBYSTUDENT_ERROR,
+  GET_STATSBYSTUDENT_SUCCESS,
+  GET_STATSBYSTUDENT_BEGIN,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -315,324 +328,395 @@ const reducer = (state, action) => {
         isLoading: false,
         specificStudent: action.payload.student,
       };
-    case GET_COMPANIESBYADMIN_BEGIN:
+    case GET_COMPANIESBYADMIN_BEGIN || GET_COMPANIESBYSTUDENT_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_COMPANIESBYADMIN_SUCCESS:
+    case GET_COMPANIESBYADMIN_SUCCESS || GET_COMPANIESBYSTUDENT_SUCCESS:
       return {
         ...state,
         isLoading: false,
+        companiesByStudent: action.payload.companies,
         companiesByAdmin: action.payload.companies,
       };
-    case GET_COMPANIESBYIDBYADMIN_BEGIN:
+    case GET_COMPANIESBYIDBYADMIN_BEGIN || GET_COMPANIESBYIDBYSTUDENT_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_COMPANIESBYIDBYADMIN_SUCCESS:
+    case GET_COMPANIESBYIDBYADMIN_SUCCESS || GET_COMPANIESBYIDBYSTUDENT_SUCCESS:
       console.log(action.payload.company);
       return {
         ...state,
         isLoading: false,
         specificCompany: action.payload.company,
       };
-    case GET_JOBSBYADMIN_BEGIN:
+    case GET_JOBSBYADMIN_BEGIN || GET_JOBSBYSTUDENT_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_JOBSBYADMIN_SUCCESS:
+    case GET_JOBSBYADMIN_SUCCESS || GET_JOBSBYSTUDENT_SUCCESS:
       console.log(action.payload.jobs);
       return {
         ...state,
         isLoading: false,
+        jobsByStudent: action.payload.jobs,
         jobsByAdmin: action.payload.jobs,
       };
-    case GET_JOBSBYIDBYADMIN_BEGIN:
+    case GET_JOBSBYIDBYADMIN_BEGIN || GET_JOBSBYIDBYSTUDENT_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_JOBSBYIDBYADMIN_SUCCESS:
+    case GET_JOBSBYIDBYADMIN_SUCCESS || GET_JOBSBYIDBYSTUDENT_SUCCESS:
       console.log(action.payload.job);
       return {
         ...state,
         isLoading: false,
         specificJob: action.payload.job,
       };
-      case VERIFY_JOB_BEGIN:
-        return { ...state, isLoading: true, showAlert: false };
-      case VERIFY_JOB_SUCCESS:
-        return {
-          ...state,
-          isLoading: false,
-        };
-      case VERIFY_JOB_ERROR:
-        return {
-          ...state,
-          isLoading: false,
-          showAlert: true,
-          alertType: "error",
-          alertText: action.payload.msg,
-        };
-      case VERIFY_STUDENT_BEGIN:
-        return { ...state, isLoading: true, showAlert: false };
-      case VERIFY_STUDENT_SUCCESS:
-        return {
-          ...state,
-          isLoading: false,
-        };
-      case VERIFY_STUDENT_ERROR:
-        return {
-          ...state,
-          isLoading: false,
-          showAlert: true,
-          alertType: "error",
-          alertText: action.payload.msg,
-        };
-      case SEND_NOTIFICATION_BEGIN:
-        return { ...state, isLoading: true, showAlert: false };
-      case SEND_NOTIFICATION_SUCCESS:
-        return {
-          ...state,
-          isLoading: false,
-        };
-      case SEND_NOTIFICATION_ERROR:
-        return {
-          ...state,
-          isLoading: false,
-          showAlert: true,
-          alertType: "error",
-          alertText: action.payload.msg,
-        };
-      // STUDENT SIDE:
-      case GET_PROFILE_BASIC_BEGIN:
-        return {
-          ...state,
-          isLoading: true,
-        };
-      case GET_PROFILE_BASIC_SUCCESS:
-        return {
-          ...state,
-          name: action?.payload?.basicDetails?.name,
-          enrollmentNo: action?.payload?.basicDetails?.enrollmentNo,
-          about: action?.payload?.basicDetails?.about,
-          isLoading: false,
-          showAlert: true,
-          alertType: "success",
-          alertText: "Profile updated successfully!",
-        };
-      case UPDATE_PROFILE_BASIC_BEGIN:
-        return {
-          ...state,
-          isLoading: true,
-        };
-      case UPDATE_PROFILE_BASIC_SUCCESS:
-        return {
-          ...state,
-          name: action?.payload?.basicDetails?.name,
-          enrollmentNo: action?.payload?.basicDetails?.enrollmentNo,
-          about: action?.payload?.basicDetails?.about,
-          isLoading: false,
-          showAlert: true,
-          alertType: "success",
-          alertText: "Profile updated successfully!",
-        };
-      case UPDATE_PROFILE_BASIC_ERROR:
-        return {
-          ...state,
-          isLoading: false,
-          showAlert: true,
-          alertType: "error",
-          alertText: action.payload.msg,
-        };
+    case VERIFY_JOB_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case VERIFY_JOB_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      };
+    case VERIFY_JOB_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case VERIFY_STUDENT_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case VERIFY_STUDENT_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      };
+    case VERIFY_STUDENT_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case SEND_NOTIFICATION_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case SEND_NOTIFICATION_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      };
+    case SEND_NOTIFICATION_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    // STUDENT SIDE:
+    case GET_PROFILE_BASIC_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case GET_PROFILE_BASIC_SUCCESS:
+      return {
+        ...state,
+        name: action?.payload?.basicDetails?.name,
+        enrollmentNo: action?.payload?.basicDetails?.enrollmentNo,
+        about: action?.payload?.basicDetails?.about,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_BASIC_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case UPDATE_PROFILE_BASIC_SUCCESS:
+      return {
+        ...state,
+        name: action?.payload?.basicDetails?.name,
+        enrollmentNo: action?.payload?.basicDetails?.enrollmentNo,
+        about: action?.payload?.basicDetails?.about,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_BASIC_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
 
+    case GET_PROFILE_PERSONAL_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case GET_PROFILE_PERSONAL_SUCCESS:
+      return {
+        ...state,
+        dob: action?.payload?.personalDetails?.dob,
+        gender: action?.payload?.personalDetails?.gender,
+        contactNo: action?.payload?.personalDetails?.contactNo,
+        aadharNo: action?.payload?.personalDetails?.aadharNo,
+        program: action?.payload?.personalDetails?.program,
+        stream: action?.payload?.personalDetails?.stream,
+        collegeName: action?.payload?.personalDetails?.collegeName,
+        universityName: action?.payload?.personalDetails?.universityName,
+        fatherName: action?.payload?.personalDetails?.fatherName,
+        motherName: action?.payload?.personalDetails?.motherName,
+        currentAddress: action?.payload?.personalDetails?.currentAddress,
+        permanentAddress: action?.payload?.personalDetails?.permanentAddress,
+        pincode: action?.payload?.personalDetails?.pincode,
+        homeCity: action?.payload?.personalDetails?.homeCity,
+        homeState: action?.payload?.personalDetails?.homeState,
+        homeCountry: action?.payload?.personalDetails?.homeCountry,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_PERSONAL_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case UPDATE_PROFILE_PERSONAL_SUCCESS:
+      return {
+        ...state,
+        dob: action?.payload?.personalDetails?.dob,
+        gender: action?.payload?.personalDetails?.gender,
+        contactNo: action?.payload?.personalDetails?.contactNo,
+        aadharNo: action?.payload?.personalDetails?.aadharNo,
+        program: action?.payload?.personalDetails?.program,
+        stream: action?.payload?.personalDetails?.stream,
+        collegeName: action?.payload?.personalDetails?.collegeName,
+        universityName: action?.payload?.personalDetails?.universityName,
+        fatherName: action?.payload?.personalDetails?.fatherName,
+        motherName: action?.payload?.personalDetails?.motherName,
+        currentAddress: action?.payload?.personalDetails?.currentAddress,
+        permanentAddress: action?.payload?.personalDetails?.permanentAddress,
+        pincode: action?.payload?.personalDetails?.pincode,
+        homeCity: action?.payload?.personalDetails?.homeCity,
+        homeState: action?.payload?.personalDetails?.homeState,
+        homeCountry: action?.payload?.personalDetails?.homeCountry,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_PERSONAL_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case GET_PROFILE_ACADEMIC_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case GET_PROFILE_ACADEMIC_SUCCESS:
+      return {
+        ...state,
+        academicDetails: action?.payload?.academicDetails,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_ACADEMIC_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case UPDATE_PROFILE_ACADEMIC_SUCCESS:
+      return {
+        ...state,
+        academicDetails: action?.payload?.academicDetails,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_ACADEMIC_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case GET_PROFILE_PROFESSIONAL_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case GET_PROFILE_PROFESSIONAL_SUCCESS:
+      return {
+        ...state,
+        professionalDetails: action?.payload?.professionalDetails,
+        professionalExperiences:
+          action?.payload?.professionalDetails?.experiences,
+        professionalProjects: action?.payload?.professionalDetails?.projects,
+        professionalCertifications:
+          action?.payload?.professionalDetails?.certifications,
+        professionalSkills: action?.payload?.professionalDetails?.skills,
+        professionalLinks: action?.payload?.professionalDetails?.links,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_PROFESSIONAL_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case UPDATE_PROFILE_PROFESSIONAL_SUCCESS:
+      return {
+        ...state,
+        professionalDetails: action?.payload?.professionalDetails,
+        professionalExperiences:
+          action?.payload?.professionalDetails?.experiences,
+        professionalProjects: action?.payload?.professionalDetails?.projects,
+        professionalCertifications:
+          action?.payload?.professionalDetails?.certifications,
+        professionalSkills: action?.payload?.professionalDetails?.skills,
+        professionalLinks: action?.payload?.professionalDetails?.links,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_PROFESSIONAL_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
 
-
-      case GET_PROFILE_PERSONAL_BEGIN:
-        return {
-          ...state,
-          isLoading: true,
-        };
-      case GET_PROFILE_PERSONAL_SUCCESS:
-        return {
-          ...state,
-          dob: action?.payload?.personalDetails?.dob,
-        gender :action?.payload?.personalDetails?.gender,
-        contactNo:action?.payload?.personalDetails?.contactNo,
-        aadharNo:action?.payload?.personalDetails?.aadharNo,
-        program:action?.payload?.personalDetails?.program,
-        stream:action?.payload?.personalDetails?.stream,
-        collegeName:action?.payload?.personalDetails?.collegeName,
-        universityName:action?.payload?.personalDetails?.universityName,
-        fatherName:action?.payload?.personalDetails?.fatherName,
-        motherName:action?.payload?.personalDetails?.motherName,
-        currentAddress:action?.payload?.personalDetails?.currentAddress,
-        permanentAddress:action?.payload?.personalDetails?.permanentAddress,
-        pincode:action?.payload?.personalDetails?.pincode,
-        homeCity:action?.payload?.personalDetails?.homeCity,
-        homeState:action?.payload?.personalDetails?.homeState,
-        homeCountry:action?.payload?.personalDetails?.homeCountry,
-          isLoading: false,
-          showAlert: true,
-          alertType: "success",
-          alertText: "Profile updated successfully!",
-        };
-      case UPDATE_PROFILE_PERSONAL_BEGIN:
-        return {
-          ...state,
-          isLoading: true,
-        };
-      case UPDATE_PROFILE_PERSONAL_SUCCESS:
-        return {
-          ...state,
-          dob: action?.payload?.personalDetails?.dob,
-        gender :action?.payload?.personalDetails?.gender,
-        contactNo:action?.payload?.personalDetails?.contactNo,
-        aadharNo:action?.payload?.personalDetails?.aadharNo,
-        program:action?.payload?.personalDetails?.program,
-        stream:action?.payload?.personalDetails?.stream,
-        collegeName:action?.payload?.personalDetails?.collegeName,
-        universityName:action?.payload?.personalDetails?.universityName,
-        fatherName:action?.payload?.personalDetails?.fatherName,
-        motherName:action?.payload?.personalDetails?.motherName,
-        currentAddress:action?.payload?.personalDetails?.currentAddress,
-        permanentAddress:action?.payload?.personalDetails?.permanentAddress,
-        pincode:action?.payload?.personalDetails?.pincode,
-        homeCity:action?.payload?.personalDetails?.homeCity,
-        homeState:action?.payload?.personalDetails?.homeState,
-        homeCountry:action?.payload?.personalDetails?.homeCountry,
-          isLoading: false,
-          showAlert: true,
-          alertType: "success",
-          alertText: "Profile updated successfully!",
-        };
-      case UPDATE_PROFILE_PERSONAL_ERROR:
-        return {
-          ...state,
-          isLoading: false,
-          showAlert: true,
-          alertType: "error",
-          alertText: action.payload.msg,
-        };
-        case GET_PROFILE_ACADEMIC_BEGIN:
-          return {
-            ...state,
-            isLoading: true,
-          };
-        case GET_PROFILE_ACADEMIC_SUCCESS:
-          return {
-            ...state,
-            academicDetails: action?.payload?.academicDetails,
-            isLoading: false,
-            showAlert: true,
-            alertType: "success",
-            alertText: "Profile updated successfully!",
-          };
-        case UPDATE_PROFILE_ACADEMIC_BEGIN:
-          return {
-            ...state,
-            isLoading: true,
-          };
-        case UPDATE_PROFILE_ACADEMIC_SUCCESS:
-          return {
-            ...state,
-            academicDetails: action?.payload?.academicDetails,
-            isLoading: false,
-            showAlert: true,
-            alertType: "success",
-            alertText: "Profile updated successfully!",
-          };
-        case UPDATE_PROFILE_ACADEMIC_ERROR:
-          return {
-            ...state,
-            isLoading: false,
-            showAlert: true,
-            alertType: "error",
-            alertText: action.payload.msg,
-          };
-          case GET_PROFILE_PROFESSIONAL_BEGIN:
-            return {
-              ...state,
-              isLoading: true,
-            };
-          case GET_PROFILE_PROFESSIONAL_SUCCESS:
-            return {
-              ...state,
-              professionalDetails: action?.payload?.professionalDetails,
-              professionalExperiences:action?.payload?.professionalDetails?.experiences,
-              professionalProjects:action?.payload?.professionalDetails?.projects,
-              professionalCertifications:action?.payload?.professionalDetails?.certifications,
-              professionalSkills:action?.payload?.professionalDetails?.skills,
-              professionalLinks:action?.payload?.professionalDetails?.links,
-              isLoading: false,
-              showAlert: true,
-              alertType: "success",
-              alertText: "Profile updated successfully!",
-            };
-          case UPDATE_PROFILE_PROFESSIONAL_BEGIN:
-            return {
-              ...state,
-              isLoading: true,
-            };
-          case UPDATE_PROFILE_PROFESSIONAL_SUCCESS:
-            return {
-              ...state,
-              professionalDetails: action?.payload?.professionalDetails,
-              professionalExperiences:action?.payload?.professionalDetails?.experiences,
-              professionalProjects:action?.payload?.professionalDetails?.projects,
-              professionalCertifications:action?.payload?.professionalDetails?.certifications,
-              professionalSkills:action?.payload?.professionalDetails?.skills,
-              professionalLinks:action?.payload?.professionalDetails?.links,
-              isLoading: false,
-              showAlert: true,
-              alertType: "success",
-              alertText: "Profile updated successfully!",
-            };
-          case UPDATE_PROFILE_PROFESSIONAL_ERROR:
-            return {
-              ...state,
-              isLoading: false,
-              showAlert: true,
-              alertType: "error",
-              alertText: action.payload.msg,
-            };
-
-
-            case GET_PROFILE_DOCUMENT_BEGIN:
-              return {
-                ...state,
-                isLoading: true,
-              };
-            case GET_PROFILE_DOCUMENT_SUCCESS:
-              return {
-                ...state,
-                documentDetails: action?.payload?.documentDetails,
-                documentResume:action?.payload?.documentDetails?.resume,
-                documentPhoto:action?.payload?.documentDetails?.photo,
-                documentAadhar:action?.payload?.documentDetails?.aadhar,
-                documentAllDocument:action?.payload?.documentDetails?.allDocument,
-                isLoading: false,
-                showAlert: true,
-                alertType: "success",
-                alertText: "Profile updated successfully!",
-              };
-            case UPDATE_PROFILE_DOCUMENT_BEGIN:
-              return {
-                ...state,
-                isLoading: true,
-              };
-            case UPDATE_PROFILE_DOCUMENT_SUCCESS:
-              return {
-                ...state,
-                documentDetails: action?.payload?.documentDetails,
-                documentResume:action?.payload?.documentDetails?.resume,
-                documentPhoto:action?.payload?.documentDetails?.photo,
-                documentAadhar:action?.payload?.documentDetails?.aadhar,
-                documentAllDocument:action?.payload?.documentDetails?.allDocument,
-                isLoading: false,
-                showAlert: true,
-                alertType: "success",
-                alertText: "Profile updated successfully!",
-              };
-            case UPDATE_PROFILE_DOCUMENT_ERROR:
-              return {
-                ...state,
-                isLoading: false,
-                showAlert: true,
-                alertType: "error",
-                alertText: action.payload.msg,
-              };
+    case GET_PROFILE_DOCUMENT_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case GET_PROFILE_DOCUMENT_SUCCESS:
+      return {
+        ...state,
+        documentDetails: action?.payload?.documentDetails,
+        documentResume: action?.payload?.documentDetails?.resume,
+        documentPhoto: action?.payload?.documentDetails?.photo,
+        documentAadhar: action?.payload?.documentDetails?.aadhar,
+        documentAllDocument: action?.payload?.documentDetails?.allDocument,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_DOCUMENT_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case UPDATE_PROFILE_DOCUMENT_SUCCESS:
+      return {
+        ...state,
+        documentDetails: action?.payload?.documentDetails,
+        documentResume: action?.payload?.documentDetails?.resume,
+        documentPhoto: action?.payload?.documentDetails?.photo,
+        documentAadhar: action?.payload?.documentDetails?.aadhar,
+        documentAllDocument: action?.payload?.documentDetails?.allDocument,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Profile updated successfully!",
+      };
+    case UPDATE_PROFILE_DOCUMENT_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case GET_COMPANIESBYSTUDENT_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_COMPANIESBYSTUDENT_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        companiesByStudent: action.payload.companies,
+      };
+    case GET_COMPANIESBYIDBYSTUDENT_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_COMPANIESBYIDBYSTUDENT_SUCCESS:
+      console.log(action.payload.company);
+      return {
+        ...state,
+        isLoading: false,
+        specificCompany: action.payload.company,
+      };
+    case GET_JOBSBYSTUDENT_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_JOBSBYSTUDENT_SUCCESS:
+      console.log(action.payload.jobs);
+      return {
+        ...state,
+        isLoading: false,
+        jobsByStudent: action.payload.jobs,
+      };
+    case GET_JOBSBYIDBYSTUDENT_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_JOBSBYIDBYSTUDENT_SUCCESS:
+      console.log(action.payload.job);
+      return {
+        ...state,
+        isLoading: false,
+        specificJob: action.payload.job,
+        specificJobApplied: action.payload.applied,
+      };
+    case APPLY_JOBBYSTUDENT_BEGIN:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case APPLY_JOBBYSTUDENT_SUCCESS:
+      return {
+        ...state,
+        specificJob: action.payload.job,
+        isLoading: false,
+        showAlert: true,
+        alertType: "success",
+        alertText: "Applied successfully!",
+      };
+    case APPLY_JOBBYSTUDENT_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case GET_STATSBYSTUDENT_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_STATSBYSTUDENT_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        statsForStudent: action.payload.stats,
+        filledPercentageStudent: action.payload.filledPercentage,
+        jobsCalendarStudent: action.payload.jobsCalendarStudent,
+      };
     default:
       throw new Error(`no such action :${action.type}`);
   }

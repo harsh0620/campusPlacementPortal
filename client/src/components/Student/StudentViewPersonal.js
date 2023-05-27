@@ -54,7 +54,7 @@ const StudentViewPersonalComp = () => {
             </div>
             <div>
               <p className="text-gray-700 font-medium">Date of Birth:</p>
-              <p>{specificStudent?.personalDetails?.dob}</p>
+              <p>{new Date(specificStudent?.personalDetails?.dob).toLocaleDateString()}</p>
             </div>
             <div>
               <p className="text-gray-700 font-medium">Gender</p>

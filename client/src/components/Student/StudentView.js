@@ -16,7 +16,7 @@ import StudentViewAbout from './StudentViewAbout';
 import StudentViewDocuments from './StudentViewDocuments';
 
 const StudentView = ({userType}) => {
-  const {getStudentById,isLoading}=useAppContext();
+  const {getStudentByIdByStudent,getStudentByIdByAdmin,user,isLoading}=useAppContext();
     const params=useParams();
     const {id}=params;
     const componentRef = useRef(null);
@@ -32,7 +32,13 @@ const StudentView = ({userType}) => {
     };
     useEffect(() => {
       console.log(userType);
-      getStudentById({userType:userType,id:id});
+      if(user?.role==="student"){
+        getStudentByIdByStudent(id);
+      }
+      else if(user?.role==="admin")
+      {
+        getStudentByIdByAdmin(id);
+      }
       // eslint-disable-next-line
     }, [])
 

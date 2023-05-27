@@ -16,7 +16,7 @@ import {
 } from "../controller/studentAuthController.js";
 import authenticateUser from "../middleware/auth.js";
 import { loginUser } from "../controller/authController.js";
-import { applyToJobDrive, getStudentById } from "../controller/studentController.js";
+import { applyToJobDrive, calculateProfileFilledPercentage, getCompany, getCompanyById, getJob, getJobById, getJobsCalendar, getStats, getStudentById } from "../controller/studentController.js";
 /**
  * @desc Register a new student user
  * @route POST /api/v1/student/auth/register
@@ -37,6 +37,37 @@ router.route("/auth/login").post(loginUser);
  * @access Private
  */
 router.route("/students/:studentId").get(authenticateUser, getStudentById);
+
+/**
+ * Get company
+ *
+ * @route GET /api/v1/student/company
+ * @access Private
+ */
+router.route("/company").get(authenticateUser,getCompany);
+
+/**
+ * Get company by id
+ * @route GET /api/v1/student/company/:companyId
+ * @access Private
+ * */
+router.route("/company/:companyId").get(authenticateUser,getCompanyById);
+/**
+ * Get job
+ *
+ * @route GET /api/v1/student/job
+ * @access Private
+ */
+router.route("/job").get(authenticateUser,getJob);
+
+/**
+ * Get job by id
+ * @route GET /api/v1/student/job/:jobId
+ * @access Private
+ * */
+router.route("/job/:jobId").get(authenticateUser,getJobById);
+
+
 /**
  * @desc Update an existing student user's personalDetails
  * @route PATCH /api/v1/student/basicDetails
@@ -92,4 +123,9 @@ router
  * @access Private
  */
 router.route("/apply/:jobDriveId").patch(authenticateUser, applyToJobDrive);
+
+
+router.route("/calculateProfileFilledPercentage").get(authenticateUser, calculateProfileFilledPercentage)
+router.route("/stats").get(authenticateUser, getStats)
+router.route("/jobsCalendar").get(authenticateUser, getJobsCalendar)
 export default router;

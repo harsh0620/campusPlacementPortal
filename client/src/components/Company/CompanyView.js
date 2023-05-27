@@ -10,12 +10,16 @@ import { FaList } from 'react-icons/fa';
 import CompanyViewJobs from './CompanyViewJobs';
 
 const CompanyView = () => {
-    const {getCompanyByIdByAdmin,isLoading}=useAppContext();
+    const {getCompanyByIdByAdmin,getCompanyByIdByStudent,isLoading,user}=useAppContext();
     const params=useParams();
     const {id}=params;
     useEffect(() => {
+      if(user?.role==="admin"){
         getCompanyByIdByAdmin(id);
-      // eslint-disable-next-line
+    }else if(user?.role==="student"){
+        getCompanyByIdByStudent(id);
+    }
+     // eslint-disable-next-line
     }, [])
   
       if(isLoading) return <Loader backgroundColor="text-gray-300" loaderColor="fill-black" text="Loading"/>

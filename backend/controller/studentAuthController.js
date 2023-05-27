@@ -120,7 +120,10 @@ const updateBasicDetailsStudent = async (req, res, next) => {
     if (!student) {
       throw new NotFoundError(`No student with id :${userId}`);
     }
-
+    if(student.applicationStatus==="verified")
+    {
+      throw new BadRequestError("You cannot update your profile after getting verified");
+    }
     // Update the student user's personal details in the database
     const updatedStudent = await Student.findOneAndUpdate(
       { _id: userId },
@@ -202,7 +205,10 @@ const updatePersonalDetailsStudent = async (req, res, next) => {
     if (!student) {
       throw new NotFoundError(`No student with id :${userId}`);
     }
-
+    if(student.applicationStatus==="verified")
+    {
+      throw new BadRequestError("You cannot update your profile after getting verified");
+    }
     // Update the student user's personal details in the database
     const updatedStudent = await Student.findOneAndUpdate(
       { _id: userId },
@@ -281,7 +287,10 @@ const updateAcademicDetailsStudent = async (req, res, next) => {
     if (!student) {
       throw new NotFoundError(`No student with id :${userId}`);
     }
-    console.log(req.body);
+    if(student.applicationStatus==="verified")
+   {
+     throw new BadRequestError("You cannot update your profile after getting verified");
+   }
     // Update the student user's personal details in the database
     const updatedStudent = await Student.findOneAndUpdate(
       { _id: userId },
@@ -359,7 +368,10 @@ const updateProfessionalDetailsStudent = async (req, res, next) => {
    if (!student) {
      throw new NotFoundError(`No student with id :${userId}`);
    }
-   console.log(student);
+   if(student.applicationStatus==="verified")
+   {
+     throw new BadRequestError("You cannot update your profile after getting verified");
+   }
    // Update the student user's personal details in the database
    const updatedStudent = await Student.findOneAndUpdate(
      { _id: userId },
@@ -438,7 +450,10 @@ const updateDocumentStudent = async (req, res, next) => {
    if (!student) {
      throw new NotFoundError(`No student with id :${userId}`);
    }
-
+   if(student.applicationStatus==="verified")
+   {
+     throw new BadRequestError("You cannot update your profile after getting verified");
+   }
    // Update the student user's personal details in the database
    let updatedStudent = await Student.findOneAndUpdate(
      { _id: userId },

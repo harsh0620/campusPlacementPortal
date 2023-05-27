@@ -95,7 +95,7 @@ const JobsViewDetailsComp = () => {
             </div>
             <div>
               <p className="text-gray-700 font-medium">Pdf Link:</p>
-              <p>{specificJob?.pdfLink}</p>
+              <a href={specificJob?.pdfLink} target="_blank" rel="noreferrer" className="text-blue-500">{specificJob?.pdfLink}</a>
             </div>
           </div>
         )}

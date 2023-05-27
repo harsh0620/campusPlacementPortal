@@ -19,7 +19,7 @@ const AvatarMenu = () => {
 
   const handleProfile = () => {
     setIsMenuOpen(false);
-    navigate("/profile");
+    navigate(`/profile/${user?._id}`);
   };
   const handleViewPrivacyPolicy = () => {
     setIsMenuOpen(false);

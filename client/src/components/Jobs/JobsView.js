@@ -7,11 +7,16 @@ import JobsViewDetails from './JobsViewDetails';
 import JobsViewAppliedStudents from './JobsViewAppliedStudents';
 
 const JobsView = () => {
-    const {getJobsByIdByAdmin,isLoading,user}=useAppContext();
+    const {getJobsByIdByAdmin,getJobsByIdByStudent,isLoading,user}=useAppContext();
     const params=useParams();
     const {id}=params;
     useEffect(() => {
+      if(user?.role==="admin"){
         getJobsByIdByAdmin(id);
+      }
+      else if(user?.role==="student"){
+        getJobsByIdByStudent(id);
+      }
       // eslint-disable-next-line
     }, [])
   

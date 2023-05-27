@@ -67,13 +67,14 @@ const studentSchema = mongoose.Schema({
     },
     appliedIn: [
       {
-        company: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Company",
-        },
-        jobProfile: {
-          type: String,
-        },
+      },
+    ],
+    rejectedFrom: [
+      {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Company",
       },
     ],
   },

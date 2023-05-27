@@ -9,7 +9,6 @@ const AdminJobs = () => {
   useEffect(() => {
     searchJobsByAdmin();
     console.log(jobsByAdmin);
-    // eslint-disable-next-line
   // eslint-disable-next-line
     }, []);
   if (isLoading) {
