@@ -16,7 +16,7 @@ import StudentViewAbout from './StudentViewAbout';
 import StudentViewDocuments from './StudentViewDocuments';
 
 const StudentView = ({userType}) => {
-  const {getStudentByIdByStudent,getStudentByIdByAdmin,user,isLoading}=useAppContext();
+  const {getStudentByIdByStudent,getStudentByIdByAdmin,getStudentByIdByCompany,user,isLoading}=useAppContext();
     const params=useParams();
     const {id}=params;
     const componentRef = useRef(null);
@@ -38,6 +38,10 @@ const StudentView = ({userType}) => {
       else if(user?.role==="admin")
       {
         getStudentByIdByAdmin(id);
+      }
+      else if(user?.role==="company")
+      {
+        getStudentByIdByCompany(id);
       }
       // eslint-disable-next-line
     }, [])

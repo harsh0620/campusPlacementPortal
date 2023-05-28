@@ -31,12 +31,6 @@ router.route("/auth/register").post(registerStudent);
  */
 router.route("/auth/login").post(loginUser);
 
-/**
- * @desc Get a student by id
- * @route GET /api/v1/student/students/:studentId
- * @access Private
- */
-router.route("/students/:studentId").get(authenticateUser, getStudentById);
 
 /**
  * Get company
@@ -128,4 +122,12 @@ router.route("/apply/:jobDriveId").patch(authenticateUser, applyToJobDrive);
 router.route("/calculateProfileFilledPercentage").get(authenticateUser, calculateProfileFilledPercentage)
 router.route("/stats").get(authenticateUser, getStats)
 router.route("/jobsCalendar").get(authenticateUser, getJobsCalendar)
+
+/**
+ * @desc Get a student by id
+ * @route GET /api/v1/student/students/:studentId
+ * @access Private
+ */
+router.route("/:studentId").get(authenticateUser, getStudentById);
+
 export default router;

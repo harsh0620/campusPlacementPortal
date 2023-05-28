@@ -85,6 +85,31 @@ import {
   APPLY_JOBBYSTUDENT_ERROR,
   GET_STATSBYSTUDENT_SUCCESS,
   GET_STATSBYSTUDENT_BEGIN,
+  GET_COMPANIESBYIDBYCOMPANY_BEGIN,
+  GET_COMPANIESBYIDBYCOMPANY_SUCCESS,
+  UPDATE_PROFILEBYCOMPANY_ERROR,
+  UPDATE_PROFILEBYCOMPANY_SUCCESS,
+  UPDATE_PROFILEBYCOMPANY_BEGIN,
+  GET_JOBSBYCOMPANY_BEGIN,
+  GET_JOBSBYCOMPANY_SUCCESS,
+  GET_JOBSBYIDBYCOMPANY_BEGIN,
+  GET_JOBSBYIDBYCOMPANY_SUCCESS,
+  GET_STUDENTSBYIDBYSTUDENT_BEGIN,
+  GET_STUDENTSBYIDBYSTUDENT_SUCCESS,
+  GET_STUDENTSBYIDBYCOMPANY_BEGIN,
+  GET_STUDENTSBYIDBYCOMPANY_SUCCESS,
+  CREATE_JOBDRIVEBYCOMPANY_BEGIN,
+  CREATE_JOBDRIVEBYCOMPANY_SUCCESS,
+  CREATE_JOBDRIVEBYCOMPANY_ERROR,
+  UPDATE_JOBDRIVEBYCOMPANY_ERROR,
+  UPDATE_JOBDRIVEBYCOMPANY_SUCCESS,
+  UPDATE_JOBDRIVEBYCOMPANY_BEGIN,
+  DELETE_JOBDRIVEBYCOMPANY_BEGIN,
+  DELETE_JOBDRIVEBYCOMPANY_SUCCESS,
+  DELETE_JOBDRIVEBYCOMPANY_ERROR,
+  ACTIONON_JOBDRIVEBYCOMPANY_BEGIN,
+  ACTIONON_JOBDRIVEBYCOMPANY_SUCCESS,
+  ACTIONON_JOBDRIVEBYCOMPANY_ERROR,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -328,27 +353,35 @@ const reducer = (state, action) => {
         isLoading: false,
         specificStudent: action.payload.student,
       };
-    case GET_COMPANIESBYADMIN_BEGIN || GET_COMPANIESBYSTUDENT_BEGIN:
+    case GET_STUDENTSBYIDBYSTUDENT_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_COMPANIESBYADMIN_SUCCESS || GET_COMPANIESBYSTUDENT_SUCCESS:
+    case GET_STUDENTSBYIDBYSTUDENT_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        specificStudent: action.payload.student,
+      };
+    case GET_COMPANIESBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_COMPANIESBYADMIN_SUCCESS:
       return {
         ...state,
         isLoading: false,
         companiesByStudent: action.payload.companies,
         companiesByAdmin: action.payload.companies,
       };
-    case GET_COMPANIESBYIDBYADMIN_BEGIN || GET_COMPANIESBYIDBYSTUDENT_BEGIN:
+    case GET_COMPANIESBYIDBYADMIN_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_COMPANIESBYIDBYADMIN_SUCCESS || GET_COMPANIESBYIDBYSTUDENT_SUCCESS:
+    case GET_COMPANIESBYIDBYADMIN_SUCCESS:
       console.log(action.payload.company);
       return {
         ...state,
         isLoading: false,
         specificCompany: action.payload.company,
       };
-    case GET_JOBSBYADMIN_BEGIN || GET_JOBSBYSTUDENT_BEGIN:
+    case GET_JOBSBYADMIN_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_JOBSBYADMIN_SUCCESS || GET_JOBSBYSTUDENT_SUCCESS:
+    case GET_JOBSBYADMIN_SUCCESS:
       console.log(action.payload.jobs);
       return {
         ...state,
@@ -356,9 +389,9 @@ const reducer = (state, action) => {
         jobsByStudent: action.payload.jobs,
         jobsByAdmin: action.payload.jobs,
       };
-    case GET_JOBSBYIDBYADMIN_BEGIN || GET_JOBSBYIDBYSTUDENT_BEGIN:
+    case GET_JOBSBYIDBYADMIN_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
-    case GET_JOBSBYIDBYADMIN_SUCCESS || GET_JOBSBYIDBYSTUDENT_SUCCESS:
+    case GET_JOBSBYIDBYADMIN_SUCCESS:
       console.log(action.payload.job);
       return {
         ...state,
@@ -714,8 +747,189 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         statsForStudent: action.payload.stats,
-        filledPercentageStudent: action.payload.filledPercentage,
+        filledPercentageStudent: action.payload.filledPercentageStudent,
         jobsCalendarStudent: action.payload.jobsCalendarStudent,
+      };
+    //COMPANY SIDE
+    case GET_COMPANIESBYIDBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_COMPANIESBYIDBYCOMPANY_SUCCESS:
+      console.log(action.payload.company);
+      return {
+        ...state,
+        isLoading: false,
+        specificCompany: action?.payload?.company,
+        companyName: action?.payload?.company?.name,
+        companyEmail: action?.payload?.company?.email,
+        companyPhone: action?.payload?.company?.companyPhone,
+        companyAddress: action?.payload?.company?.address,
+        companyLogo: action?.payload?.company?.logo,
+        companyWebsite: action?.payload?.company?.website,
+        companyDescription: action?.payload?.company?.description,
+        companyLinkedin: action?.payload?.company?.linkedin,
+        companyPrograms: action?.payload?.company?.programs,
+        companyStreams: action?.payload?.company?.streams,
+        hrName: action?.payload?.company?.hr?.name,
+        hrEmail: action?.payload?.company?.hr?.email,
+        hrPhone: action?.payload?.company?.hr?.phone,
+      };
+    case UPDATE_PROFILEBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case UPDATE_PROFILEBYCOMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        specificCompany: action?.payload?.company,
+        companyName: action?.payload?.company?.name,
+        companyEmail: action?.payload?.company?.email,
+        companyPhone: action?.payload?.company?.companyPhone,
+        companyAddress: action?.payload?.company?.address,
+        companyLogo: action?.payload?.company?.logo,
+        companyWebsite: action?.payload?.company?.website,
+        companyDescription: action?.payload?.company?.description,
+        companyLinkedin: action?.payload?.company?.linkedin,
+        companyPrograms: action?.payload?.company?.programs,
+        companyStreams: action?.payload?.company?.streams,
+        hrName: action?.payload?.company?.hr?.name,
+        hrEmail: action?.payload?.company?.hr?.email,
+        hrPhone: action?.payload?.company?.hr?.phone,
+      };
+    case UPDATE_PROFILEBYCOMPANY_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case GET_JOBSBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_JOBSBYCOMPANY_SUCCESS:
+      console.log(action.payload.jobs);
+      return {
+        ...state,
+        isLoading: false,
+        jobsByCompany: action.payload.jobs,
+      };
+    case GET_JOBSBYIDBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_JOBSBYIDBYCOMPANY_SUCCESS:
+      console.log(action.payload.job);
+      return {
+        ...state,
+        isLoading: false,
+        specificJob: action.payload.job,
+        jobDriveDesignations: action?.payload?.job?.designations,
+        jobDriveLocations: action?.payload?.job?.locations,
+        jobDriveStreams: action?.payload?.job?.streams,
+        jobDrivePrograms: action?.payload?.job?.programs,
+        jobDriveStartDate: action?.payload?.job?.startDate,
+        jobDriveEndDate: action?.payload?.job?.lastDate,
+        jobDriveEligibilityCriteriaBacklog:
+          action?.payload?.job?.eligibilityCriteria?.backlog,
+        jobDriveEligibilityCriteriaCgpa:
+          action?.payload?.job?.eligibilityCriteria?.cgpa,
+        jobDriveDriveDate: action?.payload?.job?.driveDate,
+        jobDrivePackageValueMin: action?.payload?.job?.packageValue?.min,
+        jobDrivePackageValueMax: action?.payload?.job?.packageValue?.max,
+        jobDriveDescription: action?.payload?.job?.description,
+        jobPdfLink: action?.payload?.job?.pdfLink,
+      };
+    case GET_STUDENTSBYIDBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_STUDENTSBYIDBYCOMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        specificStudent: action.payload.student,
+      };
+    case CREATE_JOBDRIVEBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case CREATE_JOBDRIVEBYCOMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        jobDriveDesignations: "",
+        jobDriveLocations: "",
+        jobDriveStreams: [],
+        jobDrivePrograms: [],
+        jobDriveStartDate: "",
+        jobDriveEndDate: "",
+        jobDriveEligibilityCriteriaBacklog: 0,
+        jobDriveEligibilityCriteriaCgpa: 6.0,
+        jobDriveDriveDate: "",
+        jobDrivePackageValueMin: 0,
+        jobDrivePackageValueMax: 0,
+        jobDriveDescription: "",
+        jobPdfLink: "",
+      };
+    case CREATE_JOBDRIVEBYCOMPANY_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case UPDATE_JOBDRIVEBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case UPDATE_JOBDRIVEBYCOMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        jobDriveDesignations: action?.payload?.job?.designations,
+        jobDriveLocations: action?.payload?.job?.locations,
+        jobDriveStreams: action?.payload?.job?.streams,
+        jobDrivePrograms: action?.payload?.job?.programs,
+        jobDriveStartDate: action?.payload?.job?.startDate,
+        jobDriveEndDate: action?.payload?.job?.lastDate,
+        jobDriveEligibilityCriteriaBacklog:
+          action?.payload?.job?.eligibilityCriteria?.backlog,
+        jobDriveEligibilityCriteriaCgpa:
+          action?.payload?.job?.eligibilityCriteria?.cgpa,
+        jobDriveDriveDate: action?.payload?.job?.driveDate,
+        jobDrivePackageValueMin: action?.payload?.job?.packageValue?.min,
+        jobDrivePackageValueMax: action?.payload?.job?.packageValue?.max,
+        jobDriveDescription: action?.payload?.job?.description,
+        jobPdfLink: action?.payload?.job?.pdfLink,
+      };
+    case UPDATE_JOBDRIVEBYCOMPANY_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case DELETE_JOBDRIVEBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case DELETE_JOBDRIVEBYCOMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      };
+    case DELETE_JOBDRIVEBYCOMPANY_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
+      };
+    case ACTIONON_JOBDRIVEBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case ACTIONON_JOBDRIVEBYCOMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      };
+    case ACTIONON_JOBDRIVEBYCOMPANY_ERROR:
+      return {
+        ...state,
+        isLoading: false,
+        showAlert: true,
+        alertType: "error",
+        alertText: action.payload.msg,
       };
     default:
       throw new Error(`no such action :${action.type}`);

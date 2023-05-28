@@ -90,8 +90,32 @@ import {
   APPLY_JOBBYSTUDENT_ERROR,
   GET_STATSBYSTUDENT_BEGIN,
   GET_STATSBYSTUDENT_SUCCESS,
+  GET_COMPANIESBYIDBYCOMPANY_BEGIN,
+  GET_COMPANIESBYIDBYCOMPANY_SUCCESS,
+  UPDATE_PROFILEBYCOMPANY_BEGIN,
+  UPDATE_PROFILEBYCOMPANY_SUCCESS,
+  UPDATE_PROFILEBYCOMPANY_ERROR,
+  GET_JOBSBYCOMPANY_BEGIN,
+  GET_JOBSBYCOMPANY_SUCCESS,
+  GET_JOBSBYIDBYCOMPANY_BEGIN,
+  GET_JOBSBYIDBYCOMPANY_SUCCESS,
+  GET_STUDENTSBYIDBYCOMPANY_BEGIN,
+  GET_STUDENTSBYIDBYCOMPANY_SUCCESS,
+  GET_STUDENTSBYIDBYSTUDENT_BEGIN,
+  GET_STUDENTSBYIDBYSTUDENT_SUCCESS,
+  CREATE_JOBDRIVEBYCOMPANY_BEGIN,
+  CREATE_JOBDRIVEBYCOMPANY_SUCCESS,
+  CREATE_JOBDRIVEBYCOMPANY_ERROR,
+  UPDATE_JOBDRIVEBYCOMPANY_SUCCESS,
+  UPDATE_JOBDRIVEBYCOMPANY_ERROR,
+  UPDATE_JOBDRIVEBYCOMPANY_BEGIN,
+  DELETE_JOBDRIVEBYCOMPANY_ERROR,
+  DELETE_JOBDRIVEBYCOMPANY_SUCCESS,
+  DELETE_JOBDRIVEBYCOMPANY_BEGIN,
+  ACTIONON_JOBDRIVEBYCOMPANY_BEGIN,
+  ACTIONON_JOBDRIVEBYCOMPANY_SUCCESS,
+  ACTIONON_JOBDRIVEBYCOMPANY_ERROR,
 } from "./actions";
-
 
 const token = localStorage.getItem("token");
 const user = localStorage.getItem("user");
@@ -108,14 +132,14 @@ export const initialState = {
   imageUrl: "",
   pdfUrl: "",
   uploadProgress: 0,
-  isUploading:false,
-  loaderText:"Loading...",
+  isUploading: false,
+  loaderText: "Loading...",
   name: "",
   email: "",
   password: "",
   newPassword: "",
   confirmPassword: "",
-  about:"",
+  about: "",
   avatar: "",
   profileImage: "",
   dob: "",
@@ -220,13 +244,13 @@ export const initialState = {
     resume: "",
     photo: "",
     aadhar: "",
-    allDocument: ""
+    allDocument: "",
   },
   documentResume: "",
   documentPhoto: "",
   documentAadhar: "",
   documentAllDocument: "",
-  statsForStudent:{},
+  statsForStudent: {},
   designation: "",
   phone: "",
   aadharno: "",
@@ -236,6 +260,7 @@ export const initialState = {
   studentsByStudent: [],
   companiesByStudent: [],
   jobsByStudent: [],
+  jobsByCompany: [],
   specificJob: {},
   specificJobApplied: {},
   specificCompany: {
@@ -270,103 +295,129 @@ export const initialState = {
   hrName: "",
   hrEmail: "",
   hrPhone: "",
+  //company jobs
+  jobDriveDesignations: "",
+  jobDriveLocations: "",
+  jobDriveStreams: [],
+  jobDrivePrograms: [],
+  jobDriveStartDate: "",
+  jobDriveEndDate: "",
+  jobDriveEligibilityCriteria: {
+    backlog: "",
+    cgpa: 6.0,
+  },
+  jobDriveDriveDate: "",
+  jobDrivePackageValue: {
+    min: 0,
+    max: 0,
+  },
+  jobDriveEligibilityCriteriaBacklog: "",
+  jobDriveEligibilityCriteriaCgpa: 6.0,
+  jobDrivePackageValueMin: 0,
+  jobDrivePackageValueMax: 0,
+  jobDriveDescription: "",
+  jobPdfLink: "",
+  actionJobAction: "",
+  actionStudentId: "",
+  actionJobProfile: "",
+  actionJobPackage: 0,
   //custom messages
   mailsArray: [],
   mailSubject: "",
   mailBody: "",
   specificStudent: {
-      applicationStatus: "unverified",
-      enrollmentNo: "",
-      name: "",
-      email:"",
-      about:"",
-      placementDetails: {
-        applied: false,
-        selected: "no",
-        selectedIn: {
+    applicationStatus: "unverified",
+    enrollmentNo: "",
+    name: "",
+    email: "",
+    about: "",
+    placementDetails: {
+      applied: false,
+      selected: "no",
+      selectedIn: {
+        company: "",
+        jobProfile: "",
+        package: "",
+        joiningDate: "",
+      },
+      appliedIn: [
+        {
           company: "",
           jobProfile: "",
-          package: "",
-          joiningDate: "",
-        },
-        appliedIn: [
-          {
-            company: "",
-            jobProfile: "",
-          },
-        ],
-      },
-      personalDetails: {
-        profileImage: "",
-        dob: "",
-        gender: "Male",
-        contactNo:"",
-        aadharNo: "",
-        program: "B.Tech",
-        stream: "Computer Science",
-        collegeName: "",
-        universityName: "",
-        fatherName: "",
-        motherName: "",
-        currentAddress: "",
-        permanentAddress: "",
-        homeCity: "",
-        homeState: "",
-        homeCountry: "",
-        pincode: "",
-      },
-      academicDetails: [
-        {
-          degree: "",
-          specialization: "",
-          institute: "",
-          yearOfPassing: "",
-          board: "",
-          result: {
-            option: "CGPA",
-            value: 0,
-          },
-          numberOfSemesters: 0,
-          backlogSubjects: 0,
         },
       ],
-      professionalDetails: {
-        experiences: [
-          {
-            companyName: "",
-            designation: "",
-            duration:0,
-            location: "",
-            jobDescription: "",
-            from: "",
-            to: ""
-          },
-        ],
-        projects: [
-          {
-            projectName: "",
-            projectDescription: "",
-            sourceCodeLink: "",
-            liveLink: "",
-          },
-        ],
-        skills: [],
-        certifications: [
-          {
-            certificationName:"",
-            certificationAuthority: "",
-            certificationLink: ""
-          },
-        ],
-        links: [],
+    },
+    personalDetails: {
+      profileImage: "",
+      dob: "",
+      gender: "Male",
+      contactNo: "",
+      aadharNo: "",
+      program: "B.Tech",
+      stream: "Computer Science",
+      collegeName: "",
+      universityName: "",
+      fatherName: "",
+      motherName: "",
+      currentAddress: "",
+      permanentAddress: "",
+      homeCity: "",
+      homeState: "",
+      homeCountry: "",
+      pincode: "",
+    },
+    academicDetails: [
+      {
+        degree: "",
+        specialization: "",
+        institute: "",
+        yearOfPassing: "",
+        board: "",
+        result: {
+          option: "CGPA",
+          value: 0,
+        },
+        numberOfSemesters: 0,
+        backlogSubjects: 0,
       },
-      documents: {
-        resume: "",
-        photo: "",
-        aadhar: "",
-        allDocument:"",
-      },
-    }
+    ],
+    professionalDetails: {
+      experiences: [
+        {
+          companyName: "",
+          designation: "",
+          duration: 0,
+          location: "",
+          jobDescription: "",
+          from: "",
+          to: "",
+        },
+      ],
+      projects: [
+        {
+          projectName: "",
+          projectDescription: "",
+          sourceCodeLink: "",
+          liveLink: "",
+        },
+      ],
+      skills: [],
+      certifications: [
+        {
+          certificationName: "",
+          certificationAuthority: "",
+          certificationLink: "",
+        },
+      ],
+      links: [],
+    },
+    documents: {
+      resume: "",
+      photo: "",
+      aadhar: "",
+      allDocument: "",
+    },
+  },
 };
 const AppContext = React.createContext();
 const AppProvider = ({ children }) => {
@@ -447,12 +498,8 @@ const AppProvider = ({ children }) => {
   const imageUpload = (photo, user) => {
     return new Promise((resolve, reject) => {
       if (photo == null) {
-        toast.error(
-          "First Select an image"
-        );
-        reject(
-          "First Select an image"
-        );
+        toast.error("First Select an image");
+        reject("First Select an image");
         return;
       }
 
@@ -484,9 +531,7 @@ const AppProvider = ({ children }) => {
             .getDownloadURL()
             .then((downloadURL) => {
               // You can use the downloadURL for further processing, such as storing it in a database, displaying the image, etc.
-              toast.success(
-                "Image got uploaded"
-              );
+              toast.success("Image got uploaded");
               dispatch({ type: SET_IMAGE_URL, payload: { downloadURL } });
               stopLoading();
               resolve(downloadURL);
@@ -503,12 +548,8 @@ const AppProvider = ({ children }) => {
   const pdfUpload = (pdfFile, user) => {
     return new Promise((resolve, reject) => {
       if (pdfFile == null) {
-        toast.error(
-          "Please select a PDF file."
-        );
-        reject(
-          "Please select a PDF file."
-        );
+        toast.error("Please select a PDF file.");
+        reject("Please select a PDF file.");
         return;
       }
       // Upload the PDF to Firebase storage
@@ -539,9 +580,7 @@ const AppProvider = ({ children }) => {
             .getDownloadURL()
             .then((downloadURL) => {
               // You can use the downloadURL for further processing, such as storing it in a database, displaying the PDF, etc.
-              toast.success(
-                "PDF file uploaded successfully."
-              );
+              toast.success("PDF file uploaded successfully.");
               dispatch({ type: SET_PDF_URL, payload: { downloadURL } });
               stopLoading();
               resolve(downloadURL);
@@ -808,13 +847,13 @@ const AppProvider = ({ children }) => {
   };
   const getStudentByIdByStudent = async (id) => {
     console.log(id);
-    dispatch({ type: GET_STUDENTSBYIDBYADMIN_BEGIN });
+    dispatch({ type: GET_STUDENTSBYIDBYSTUDENT_BEGIN });
     try {
-      const { data } = await authFetch(`/student/students/${id}`);
+      const { data } = await authFetch(`/student/${id}`);
       console.log(data);
       const { student } = data;
       dispatch({
-        type: GET_STUDENTSBYIDBYADMIN_SUCCESS,
+        type: GET_STUDENTSBYIDBYSTUDENT_SUCCESS,
         payload: {
           student,
         },
@@ -1005,10 +1044,10 @@ const AppProvider = ({ children }) => {
   const updateStudentProfileBasics = async () => {
     dispatch({ type: UPDATE_PROFILE_BASIC_BEGIN });
     try {
-      const { name,enrollmentNo,about } = state;
-      
+      const { name, enrollmentNo, about } = state;
+
       const { data } = await authFetch.patch(`/student/basicDetails`, {
-       name,
+        name,
         enrollmentNo,
         about,
       });
@@ -1167,17 +1206,23 @@ const AppProvider = ({ children }) => {
   const updateStudentProfileProfessional = async () => {
     dispatch({ type: UPDATE_PROFILE_PROFESSIONAL_BEGIN });
     try {
-      const { professionalExperiences,professionalProjects, professionalSkills,professionalCertifications,professionalLinks} = state;
-      const helper={
-        experiences:professionalExperiences,
-        projects:professionalProjects,
-        skills:professionalSkills,
-        certifications:professionalCertifications,
-        links:professionalLinks
-      }
+      const {
+        professionalExperiences,
+        professionalProjects,
+        professionalSkills,
+        professionalCertifications,
+        professionalLinks,
+      } = state;
+      const helper = {
+        experiences: professionalExperiences,
+        projects: professionalProjects,
+        skills: professionalSkills,
+        certifications: professionalCertifications,
+        links: professionalLinks,
+      };
       console.log(helper);
       const { data } = await authFetch.patch(`/student/professionalDetails`, {
-        professionalDetails:helper
+        professionalDetails: helper,
       });
       console.log(data);
       dispatch({
@@ -1217,15 +1262,20 @@ const AppProvider = ({ children }) => {
   const updateStudentProfileDocuments = async () => {
     dispatch({ type: UPDATE_PROFILE_DOCUMENT_BEGIN });
     try {
-      const { documentResume,documentPhoto,documentAadhar,documentAllDocument } = state;
-      const helper={
-        resume:documentResume,
-        photo:documentPhoto,
-        aadhar:documentAadhar,
-        allDocument:documentAllDocument
-      }
+      const {
+        documentResume,
+        documentPhoto,
+        documentAadhar,
+        documentAllDocument,
+      } = state;
+      const helper = {
+        resume: documentResume,
+        photo: documentPhoto,
+        aadhar: documentAadhar,
+        allDocument: documentAllDocument,
+      };
       const { data } = await authFetch.patch(`/student/documentDetails`, {
-        documentDetails:helper,
+        documentDetails: helper,
       });
       dispatch({
         type: UPDATE_PROFILE_DOCUMENT_SUCCESS,
@@ -1303,9 +1353,9 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await authFetch(`/student/job/${id}`);
       console.log(data);
-      const { job,applied } = data;
+      const { job, applied } = data;
       console.log(job);
-      console.log("Applied",applied)
+      console.log("Applied", applied);
       dispatch({
         type: GET_JOBSBYIDBYSTUDENT_SUCCESS,
         payload: {
@@ -1320,11 +1370,11 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
-  const applyJobByStudent = async ({jobId}) => {
+  const applyJobByStudent = async ({ jobId }) => {
     dispatch({ type: APPLY_JOBBYSTUDENT_BEGIN });
     try {
       const { data } = await authFetch.patch(`/student/apply/${jobId}`);
-      const { message,job } = data;
+      const { message, job } = data;
       dispatch({
         type: APPLY_JOBBYSTUDENT_SUCCESS,
         payload: {
@@ -1342,27 +1392,314 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const getStatsByStudent = async (id) => {
+  const getStatsByStudent = async () => {
     dispatch({ type: GET_STATSBYSTUDENT_BEGIN });
     try {
       const { data } = await authFetch(`/student/stats`);
-      const filledPercentage= await authFetch(`/student/calculateProfileFilledPercentage`);
-      const jobCalendar= await authFetch(`/student/jobsCalendar`);
+      const filledPercentage = await authFetch(
+        `/student/calculateProfileFilledPercentage`
+      );
+      const jobCalendar = await authFetch(`/student/jobsCalendar`);
       console.log(jobCalendar.data);
       console.log(jobCalendar.data.events);
-      const { stats} = data;
+      const { stats } = data;
       dispatch({
         type: GET_STATSBYSTUDENT_SUCCESS,
         payload: {
           stats,
-          //upto 2 decimals
-          filledPercentageStudent:filledPercentage.data.filledPercentage,
-          jobsCalendarStudent:jobCalendar.data.events
+          filledPercentageStudent: filledPercentage.data.filledPercentage,
+          jobsCalendarStudent: jobCalendar.data.events,
         },
       });
     } catch (error) {
       console.log(error);
       //logoutUser();
+    }
+    clearAlert();
+  };
+  //company side
+  const getCompanyByIdByCompany = async (id) => {
+    dispatch({ type: GET_COMPANIESBYIDBYCOMPANY_BEGIN });
+    try {
+      const { data } = await authFetch(`/company/${id}`);
+      console.log(data);
+      const { company } = data;
+      console.log(company);
+      dispatch({
+        type: GET_COMPANIESBYIDBYCOMPANY_SUCCESS,
+        payload: {
+          company,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+
+  const updateCompanyProfile = async (id) => {
+    dispatch({ type: UPDATE_PROFILEBYCOMPANY_BEGIN });
+    try {
+      const {
+        companyName,
+        companyEmail,
+        companyPassword,
+        companyAddress,
+        companyLogo,
+        companyWebsite,
+        companyDescription,
+        companyPrograms,
+        companyLinkedin,
+        companyStreams,
+        hrName,
+        hrEmail,
+        hrPhone,
+      } = state;
+
+      const { data } = await authFetch.patch(`/company/${id}`, {
+        name: companyName,
+        email: companyEmail,
+        password: companyPassword,
+        website: companyWebsite,
+        description: companyDescription,
+        logo: companyLogo,
+        linkedin: companyLinkedin,
+        address: companyAddress,
+        programs: companyPrograms,
+        streams: companyStreams,
+        hrName,
+        hrEmail,
+        hrPhone,
+      });
+      const { company } = data;
+      dispatch({
+        type: UPDATE_PROFILEBYCOMPANY_SUCCESS,
+        payload: {
+          company,
+        },
+      });
+      toast.success("Profile Updated Successfully");
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: UPDATE_PROFILEBYCOMPANY_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Updating Profile: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const searchJobsByCompany = async () => {
+    dispatch({ type: GET_JOBSBYCOMPANY_BEGIN });
+    try {
+      const { data } = await authFetch(`/company/job`);
+      const { jobs } = data;
+      console.log(jobs);
+      dispatch({
+        type: GET_JOBSBYCOMPANY_SUCCESS,
+        payload: {
+          jobs,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const getJobsByIdByCompany = async (id) => {
+    dispatch({ type: GET_JOBSBYIDBYCOMPANY_BEGIN });
+    try {
+      const { data } = await authFetch(`/company/job/${id}`);
+      const { job } = data;
+      console.log(job);
+      dispatch({
+        type: GET_JOBSBYIDBYCOMPANY_SUCCESS,
+        payload: {
+          job,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const getStudentByIdByCompany = async (id) => {
+    console.log(id);
+    dispatch({ type: GET_STUDENTSBYIDBYCOMPANY_BEGIN });
+    try {
+      const { data } = await authFetch(`/company/student/${id}`);
+      console.log(data);
+      const { student } = data;
+      dispatch({
+        type: GET_STUDENTSBYIDBYCOMPANY_SUCCESS,
+        payload: {
+          student,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  };
+  const createJobDrive = async () => {
+    dispatch({ type: CREATE_JOBDRIVEBYCOMPANY_BEGIN });
+    try {
+      const {
+        jobDriveDesignations,
+        jobDriveLocations,
+        jobDriveStreams,
+        jobDrivePrograms,
+        jobDriveStartDate,
+        jobDriveEndDate,
+        jobDriveEligibilityCriteriaBacklog,
+        jobDriveEligibilityCriteriaCgpa,
+        jobDriveDriveDate,
+        jobDrivePackageValueMin,
+        jobDrivePackageValueMax,
+        jobDriveDescription,
+        jobPdfLink,
+      } = state;
+
+      const { data } = await authFetch.post(`/company/job`, {
+        designations: jobDriveDesignations,
+        locations: jobDriveLocations,
+        streams: jobDriveStreams,
+        programs: jobDrivePrograms,
+        startDate: jobDriveStartDate,
+        lastDate: jobDriveEndDate,
+        eligibilityCriteria: {
+          backlog: jobDriveEligibilityCriteriaBacklog,
+          cgpa: jobDriveEligibilityCriteriaCgpa,
+        },
+        driveDate: jobDriveDriveDate,
+        packageValue: {
+          min: jobDrivePackageValueMin,
+          max: jobDrivePackageValueMax,
+        },
+        description: jobDriveDescription,
+        pdfLink: jobPdfLink,
+      });
+      const { message } = data;
+      dispatch({
+        type: CREATE_JOBDRIVEBYCOMPANY_SUCCESS,
+      });
+      toast.success(message);
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: CREATE_JOBDRIVEBYCOMPANY_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Creating Job: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const updateJobDrive = async (id) => {
+    dispatch({ type: UPDATE_JOBDRIVEBYCOMPANY_BEGIN });
+    try {
+      const {
+        jobDriveDesignations,
+        jobDriveLocations,
+        jobDriveStreams,
+        jobDrivePrograms,
+        jobDriveStartDate,
+        jobDriveEndDate,
+        jobDriveEligibilityCriteriaBacklog,
+        jobDriveEligibilityCriteriaCgpa,
+        jobDriveDriveDate,
+        jobDrivePackageValueMin,
+        jobDrivePackageValueMax,
+        jobDriveDescription,
+        jobPdfLink,
+      } = state;
+
+      const { data } = await authFetch.patch(`/company/job/${id}`, {
+        designations: jobDriveDesignations,
+        locations: jobDriveLocations,
+        streams: jobDriveStreams,
+        programs: jobDrivePrograms,
+        startDate: jobDriveStartDate,
+        lastDate: jobDriveEndDate,
+        eligibilityCriteria: {
+          backlog: jobDriveEligibilityCriteriaBacklog,
+          cgpa: jobDriveEligibilityCriteriaCgpa,
+        },
+        driveDate: jobDriveDriveDate,
+        packageValue: {
+          min: jobDrivePackageValueMin,
+          max: jobDrivePackageValueMax,
+        },
+        description: jobDriveDescription,
+        pdfLink: jobPdfLink,
+      });
+      const { job } = data;
+      dispatch({
+        type: UPDATE_JOBDRIVEBYCOMPANY_SUCCESS,
+        payload: {
+          job,
+        },
+      });
+      toast.success("Job Updated Successfully");
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: UPDATE_JOBDRIVEBYCOMPANY_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Updating Job: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const actionForStudentForJobDrive = async (id) => {
+    dispatch({ type: ACTIONON_JOBDRIVEBYCOMPANY_BEGIN });
+    try {
+      const {
+        actionJobAction,
+        actionStudentId,
+        actionJobProfile,
+        actionJobPackage,
+      } = state;
+      const { data } = await authFetch.patch(`/company/action/${id}`, {
+        action: actionJobAction,
+        studentId: actionStudentId,
+        jobProfile: actionJobProfile,
+        jobPackage: actionJobPackage,
+      });
+      const { message } = data;
+      dispatch({
+        type: ACTIONON_JOBDRIVEBYCOMPANY_SUCCESS,
+      });
+      toast.success(message);
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: ACTIONON_JOBDRIVEBYCOMPANY_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error deleting Job: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const deleteJobDrive = async (id) => {
+    dispatch({ type: DELETE_JOBDRIVEBYCOMPANY_BEGIN });
+    try {
+      const { data } = await authFetch.delete(`/company/job/${id}`);
+      const { message } = data;
+      dispatch({
+        type: DELETE_JOBDRIVEBYCOMPANY_SUCCESS,
+      });
+      toast.success(message);
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: DELETE_JOBDRIVEBYCOMPANY_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error deleting Job: ${error.response.data.message}`);
     }
     clearAlert();
   };
@@ -1413,6 +1750,16 @@ const AppProvider = ({ children }) => {
         getJobsByIdByStudent,
         applyJobByStudent,
         getStatsByStudent,
+        //COMPANY SIDE
+        getCompanyByIdByCompany,
+        updateCompanyProfile,
+        searchJobsByCompany,
+        getJobsByIdByCompany,
+        getStudentByIdByCompany,
+        createJobDrive,
+        updateJobDrive,
+        deleteJobDrive,
+        actionForStudentForJobDrive,
       }}
     >
       {children}

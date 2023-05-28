@@ -22,8 +22,8 @@ const jobDriveSchema = mongoose.Schema({
     type: [String],
     required: [true, "Please provide at least one stream"],
   },
-  program: {
-    type: String,
+  programs: {
+    type: [String],
     required: [true, "Please provide the program"],
   },
   startDate: {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BsChevronDown } from "react-icons/bs";
+import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 
 const ActionCard = ({ title, icon, dropDownComponent, bgColor }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -10,7 +10,7 @@ const ActionCard = ({ title, icon, dropDownComponent, bgColor }) => {
 
   return (
     <div className="bg-white border rounded-xl p-4 mt-2 mb-2">
-      <div className="flex items-center justify-between ">
+      <div className="flex items-center justify-between "  onClick={handleToggleDropdown}>
         <div className="flex items-center">
           <div className={`${bgColor} text-white rounded-full p-2 mr-4`}>
             {icon}
@@ -19,9 +19,10 @@ const ActionCard = ({ title, icon, dropDownComponent, bgColor }) => {
         </div>
         <button
           className={`flex items-center justify-center ${bgColor} text-white rounded-full p-2`}
-          onClick={handleToggleDropdown}
+          
         >
-          <BsChevronDown />
+          {isDropdownOpen ?<BsChevronUp /> : <BsChevronDown />}
+          
         </button>
       </div>
       {isDropdownOpen && <div className="mt-2">{dropDownComponent}</div>}

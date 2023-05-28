@@ -42,13 +42,9 @@ const studentSchema = mongoose.Schema({
     select: false,
   },
   placementDetails: {
-    applied: {
+    selected: {
       type: Boolean,
       default: false,
-    },
-    selected: {
-      type: String,
-      default: "no",
     },
     selectedIn: {
       company: {
@@ -60,10 +56,7 @@ const studentSchema = mongoose.Schema({
       },
       package: {
         type: Number,
-      },
-      joiningDate: {
-        type: Date,
-      },
+      }
     },
     appliedIn: [
       {

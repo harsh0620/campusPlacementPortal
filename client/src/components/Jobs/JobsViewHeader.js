@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useAppContext } from "../../context/appContext";
-import { FaCheckCircle, FaPaperPlane, FaTimes } from "react-icons/fa";
+import { FaCheckCircle, FaPaperPlane, FaTimes, FaTrash } from "react-icons/fa";
 import Loader from "../Loader";
+import { useNavigate } from "react-router-dom";
 
 const JobsViewHeader = () => {
   const [sendJob, setSendJob] = useState(false);
@@ -16,8 +17,10 @@ const JobsViewHeader = () => {
     applyJobByStudent,
     getJobsByIdByAdmin,
     specificJobApplied,
+    deleteJobDrive,
     isLoading,
   } = useAppContext();
+  const navigate=useNavigate()
   const handleVerify = () => {
     if (
       window.confirm(
@@ -33,6 +36,19 @@ const JobsViewHeader = () => {
       window.location.reload(false);
     }, 4500);
   };
+  const handleDelete=()=>{
+    
+    if (
+      window.confirm(
+        `Are you sure you want to ${
+          specificJobApplied === true ? "discard " : "apply for "
+        }this job?`
+      )
+    ) {
+      deleteJobDrive(specificJob?._id);
+    }
+   navigate("/jobs")
+  }
   const handleApply = () => {
     if (
       window.confirm(
@@ -63,6 +79,18 @@ const JobsViewHeader = () => {
           className={`rounded-t-xl mb-20 ${getRandomColor()}`}
           style={{ minHeight: "100px" }}
         ></div>
+        {user?.role==="company" && (
+          <>
+          <div className="flex flex-row absolute top-0 right-0 mt-4 mr-4">
+          <button
+                className="border bg-white px-2 py-1 rounded-lg mr-2 text-sm font-medium text-red-500"
+                onClick={handleDelete}
+              >
+               <FaTrash/>
+              </button>
+            </div>
+            </>
+        )}
         {user?.role === "student" && (
           <>
             <div className="flex flex-row absolute top-0 right-0 mt-4 mr-4">

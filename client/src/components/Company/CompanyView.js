@@ -10,7 +10,7 @@ import { FaList } from 'react-icons/fa';
 import CompanyViewJobs from './CompanyViewJobs';
 
 const CompanyView = () => {
-    const {getCompanyByIdByAdmin,getCompanyByIdByStudent,isLoading,user}=useAppContext();
+    const {getCompanyByIdByAdmin,getCompanyByIdByStudent,getCompanyByIdByCompany,isLoading,user}=useAppContext();
     const params=useParams();
     const {id}=params;
     useEffect(() => {
@@ -18,6 +18,9 @@ const CompanyView = () => {
         getCompanyByIdByAdmin(id);
     }else if(user?.role==="student"){
         getCompanyByIdByStudent(id);
+    }
+    else if(user?.role==="company"){
+      getCompanyByIdByCompany(id);
     }
      // eslint-disable-next-line
     }, [])

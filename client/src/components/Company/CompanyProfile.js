@@ -1,8 +1,11 @@
 import React from 'react'
+import CompanyView from './CompanyView'
 
 const CompanyProfile = () => {
   return (
-    <div>CompanyProfile</div>
+    <div>
+      <CompanyView/>
+    </div>
   )
 }
 
