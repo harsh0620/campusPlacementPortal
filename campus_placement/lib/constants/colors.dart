@@ -17,4 +17,7 @@ class ColorConst {
 
   static const blue = Color(0xFF5277BF);
   static const success = Color(0xFF04A24C);
+  static const lightGrey2 = Color(0xFFECECEC);
+  static const lightGrey3 = Color(0xFFC9C9C9);
+  static const dartGrey3 = Color(0xFFA3A3A3);
 }
