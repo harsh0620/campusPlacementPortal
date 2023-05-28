@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../auth/auth_bloc.dart';
 import '../../features/error/error.dart';
 import '../../features/home/UI/home.dart';
 import '../../features/login/UI/confirm_password.dart';
@@ -19,14 +21,21 @@ class Routes {
 
 final rootKey = GlobalKey<NavigatorState>();
 
-GoRouter router(BuildContext context) {
+GoRouter goRouter(BuildContext context) {
   return GoRouter(
       debugLogDiagnostics: true,
       navigatorKey: rootKey,
       initialLocation: Routes.root,
       redirect: (ctx, state) {
-        // final authState = context.read<AuthBloc>().state;
-        // if (authState.isAuthenticated || state.location.contains(Routes.login)) {
+        final authState = context.read<AuthBloc>().state;
+        if (authState.isAuthenticated ||
+            state.location.contains(Routes.login)) {
+          return null;
+        } else {
+          return Routes.login;
+        }
+        // // final authState = context.read<AuthBloc>().state;
+        // if (state.location.contains(Routes.login)) {
         //   return null;
         // } else {
         //   return Routes.login;
@@ -44,8 +53,11 @@ GoRouter router(BuildContext context) {
         GoRoute(
           name: Routes.root,
           path: Routes.root,
-          pageBuilder: (context, state) => const MaterialPage(child: Home()),
-          routes: const [],
+          pageBuilder: (context, state) {
+            return NoTransitionPage(
+              child: const Home(),
+            );
+          },
         ),
         GoRoute(
           path: Routes.login,
@@ -57,7 +69,7 @@ GoRouter router(BuildContext context) {
             GoRoute(
               path: Routes.enterOtp,
               name: Routes.enterOtp,
-              redirect: (context, state) {},
+              // redirect: (context, state) {},
               builder: (ctx, state) {
                 return EnterOtpScreen(
                   email: state.queryParams['email'] ?? '',
