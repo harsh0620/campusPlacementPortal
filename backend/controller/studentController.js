@@ -29,9 +29,9 @@ const applyToJobDrive = async (req, res, next) => {
         "You are not authorized to apply to this job drive"
       );
     }
-    if (ifStudent.applicationStatus === "unverified") {
+    if (ifStudent.applicationStatus === "unverified" || ifStudent?.placementDetails?.selected===true) {
       throw new BadRequestError(
-        "You are not veried by the admin yet. Please wait for the admin to verify you"
+        "You are not veried by the admin yet. Please wait for the admin to verify you OR you are already selected in a company."
       );
     }
     if (jobDrive.lastDate < new Date()) {
@@ -96,7 +96,7 @@ const applyToJobDrive = async (req, res, next) => {
 /**
  * @desc Get a student by id
  *
- * @route GET /api/v1/student/students/:studentId
+ * @route GET /api/v1/student/:studentId
  * @access Private
  */
 const getStudentById = async (req, res, next) => {
@@ -104,7 +104,6 @@ const getStudentById = async (req, res, next) => {
     const userId = req.user.userId;
     const admin = await Admin.findOne({ _id: userId });
     const company = await Company.findOne({ _id: userId });
-    console.log(admin, company);
     if (admin || company) {
       throw new UnAuthenticatedError(
         "You are not authorized to perform this action"
@@ -188,7 +187,7 @@ const getJob = async (req, res, next) => {
       );
     }
     const jobs = await jobDrive
-      .find({})
+      .find({verified: true})
       .sort({ driveDate: -1 })
       .populate("company", "name");
     res.status(StatusCodes.OK).json({
@@ -210,7 +209,7 @@ const getJobById = async (req, res, next) => {
     }
     const jobId = req.params.jobId;
     const job = await jobDrive
-      .findOne({ _id: jobId })
+      .findOne({ _id: jobId,verified: true })
       .populate("company", "name");
     if (!job) {
       throw new NotFoundError(`No job with ID: ${jobId}`);
@@ -279,7 +278,10 @@ const getJobsCalendar = async (req, res, next) => {
         title: job?.company?.name,
         start: formattedDate,
         end: formattedDate,
-        description: job?.description,
+        extendedProps:{
+          description: job?.description,
+        }
+        
       };
     
       events.push(event);

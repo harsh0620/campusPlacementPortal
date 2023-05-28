@@ -114,7 +114,7 @@ const CreateCompanyForm = () => {
     e.preventDefault();
     createCompany();
   };
-  function handleMultipleSelect(e) {
+  const handleMultipleSelect=(e)=> {
     let options = e.target.options;
     let values = [];
     for (let i = 0, l = options.length; i < l; i++) {

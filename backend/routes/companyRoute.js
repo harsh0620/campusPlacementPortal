@@ -2,45 +2,36 @@ import express from "express";
 import authenticateUser from "../middleware/auth.js";
 const router = express.Router();
 import {
-  createCompany,
-  getAllCompanies,
+  actionForStudentForJobDrive,
+  createJobDrive,
+  deleteJobDrive,
   getCompanyById,
+  getJobDrive,
+  getJobDriveById,
+  getStudentById,
   updateCompanyById,
-  loginCompany,
+  updateJobDrive,
 } from "../controller/companyController.js";
-
-/**
- * @desc Register a new company
- * @route POST /api/v1/company/create
- * @access Private
- */
-router.route("/create").post(authenticateUser, createCompany);
-
-/**
- * @desc Get All Companies
- * @route GET /api/v1/company/all
- * @access Private
- */
-router.route("/all").get(authenticateUser, getAllCompanies);
 
 /**
  * @desc Get Company by ID
  * @route GET /api/v1/company/:companyId
+ * @route PATCH /api/v1/company/:companyId
  * @access Private
  */
-router.route("/:companyId").get(authenticateUser, getCompanyById);
-
-/**
- * @desc Update a company
- * @route POST /api/v1/company/edit/:companyId
- * @access Private
- */
-router.route("/edit/:companyId").patch(authenticateUser, updateCompanyById);
-/**
- * @desc Login an existing company
- * @route POST /api/company/login
- * @access Public
- */
-router.route("/login").post(loginCompany);
-
+router
+  .route("/job")
+  .post(authenticateUser, createJobDrive)
+  .get(authenticateUser, getJobDrive);
+router
+  .route("/:companyId")
+  .get(authenticateUser, getCompanyById)
+  .patch(authenticateUser, updateCompanyById);
+router
+  .route("/job/:jobId")
+  .get(authenticateUser, getJobDriveById)
+  .patch(authenticateUser, updateJobDrive)
+  .delete(authenticateUser, deleteJobDrive);
+  router.route("/action/:jobId").patch(authenticateUser, actionForStudentForJobDrive);
+router.route("/student/:studentId").get(authenticateUser, getStudentById);
 export default router;

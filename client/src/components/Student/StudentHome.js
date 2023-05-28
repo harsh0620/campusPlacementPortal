@@ -1,44 +1,74 @@
-import React, { useEffect, useRef } from "react";
-import { FaCheckCircle ,FaTimesCircle} from "react-icons/fa";
-import { AiFillProfile} from "react-icons/ai";
-import { BsFillCalendar2MonthFill} from "react-icons/bs";
-import { MdCheckCircle, MdCancel ,MdAccountCircle} from "react-icons/md";
+import React, { useEffect, useRef, useState } from "react";
+import {Tooltip} from "react-tooltip";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { AiFillProfile } from "react-icons/ai";
+import { BsFillCalendar2MonthFill } from "react-icons/bs";
+import { MdCheckCircle, MdCancel, MdAccountCircle } from "react-icons/md";
 import { useAppContext } from "../../context/appContext";
 import Loader from "../Loader";
 import ActionCard from "../ActionCard";
 import StudentJobDriveTable from "./StudentJobDriveTable";
-import Calendar  from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
+import Calendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 
 // import '@fullcalendar/core/main.css';
 // import '@fullcalendar/daygrid/main.css';
-const StatCard = ({ title, value, icon, textColor,valueText }) => {
+const StatCard = ({ title, value, icon, textColor, valueText }) => {
   return (
     <div className="p-4 flex flex-col overflow-x-auto outlet items-center mt-2 mb-4 mx-2 rounded-lg  w-full justify-center bg-white hover:shadow-md shadow ">
       <div className={`md:text-6xl text-4xl ${textColor} mx-1`}>{icon}</div>
       <div className="flex-row flex lex justify-center items-center text-black">
-        <div className="md:text-2xl text-lg mr-1 text-center">{title}:</div>
-        {" "}
-        <div className={`md:text-2xl text-lg text-center ${textColor}`}>{value} {valueText}</div>
+        <div className="md:text-2xl text-lg mr-1 text-center">{title}:</div>{" "}
+        <div className={`md:text-2xl text-lg text-center ${textColor}`}>
+          {value} {valueText}
+        </div>
       </div>
     </div>
   );
 };
 const CalendarComponent = () => {
   // Sample event data in JSON format
-  const {jobsCalendarStudent} = useAppContext();
+  const { jobsCalendarStudent } = useAppContext();
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipContent, setTooltipContent] = useState('sdfsdfsd');
+
+  const handleMouseEnter = (info) => {
+    console.log(info);
+    // if (info.event.extendedProps.description) {
+    //   console.log(info.event.extendedProps.description);
+    //   setTooltipContent(info.event.extendedProps.description);
+    //   setShowTooltip(true);
+    // }
+  };
+
+  const handleMouseLeave = () => {
+    setShowTooltip(false);
+  };
   return (
     <div className="border rounded-lg p-2 mt-4 mx-1">
       <Calendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
+        eventMouseEnter={()=>handleMouseEnter()}
+        eventMouseLeave={()=>handleMouseLeave()}
         events={jobsCalendarStudent}
       />
+     {showTooltip && (
+        <Tooltip effect="solid" place="top">
+          {tooltipContent}
+        </Tooltip>
+      )}
     </div>
   );
 };
 const StudentHome = () => {
-  const { getStatsByStudent, statsForStudent,filledPercentageStudent,jobsCalendarStudent, isLoading } = useAppContext();
+  const {
+    getStatsByStudent,
+    statsForStudent,
+    filledPercentageStudent,
+    jobsCalendarStudent,
+    isLoading,
+  } = useAppContext();
   useEffect(() => {
     document.title = "Student Home | Placement Portal";
     getStatsByStudent();
@@ -60,14 +90,14 @@ const StudentHome = () => {
           value={statsForStudent?.totalAppliedCount}
           icon={<MdCheckCircle />}
           textColor={"text-green-500"}
-          valueText={statsForStudent?.totalAppliedCount>1?`Jobs`:"Job"}
+          valueText={statsForStudent?.totalAppliedCount > 1 ? `Jobs` : "Job"}
         />
         <StatCard
           title="Rejected In"
           value={statsForStudent?.totalRejectedCount}
           icon={<MdCancel />}
           textColor={"text-red-500"}
-          valueText={statsForStudent?.totalRejectedCount>1?`Jobs`:"Job"}
+          valueText={statsForStudent?.totalRejectedCount > 1 ? `Jobs` : "Job"}
         />
       </div>
       <div className="flex sm:flex-row flex-col mx-2">
@@ -90,13 +120,17 @@ const StudentHome = () => {
         title={"Applied In Jobs"}
         bgColor={"bg-purple-500"}
         icon={<FaCheckCircle />}
-        dropDownComponent={<StudentJobDriveTable jobDrives={statsForStudent?.totalApplied} />}
+        dropDownComponent={
+          <StudentJobDriveTable jobDrives={statsForStudent?.totalApplied} />
+        }
       />
       <ActionCard
         title={"Rejected In Jobs"}
         bgColor={"bg-indigo-500"}
         icon={<FaTimesCircle />}
-        dropDownComponent={<StudentJobDriveTable jobDrives={statsForStudent?.totalRejected} />}
+        dropDownComponent={
+          <StudentJobDriveTable jobDrives={statsForStudent?.totalRejected} />
+        }
       />
       <ActionCard
         title={"Jobs Calendar"}
@@ -104,7 +138,6 @@ const StudentHome = () => {
         icon={<BsFillCalendar2MonthFill />}
         dropDownComponent={<CalendarComponent />}
       />
-      
     </div>
   );
 };

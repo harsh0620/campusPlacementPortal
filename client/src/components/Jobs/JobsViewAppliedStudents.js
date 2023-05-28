@@ -2,12 +2,17 @@ import React from 'react'
 import JobsViewComp from './JobsViewComp'
 import AdminStudentTable from '../Admin/AdminStudentTable'
 import { useAppContext } from '../../context/appContext';
+import CompanyStudentTable from '../Company/CompanyStudentTable';
 
 const JobsViewAppliedStudentsComp = () => {
-    const {specificJob}=useAppContext();
+    const {specificJob,user}=useAppContext();
     return (
         <div>
-          <AdminStudentTable students={specificJob?.appliedBy} />
+          {user?.role==="admin" &&
+          <AdminStudentTable students={specificJob?.appliedBy} />}
+          {user?.role==="company" &&
+          <CompanyStudentTable students={specificJob?.appliedBy} />}
+
         </div>
     )
 }

@@ -61,7 +61,16 @@ const JobsViewDetailsComp = () => {
             </div>
             <div>
               <p className="text-gray-700 font-medium">Program:</p>
-              <p>{specificJob?.program}</p>
+              <p>{specificJob?.programs?.map((program, index) => {
+                  return (
+                    <span key={index}>
+                      {program}
+                      {specificJob?.programs.length !== index + 1
+                        ? ","
+                        : ""}{" "}
+                    </span>
+                  );
+                })}</p>
             </div>
             <div>
               <p className="text-gray-700 font-medium">Drive Date:</p>
