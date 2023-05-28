@@ -164,10 +164,10 @@ const createJobDrive = async (req, res, next) => {
     ) {
       throw new BadRequestError("Please provide all the required fields");
     }
-    const locationArray=locations.split(",");
-    const designationArray=designations.split(",");
-    req.body.locations=locationArray;
-    req.body.designations=designationArray;
+    const locationArray = locations.split(",");
+    const designationArray = designations.split(",");
+    req.body.locations = locationArray;
+    req.body.designations = designationArray;
     const userId = req.user.userId;
     const ifAdmin = await Admin.findOne({ _id: userId });
     const ifStudent = await Student.findOne({ _id: userId });
@@ -185,6 +185,13 @@ const createJobDrive = async (req, res, next) => {
     req.body.company = company?._id;
     const jobDrive = new JobDrive(req.body);
     const newJobDrive = await jobDrive.save();
+    const updateCompany = await Company.findOneAndUpdate(
+      { _id: userId },
+      { $push: { placementDrives: newJobDrive._id } },
+      { new: true,
+        runValidators: true,
+      }
+    );
     res
       .status(StatusCodes.CREATED)
       .json({ message: "Job Created Successfully", jobDrive: newJobDrive });
@@ -351,24 +358,29 @@ const deleteJobDrive = async (req, res, next) => {
         "You are not authorized to perform action for job drive"
       );
     }
+    const updateCompany = await Company.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { placementDrives: job._id } },
+      { new: true,
+        runValidators: true,
+      }
+    );
     await JobDrive.findOneAndDelete({
       _id: jobDriveId,
     });
-    res
-      .status(StatusCodes.OK)
-      .json({ message: "Job Deleted Successfully"});
+    res.status(StatusCodes.OK).json({ message: "Job Deleted Successfully" });
   } catch (error) {
     next(error);
   }
 };
 const actionForStudentForJobDrive = async (req, res, next) => {
   try {
-    const {action, studentId, jobProfile, jobPackage} = req.body;
-    if(!action){
+    const { action, jobProfile, jobPackage } = req.body;
+    if (!action) {
       throw new BadRequestError("Please provide all the required fields");
     }
+    const studentId = req.params.studentId;
     const userId = req.user.userId;
-    const jobDriveId = req.params.jobId;
     const ifAdmin = await Admin.findOne({ _id: userId });
     const ifStudent = await Student.findOne({ _id: userId });
     if (ifStudent || ifAdmin) {
@@ -377,44 +389,94 @@ const actionForStudentForJobDrive = async (req, res, next) => {
       );
     }
     var company = await Company.findOne({ _id: userId });
-    const job = await JobDrive.findOne({ _id: jobDriveId });
-    if (!company || job?.company.toString() !== company?._id.toString()) {
+    if (!company) {
       throw new UnAuthenticatedError(
         "You are not authorized to perform action for job drive"
       );
     }
-    const student = await Student.findOne({ _id: studentId })
-    if(!student){
+    let student = await Student.findOne({ _id: studentId });
+    if (!student) {
       throw new NotFoundError(`No student with ID: ${studentId}`);
     }
-    console.log(action);
-    if(action === "hire"){
-      if(!action || !studentId || !jobProfile || !jobPackage){
+    if (action === "hire") {
+      if (!action || !jobProfile || !jobPackage) {
         throw new BadRequestError("Please provide all the required fields");
+      }
+      if (student.placementDetails.rejectedFrom.includes(company?._id)) {
+        student = await Student.findOneAndUpdate(
+          { _id: studentId },
+          { $pull: { "placementDetails.rejectedFrom": userId } },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
       }
       student.placementDetails.selected = true;
       student.placementDetails.selectedIn.company = company?._id;
-      student.placementDetails.selectedIn.jobProfile =jobProfile;
-      student.placementDetails.selectedIn.package =jobPackage;
+      student.placementDetails.selectedIn.jobProfile = jobProfile;
+      student.placementDetails.selectedIn.package = jobPackage;
       await student.save();
-    }
-    else if(action === "reject"){
-      student.placementDetails.selected = false;
-      await student.save();
-      const updatedStudent= await Student.findOneAndUpdate(
+    } else if (action === "reject") {
+      console.log(action);
+      const updatedStudent = await Student.findOneAndUpdate(
         { _id: studentId },
-        { $push: { rejectedFrom: company?._id } },
+        { $push: { "placementDetails.rejectedFrom": userId } },
         {
           new: true,
           runValidators: true,
         }
       );
+      student.placementDetails.selected = false;
+      student.placementDetails.selectedIn = {};
+      await student.save();
     }
     res
       .status(StatusCodes.OK)
-      .json({ message: "Action Performed Successfully"});
+      .json({ message: "Action Performed Successfully" });
+  } catch (error) {
+    next(error);
   }
-  catch (error) {
+};
+const getStats = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const ifAdmin = await Admin.findOne({ _id: userId });
+    const ifStudent = await Student.findOne({ _id: userId });
+    if (ifStudent || ifAdmin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform action for job drive"
+      );
+    }
+    var company = await Company.findOne({ _id: userId });
+    if (!company) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform action for job drive"
+      );
+    }
+    const totalJobDrives = await JobDrive.find({ company: userId }).count();
+    const totalStudentsApplied=await JobDrive.find({company:userId}).populate('appliedBy');
+    console.log("totalStudentsApplied",totalStudentsApplied)  
+    const selectedStudentsCount = totalStudentsApplied.reduce((count, jobDrive) => {
+      const selectedStudents = jobDrive.appliedBy.filter(student => student.placementDetails.selected === true);
+      return count + selectedStudents.length;
+    }, 0);
+    const notSelectedStudentsCount = totalStudentsApplied.reduce((count, jobDrive) => {
+      const selectedStudents = jobDrive.appliedBy.filter(student => student.placementDetails.selected === false);
+      return count + selectedStudents.length;
+    }, 0);
+    
+    console.log(selectedStudentsCount);
+    const stats={
+      totalJobDrives,
+      totalStudentsApplied:totalStudentsApplied.length,
+      totalSelectedStudents:selectedStudentsCount,
+      totalNotSelectedStudents:notSelectedStudentsCount
+    }
+    res.status(StatusCodes.OK).json({
+     stats
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -428,4 +490,5 @@ export {
   deleteJobDrive,
   getStudentById,
   actionForStudentForJobDrive,
+  getStats,
 };

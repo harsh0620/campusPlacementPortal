@@ -14,6 +14,7 @@ import StudentViewLink from './StudentViewLink';
 import Loader from '../Loader';
 import StudentViewAbout from './StudentViewAbout';
 import StudentViewDocuments from './StudentViewDocuments';
+import CompanyHireStudent from '../Company/CompanyHireStudent';
 
 const StudentView = ({userType}) => {
   const {getStudentByIdByStudent,getStudentByIdByAdmin,getStudentByIdByCompany,user,isLoading}=useAppContext();
@@ -59,6 +60,7 @@ const StudentView = ({userType}) => {
         <StudentViewCertification/>
         <StudentViewLink/>
         <StudentViewDocuments/>
+        {user?.role==="company" && <CompanyHireStudent/>}
     </div>
   )
 }

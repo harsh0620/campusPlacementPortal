@@ -115,6 +115,8 @@ import {
   ACTIONON_JOBDRIVEBYCOMPANY_BEGIN,
   ACTIONON_JOBDRIVEBYCOMPANY_SUCCESS,
   ACTIONON_JOBDRIVEBYCOMPANY_ERROR,
+  GET_STATSBYCOMPANY_BEGIN,
+  GET_STATSBYCOMPANY_SUCCESS,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -251,6 +253,7 @@ export const initialState = {
   documentAadhar: "",
   documentAllDocument: "",
   statsForStudent: {},
+  statsForCompany: {},
   designation: "",
   phone: "",
   aadharno: "",
@@ -317,7 +320,7 @@ export const initialState = {
   jobDrivePackageValueMax: 0,
   jobDriveDescription: "",
   jobPdfLink: "",
-  actionJobAction: "",
+  actionJobAction: "hire",
   actionStudentId: "",
   actionJobProfile: "",
   actionJobPackage: 0,
@@ -1654,18 +1657,17 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const actionForStudentForJobDrive = async (id) => {
+  const actionForStudentForJobDrive = async ({studentId}) => {
     dispatch({ type: ACTIONON_JOBDRIVEBYCOMPANY_BEGIN });
     try {
       const {
         actionJobAction,
-        actionStudentId,
         actionJobProfile,
         actionJobPackage,
       } = state;
-      const { data } = await authFetch.patch(`/company/action/${id}`, {
+      console.log(studentId)
+      const { data } = await authFetch.patch(`/company/action/${studentId}`, {
         action: actionJobAction,
-        studentId: actionStudentId,
         jobProfile: actionJobProfile,
         jobPackage: actionJobPackage,
       });
@@ -1700,6 +1702,24 @@ const AppProvider = ({ children }) => {
         payload: { msg: error.response.data.message },
       });
       toast.error(`Error deleting Job: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const getStatsByCompany = async () => {
+    dispatch({ type: GET_STATSBYCOMPANY_BEGIN });
+    try {
+      const { data } = await authFetch(`/company/stats`);
+      const { stats } = data;
+      console.log(stats);
+      dispatch({
+        type: GET_STATSBYCOMPANY_SUCCESS,
+        payload: {
+          stats,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
     }
     clearAlert();
   };
@@ -1760,6 +1780,7 @@ const AppProvider = ({ children }) => {
         updateJobDrive,
         deleteJobDrive,
         actionForStudentForJobDrive,
+        getStatsByCompany
       }}
     >
       {children}

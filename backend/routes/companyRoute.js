@@ -8,6 +8,7 @@ import {
   getCompanyById,
   getJobDrive,
   getJobDriveById,
+  getStats,
   getStudentById,
   updateCompanyById,
   updateJobDrive,
@@ -19,6 +20,8 @@ import {
  * @route PATCH /api/v1/company/:companyId
  * @access Private
  */
+
+router.route("/stats").get(authenticateUser, getStats);
 router
   .route("/job")
   .post(authenticateUser, createJobDrive)
@@ -32,6 +35,6 @@ router
   .get(authenticateUser, getJobDriveById)
   .patch(authenticateUser, updateJobDrive)
   .delete(authenticateUser, deleteJobDrive);
-  router.route("/action/:jobId").patch(authenticateUser, actionForStudentForJobDrive);
+  router.route("/action/:studentId").patch(authenticateUser, actionForStudentForJobDrive);
 router.route("/student/:studentId").get(authenticateUser, getStudentById);
 export default router;

@@ -110,6 +110,8 @@ import {
   ACTIONON_JOBDRIVEBYCOMPANY_BEGIN,
   ACTIONON_JOBDRIVEBYCOMPANY_SUCCESS,
   ACTIONON_JOBDRIVEBYCOMPANY_ERROR,
+  GET_STATSBYCOMPANY_BEGIN,
+  GET_STATSBYCOMPANY_SUCCESS,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -841,7 +843,10 @@ const reducer = (state, action) => {
       return {
         ...state,
         isLoading: false,
-        specificStudent: action.payload.student,
+        specificStudent: action?.payload?.student,
+        actionJobAction:action?.payload?.student?.placementDetails?.selected===true?"hire":"reject",
+        actionJobProfile:action?.payload?.student?.placementDetails?.selectedIn?.jobProfile,
+        actionJobPackage:action?.payload?.student?.placementDetails?.selectedIn?.package,
       };
     case CREATE_JOBDRIVEBYCOMPANY_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
@@ -930,6 +935,14 @@ const reducer = (state, action) => {
         showAlert: true,
         alertType: "error",
         alertText: action.payload.msg,
+      };
+      case GET_STATSBYCOMPANY_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_STATSBYCOMPANY_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        statsForCompany: action.payload.stats,
       };
     default:
       throw new Error(`no such action :${action.type}`);
