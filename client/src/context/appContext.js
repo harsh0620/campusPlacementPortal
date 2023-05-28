@@ -867,6 +867,31 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+  const getStudentByIdByStudentInCSV = async (id) => {
+    try {
+      const { data } = await authFetch.get(`/student/csv/${id}`, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "student.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+      // Handle error
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
   const searchCompaniesByAdmin = async () => {
     dispatch({ type: GET_COMPANIESBYADMIN_BEGIN });
     try {
@@ -1754,6 +1779,7 @@ const AppProvider = ({ children }) => {
         sendJobNotification,
         // STUDENT SIDE
         getStudentByIdByStudent,
+        getStudentByIdByStudentInCSV,
         getStudentProfileBasics,
         updateStudentProfileBasics,
         getStudentProfilePersonal,

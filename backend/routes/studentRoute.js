@@ -16,7 +16,7 @@ import {
 } from "../controller/studentAuthController.js";
 import authenticateUser from "../middleware/auth.js";
 import { loginUser } from "../controller/authController.js";
-import { applyToJobDrive, calculateProfileFilledPercentage, getCompany, getCompanyById, getJob, getJobById, getJobsCalendar, getStats, getStudentById } from "../controller/studentController.js";
+import { applyToJobDrive, calculateProfileFilledPercentage, getCompany, getCompanyById, getJob, getJobById, getJobsCalendar, getStats, getStudentById, getStudentByIdInCSV } from "../controller/studentController.js";
 /**
  * @desc Register a new student user
  * @route POST /api/v1/student/auth/register
@@ -128,6 +128,8 @@ router.route("/jobsCalendar").get(authenticateUser, getJobsCalendar)
  * @route GET /api/v1/student/students/:studentId
  * @access Private
  */
+router.route("/csv/:studentId").get(authenticateUser, getStudentByIdInCSV);
 router.route("/:studentId").get(authenticateUser, getStudentById);
+
 
 export default router;

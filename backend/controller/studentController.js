@@ -9,7 +9,7 @@ import JobDrive from "../models/jobDrive.js";
 import Company from "../models/Company.js";
 import Admin from "../models/admin.js";
 import jobDrive from "../models/jobDrive.js";
-
+import ObjectsToCsv from "objects-to-csv";
 /**
  * @desc Apply to jobDrive
  * @route POST /api/v1/student/apply/:jobDriveId
@@ -126,6 +126,61 @@ const getStudentById = async (req, res, next) => {
     next(error);
   }
 };
+import { Parser } from 'json2csv';
+
+const getStudentByIdInCSV = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const admin = await Admin.findOne({ _id: userId });
+    const company = await Company.findOne({ _id: userId });
+    if (admin || company) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const studentId = req.params.studentId;
+    if (studentId !== userId) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const student = await Student.findOne({ _id: studentId });
+    if (!student) {
+      throw new NotFoundError(`No student with ID: ${studentId}`);
+    }
+
+    // Convert student data to CSV format
+    const csvFields = [
+      'role',
+      'applicationStatus',
+      'enrollmentNo',
+      'name',
+      'email',
+      'about',
+      'placementDetails',
+      'personalDetails',
+      'academicDetails',
+      'professionalDetails',
+      'documents',
+    ];
+
+    const json2csvParser = new Parser({ fields: csvFields });
+    const csvData = json2csvParser.parse(student);
+
+
+
+    // Set the response headers for CSV download
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="student.csv"');
+
+    // Send the CSV data as the response
+    res.send(csvData);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getCompany = async (req, res, next) => {
   try {
     // Extract the userId property from the request object
@@ -410,6 +465,7 @@ const calculateProfileFilledPercentage = async (req, res, next) => {
 export {
   applyToJobDrive,
   getStudentById,
+  getStudentByIdInCSV,
   getCompany,
   getCompanyById,
   getJob,

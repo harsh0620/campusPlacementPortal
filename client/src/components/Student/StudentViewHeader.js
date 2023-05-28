@@ -5,8 +5,10 @@ import {
   FaTimes,
   FaUserCircle,
 } from "react-icons/fa";
+import { ExportJsonCsv } from "react-export-json-csv";
+import { useState } from "react";
 const StudentViewHeader = ({ handleCapture }) => {
-  const { specificStudent, getRandomColor, user, verifyStudent } =
+  const { specificStudent,getStudentByIdByStudentInCSV, getRandomColor, user, verifyStudent } =
     useAppContext();
   const handleVerify = () => {
     if (
@@ -22,6 +24,30 @@ const StudentViewHeader = ({ handleCapture }) => {
       window.location.reload(false);
     }, 4500);
   };
+  let arrayTemp=[];
+  arrayTemp.push(specificStudent);
+  const [headers] = useState([
+    {
+      key: "enrollmentNo",
+      name: "Enrollment No",
+    },
+    {
+      key: "name",
+      name: "Name",
+    },
+    {
+      key: "email",
+      name: "Email",
+    },
+    {
+      key: "about",
+      name: "About",
+    },
+    {
+      key: "personalDetails",
+      name: "Personal Details",
+    },
+  ]);
   return (
     <div className="shadow bg-white w-full rounded-xl flex flex-col">
       {/* //Details Section */}
@@ -54,9 +80,13 @@ const StudentViewHeader = ({ handleCapture }) => {
           <button
             title="Download CSV"
             className="flex flex-col justify-center items-center mx-auto border bg-white px-2 py-1 rounded-lg text-sm font-medium"
+            onClick={()=>getStudentByIdByStudentInCSV(specificStudent?._id)}
           >
             <FaFileDownload />
+            {/* <ExportJsonCsv headers={headers} items={arrayTemp}> */}
             <span className="font-bold text-xs">CSV</span>
+          {/* </ExportJsonCsv> */}
+            
           </button>
         </div>
         <div className="flex flex-row absolute top-0 right-0 mt-16 mr-4">
