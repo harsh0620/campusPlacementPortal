@@ -12,21 +12,11 @@ import 'features/login/cubit/login_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //  await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  // final storage = await HydratedStorage.build(
-  //   storageDirectory: kIsWeb
-  //       ? HydratedStorage.webStorageDirectory
-  //       : await getApplicationDocumentsDirectory(),
-  // );
+
   HydratedBloc.storage = await HydratedStorage.build(
       storageDirectory: await getApplicationDocumentsDirectory());
   initLocator();
-  // HydratedBlocOverrides.runZoned(
-  //   () => runApp(MyApp()),
-  //   storage: storage,
-  // );
+
   runApp(const MyApp());
 }
 
