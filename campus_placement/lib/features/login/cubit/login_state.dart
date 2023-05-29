@@ -10,6 +10,7 @@ enum ConfirmPasswordStatus { initial, loading, success, failure }
 
 class LoginState extends Equatable {
   final LoginStatus loginStatus;
+
   final ForgetPassword forgetPassword;
   final OtpStatus otpStatus;
   final ConfirmPasswordStatus confirmPasswordStatus;

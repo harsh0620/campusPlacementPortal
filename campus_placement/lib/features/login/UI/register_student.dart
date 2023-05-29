@@ -6,41 +6,46 @@ import 'package:go_router/go_router.dart';
 import '../../../auth/auth_bloc.dart';
 import '../../../constants/colors.dart';
 import '../../../core/router/router.dart';
-import '../cubit/login_cubit.dart';
+import '../../common/utils.dart';
+import '../cubit/register_student_cubit.dart';
+import 'login_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterStudent extends StatefulWidget {
+  const RegisterStudent({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterStudent> createState() => _RegisterStudentState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  String _selectedUserType = 'Admin';
+class _RegisterStudentState extends State<RegisterStudent> {
   late TextEditingController _emailController;
+  late TextEditingController _nameController;
   late TextEditingController _passwordController;
+  late TextEditingController _enrollController;
+  late PasswordInput _passwordInput;
   String? emailError;
+  String? enrollError;
+  String? nameError;
   String? passwordError;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _nameController.dispose();
+    _enrollController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    _passwordInput = const PasswordInput.pure();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _nameController = TextEditingController();
+    _enrollController = TextEditingController();
   }
-
-  List<String> _userTypes = [
-    'Admin',
-    'Company',
-    'Student',
-  ];
 
   void emailVal(String? value) {
     final regex = RegExp(
@@ -56,39 +61,77 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void passwordVal(String? value) {
-    setState(() {
-      passwordError =
-          value == null || value.isEmpty ? 'Please enter your password' : null;
-    });
+  void enrollmentVal(String? value) {
+    // final regex = RegExp(r'^\d{4}/CTAE/\d{4}$');
+    // RegExp regex = RegExp(r'^\d{4}/CTAE/\d{4}$');
+    // final regex = RegExp(r'^\d{4}/[A-Za-z]{4}/\d{4}$');
+    if (value == null) {
+      setState(() {
+        emailError = 'Please enter valid enrollment no.';
+      });
+    } else {
+      setState(() {
+        enrollError = null;
+      });
+    }
+    // else {
+    //   setState(() {
+    //     enrollError = regex.hasMatch(value) ? null : 'Invalid Enrollment no.';
+    //   });
+    // }
   }
 
+  void nameVal(String? value) {
+    // final alphanumericRegex = RegExp(r'^[a-zA-Z0-9]+$');
+    // final regex = RegExp(r'^[a-zA-Z0-9]+(?:\s[a-zA-Z0-9]+)*$');
+    if (value == null) {
+      setState(() {
+        nameError = 'Please enter valid Name';
+      });
+    } else {
+      setState(() {
+        enrollError = null;
+      });
+    }
+    // else {
+    //   setState(() {
+    //     nameError = regex.hasMatch(value) ? null : 'Invalid Name ';
+    //   });
+    // }
+  }
+
+  // void passwordVal(String? value) {
+  //   setState(() {
+  //     passwordError =
+  //         value == null || value.isEmpty ? 'Please enter your password' : null;
+  //   });
+  // }
   void submit() {
     if (_emailController.text.isEmpty) {
       emailVal(_emailController.text);
     }
-    if (_passwordController.text.isEmpty) {
-      passwordVal(_passwordController.text);
+    if (_nameController.text.isEmpty) {
+      nameVal(_nameController.text);
+    }
+    if (_enrollController.text.isEmpty) {
+      enrollmentVal(_enrollController.text);
     }
     if (emailError == null && passwordError == null) {
-      context.read<LoginCubit>().login(
-            _emailController.text.trim(),
-            _passwordController.text,
-            _selectedUserType,
-          );
+      context.read<RegisterStudentCubit>().registerStudent(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          enrollmentNo: _enrollController.text.trim(),
+          studentName: _nameController.text.trim());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Login Page'),
-      // ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.all(20.w),
+            margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
             // alignment: Alignment.center,
             width: 350.w,
 
@@ -97,15 +140,17 @@ class _LoginPageState extends State<LoginPage> {
                 color: ColorConst.white,
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(10)),
-            child: BlocConsumer<LoginCubit, LoginState>(
+            child: BlocConsumer<RegisterStudentCubit, RegisterStudentState>(
               listener: (context, state) {
-                if (state.loginStatus == LoginStatus.success) {
+                if (state.registerStudentStatus ==
+                    RegisterStudentStatus.success) {
                   context
                       .read<AuthBloc>()
                       .add(LoginEvent(user: state.user!, token: state.token!));
                   context.goNamed(Routes.root);
                 }
-                if (state.loginStatus == LoginStatus.failure) {
+                if (state.registerStudentStatus ==
+                    RegisterStudentStatus.failure) {
                   // showErrorToast(context);
                 }
               },
@@ -115,47 +160,31 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      'Login',
+                      'Register Student',
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    SizedBox(height: 40.0.h),
+                    SizedBox(height: 20.0.h),
                     Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        'User Type',
+                        'Name',
                         style: TextStyle(
                           fontSize: 16.0.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0.h),
-                    DropdownButtonFormField<String>(
-                      value: _selectedUserType,
-                      decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: ColorConst.white,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        // labelText: 'User Type',
-                      ),
-                      items: _userTypes.map((String userType) {
-                        return DropdownMenuItem<String>(
-                          value: userType,
-                          child: Text(userType),
-                        );
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedUserType = value ?? '';
-                        });
-                      },
+                    SizedBox(height: 10.0.h),
+                    CustomTextFormField(
+                      controller: _nameController,
+                      hint: 'Enter your name',
+                      errorText: nameError,
+                      onChanged: nameVal,
                     ),
-                    SizedBox(height: 20.0.h),
+                    SizedBox(height: 10.0.h),
                     Align(
                       alignment: Alignment.topLeft,
                       child: Text(
@@ -166,14 +195,32 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0.h),
+                    SizedBox(height: 10.0.h),
                     CustomTextFormField(
                       controller: _emailController,
                       hint: 'Enter Email Address',
                       errorText: emailError,
                       onChanged: emailVal,
                     ),
-                    SizedBox(height: 20.0.h),
+                    SizedBox(height: 10.0.h),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Enrollment No.',
+                        style: TextStyle(
+                          fontSize: 16.0.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.0.h),
+                    CustomTextFormField(
+                      controller: _enrollController,
+                      hint: 'Enter Enrollment Address',
+                      errorText: enrollError,
+                      onChanged: enrollmentVal,
+                    ),
+                    SizedBox(height: 10.0.h),
                     Align(
                       alignment: Alignment.topLeft,
                       child: Text(
@@ -184,15 +231,17 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0.h),
+                    SizedBox(height: 10.0.h),
                     CustomTextFormField(
                       obscureText: true,
                       controller: _passwordController,
                       hint: 'Enter your Password',
-                      errorText: passwordError,
-                      onChanged: passwordVal,
+                      errorText: _passwordInput.displayError?.text(),
+                      onChanged: (value) => setState(() {
+                        _passwordInput = PasswordInput.dirty(value);
+                      }),
                     ),
-                    SizedBox(height: 20.0.h),
+                    SizedBox(height: 10.0.h),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -218,23 +267,23 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     ),
-                    SizedBox(height: 20.0.h),
+                    SizedBox(height: 10.0.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Row(
                           children: [
-                            Text('Dont have an Account ',
+                            Text('Have an account ',
                                 style: TextStyle(
                                     // fontWeight: FontWeight.w600,
                                     color: ColorConst.black,
                                     fontSize: 11.sp)),
                             InkWell(
                               onTap: () {
-                                context.goNamed(Routes.registerStudentPage);
+                                context.goNamed(Routes.login);
                               },
                               child: Text(
-                                'Register',
+                                'Login',
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     color: ColorConst.black,
@@ -262,107 +311,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({
-    super.key,
-    required this.controller,
-    this.hint,
-    this.obscureText = false,
-    this.errorText,
-    this.onChanged,
-    this.onSubmitted,
-  });
-
-  final TextEditingController controller;
-  final String? hint;
-  final bool obscureText;
-  final String? errorText;
-  final void Function(String)? onChanged;
-  final void Function(String?)? onSubmitted;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      obscureText: obscureText,
-      controller: controller,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        filled: true,
-        hoverColor: Colors.transparent,
-        focusColor: ColorConst.white,
-        fillColor: ColorConst.white,
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(
-            color: ColorConst.lightGrey3,
-            width: 1.w,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.dartGrey3,
-            width: 1,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.black,
-            width: 2,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.red,
-            width: 2,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.red,
-            width: 1,
-          ),
-        ),
-        // prefixIcon: prefixIcon,
-        // prefixIconColor: ColorConst.burgundy,
-        // suffixIcon: suffixIcon,
-        // suffixIconColor: ColorConst.burgundy,
-        hintText: hint,
-        hintStyle: TextStyle(
-          // TextType.subHeading2,
-          color: ColorConst.dartGrey3,
-          fontSize: 16.sp,
-        ),
-        errorText: errorText,
-        errorStyle: TextStyle(
-          // TextType.text6,
-          color: ColorConst.red,
-          fontSize: 16.sp,
-        ),
-        enabled: true,
-
-        // helperText: helperText,
-        // helperStyle: getTextStyle(
-        //   // TextType.text6,
-        //   color: ColorConst.dartGrey3,
-        //   fontSize: helperFontSize,
-        // ),
-        // contentPadding: contentPadding,
-      ),
-      style: TextStyle(
-        // TextType.subHeading1,
-        color: ColorConst.dartGrey3,
-        fontSize: 16.sp,
-      ),
-      onChanged: onChanged,
-      onFieldSubmitted: onSubmitted,
     );
   }
 }

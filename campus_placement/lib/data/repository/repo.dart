@@ -11,6 +11,8 @@ abstract class RemoteRepository {
     String password,
     String userType,
   );
+  Future<LoginResponse?> registerStudentUser(
+      String email, String password, String enrollmentNo, String studentName);
   Future<void> logoutUser();
 }
 
@@ -36,6 +38,34 @@ class RemoteRepositoryImpl extends RemoteRepository {
           'email': email,
           'password': password,
           'userType': userType.toLowerCase(),
+        },
+      );
+      final rs = {
+        'user': response.data['user'],
+        'token': response.data['token'],
+        // 'token': response.headers.value('x-access-token'),
+      };
+      print('rs ${rs['token']}');
+      print('rs ${rs['user']}');
+      // _sharedPreferences.setString('token', response.data['token']);
+      return LoginResponse.fromJson(rs);
+    } catch (e) {
+      debugPrint('Error in loginUser => $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<LoginResponse?> registerStudentUser(String email, String password,
+      String enrollmentNo, String studentName) async {
+    try {
+      final response = await _client.post(
+        EndPoints.registerStudentUser,
+        data: {
+          'enrollmentNo': enrollmentNo,
+          'name': studentName,
+          'email': email,
+          'password': password,
         },
       );
       final rs = {

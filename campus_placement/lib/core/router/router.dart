@@ -1,3 +1,4 @@
+import 'package:campus_placement/features/login/UI/register_student.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ class Routes {
   static const root = '/';
   static const error = '/error';
   static const login = '/login';
+  static const registerStudentPage = '/register-student';
   static const enterEmailResetPassword = 'reset-password';
   static const enterOtp = 'enter-otp';
   static const changePassword = 'confirm-password';
@@ -29,7 +31,8 @@ GoRouter goRouter(BuildContext context) {
       redirect: (ctx, state) {
         final authState = context.read<AuthBloc>().state;
         if (authState.isAuthenticated ||
-            state.location.contains(Routes.login)) {
+            state.location.contains(Routes.login) ||
+            state.location.contains(Routes.registerStudentPage)) {
           return null;
         } else {
           return Routes.login;
@@ -90,6 +93,13 @@ GoRouter goRouter(BuildContext context) {
                       email: state.queryParams['email'] ?? '');
                 }),
           ],
+        ),
+        GoRoute(
+          path: Routes.registerStudentPage,
+          name: Routes.registerStudentPage,
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: RegisterStudent(),
+          ),
         ),
         GoRoute(
           path: Routes.error,
