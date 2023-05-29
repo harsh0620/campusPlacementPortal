@@ -114,6 +114,8 @@ import {
   GET_STATSBYCOMPANY_SUCCESS,
   GET_STATSBYADMIN_BEGIN,
   GET_STATSBYADMIN_SUCCESS,
+  SEND_MESSAGEONMAIL_BEGIN,
+  SEND_MESSAGEONMAIL_SUCCESS,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -440,6 +442,16 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
       };
+    case SEND_MESSAGEONMAIL_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case SEND_MESSAGEONMAIL_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        mailsArray: "",
+        mailSubject: "",
+        mailBody: "",
+      };
     case SEND_NOTIFICATION_ERROR:
       return {
         ...state,
@@ -448,7 +460,7 @@ const reducer = (state, action) => {
         alertType: "error",
         alertText: action.payload.msg,
       };
-      case GET_STATSBYADMIN_BEGIN:
+    case GET_STATSBYADMIN_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
     case GET_STATSBYADMIN_SUCCESS:
       return {
@@ -855,9 +867,14 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         specificStudent: action?.payload?.student,
-        actionJobAction:action?.payload?.student?.placementDetails?.selected===true?"hire":"reject",
-        actionJobProfile:action?.payload?.student?.placementDetails?.selectedIn?.jobProfile,
-        actionJobPackage:action?.payload?.student?.placementDetails?.selectedIn?.package,
+        actionJobAction:
+          action?.payload?.student?.placementDetails?.selected === true
+            ? "hire"
+            : "reject",
+        actionJobProfile:
+          action?.payload?.student?.placementDetails?.selectedIn?.jobProfile,
+        actionJobPackage:
+          action?.payload?.student?.placementDetails?.selectedIn?.package,
       };
     case CREATE_JOBDRIVEBYCOMPANY_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
@@ -947,7 +964,7 @@ const reducer = (state, action) => {
         alertType: "error",
         alertText: action.payload.msg,
       };
-      case GET_STATSBYCOMPANY_BEGIN:
+    case GET_STATSBYCOMPANY_BEGIN:
       return { ...state, isLoading: true, showAlert: false };
     case GET_STATSBYCOMPANY_SUCCESS:
       return {

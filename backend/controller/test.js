@@ -1,27 +1,376 @@
 import fs from 'fs';
 
+// const createCSV = async (data, filePath) => {
+//   try {
+//     let csvContent = '';
+
+//     // Extracting the header fields from the data
+//     const headerFields = ['dob','gender','contactno'];
+// const headerData=[
+//     {
+//         dob:'30/08/2001',
+//         gender:'Male',
+//         contactno:'8302888090'
+//   }]
+//     // Constructing the CSV header line
+//     const headerLine = headerFields.join(',');
+
+//     // Appending the header line to the CSV content
+//     csvContent += headerLine + '\n';
+
+//     // Constructing the CSV data lines
+//     headerData.forEach((row) => {
+//       const rowValues = headerFields.map((field) => row[field]);
+//       const rowLine = rowValues.join(',');
+//       csvContent += rowLine + '\n';
+//     });
+
+//     // Writing the CSV content to the file
+//     fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' });
+
+//     console.log('CSV file created successfully.');
+
+//   } catch (error) {
+//     console.error('Error creating CSV file:', error);
+//   }
+// };
 const createCSV = async (data, filePath) => {
+    try {
+      let csvContent = '';
+  
+      // Extracting the header fields and their corresponding names from the data
+      const headerFields = ['dob', 'gender', 'contactno', 'personalDetails.fathersName', 'academicDetails','name'];
+      const headerFieldNames = ['Date of Birth', 'Gender', 'Contact Number', 'Father\'s Name', 'Academic Details','Name'];
+  
+      const headerData = [
+        {
+          dob: '30/08/2001',
+          gender: 'Male',
+          contactno: '8302888090',
+          personalDetails: {
+            fathersName: 'John Doe'
+          },
+          academicDetails: [
+            {
+              result: {
+                option: 'CGPA',
+                value: 8.15
+              },
+              degree: 'B.Tech',
+              specialization: 'Computer Science And Engineering',
+              institute: 'College Of Technology And Engineering',
+              yearOfPassing: 2023,
+              board: 'MPUAT',
+              numberOfSemesters: 8,
+              backlogSubjects: null,
+              _id: '647344b3c130458811ac84ab'
+            },
+            {
+                result: {
+                  option: 'CGPA',
+                  value: 8.15
+                },
+                degree: 'B.Tech',
+                specialization: 'Computer Science And Engineering',
+                institute: 'College Of Technology And Engineering',
+                yearOfPassing: 2023,
+                board: 'MPUAT',
+                numberOfSemesters: 8,
+                backlogSubjects: null,
+                _id: '647344b3c130458811ac84ab'
+              },
+              {
+                result: {
+                  option: 'CGPA',
+                  value: 8.15
+                },
+                degree: 'B.Tech',
+                specialization: 'Computer Science And Engineering',
+                institute: 'College Of Technology And Engineering',
+                yearOfPassing: 2023,
+                board: 'MPUAT',
+                numberOfSemesters: 8,
+                backlogSubjects: null,
+                _id: '647344b3c130458811ac84ab'
+              }
+          ],
+          name:"Harsh Chandravanshi"
+        }
+      ];
+  
+      // Constructing the CSV header line
+      const headerLine = headerFieldNames.join(',');
+  
+      // Appending the header line to the CSV content
+      csvContent += headerLine + '\n';
+  
+      // Constructing the CSV data lines
+      headerData.forEach((row) => {
+        const rowValues = headerFields.map((field, index) => {
+          // Handle nested fields
+          if (field.includes('.')) {
+            const nestedFields = field.split('.');
+            let nestedValue = row;
+            for (let i = 0; i < nestedFields.length; i++) {
+              nestedValue = nestedValue[nestedFields[i]];
+              if (nestedValue === undefined) break;
+            }
+            return nestedValue;
+          }
+  
+          return row[field];
+        });
+  
+        // Stringify array data if needed
+        const rowLine = rowValues.map((value) => {
+            if (Array.isArray(value)) {
+              return JSON.stringify(value);
+            }
+            return value;
+          }).join('');
+    
+          csvContent += rowLine + '\n';
+        });
+  
+      // Writing the CSV content to the file
+      fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' });
+  
+      console.log('CSV file created successfully.');
+  
+    } catch (error) {
+      console.error('Error creating CSV file:', error);
+    }
+  };
+  const createCSV1 = async (data, filePath) => {
+    try {
+      let csvContent = '';
+      let headerFields = [];
+      let headerFieldNames = [];
+  
+      // Recursive function to generate header fields and names
+      const generateHeader = (data, prefix = '') => {
+        for (const key in data) {
+          if (Array.isArray(data[key])) {
+            // Handle array data
+            const arrayItem = data[key][0];
+            if (typeof arrayItem === 'object') {
+              generateHeader(arrayItem, `${prefix}${key}.`);
+            } else {
+              headerFields.push(`${prefix}${key}`);
+              headerFieldNames.push(`${prefix}${key}`);
+            }
+          } else if (typeof data[key] === 'object') {
+            // Handle nested objects
+            generateHeader(data[key], `${prefix}${key}.`);
+          } else {
+            // Handle simple fields
+            headerFields.push(`${prefix}${key}`);
+            headerFieldNames.push(`${prefix}${key}`);
+          }
+        }
+      };
+  
+      // Generate the header fields and names
+      generateHeader(data[0]);
+  
+      // Constructing the CSV header line
+      const headerLine = headerFieldNames.map((name) => `"${name}"`).join(',');
+  
+      // Appending the header line to the CSV content
+      csvContent += headerLine + '\n';
+  
+      // Constructing the CSV data lines
+      data.forEach((row) => {
+        const rowValues = headerFields.map((field, index) => {
+          // Handle nested fields
+          if (field.includes('.')) {
+            const nestedFields = field.split('.');
+            let nestedValue = row;
+            for (let i = 0; i < nestedFields.length; i++) {
+              nestedValue = nestedValue[nestedFields[i]];
+              if (nestedValue === undefined) break;
+            }
+            return nestedValue;
+          }
+          return row[field];
+        });
+  
+        // Stringify array data if needed
+        const rowLine = rowValues.map((value) => {
+          if (Array.isArray(value)) {
+            // Join array values with a separator (e.g., '|') for better readability in Excel
+            return value.map((item) => JSON.stringify(item)).join('|');
+          }
+          return value;
+        }).map((value) => {
+          if (typeof value === 'string') {
+            return `"${value}"`; // Enclose string values in double quotes
+          }
+          return value;
+        }).join(',');
+  
+        csvContent += rowLine + '\n';
+      });
+  
+      // Writing the CSV content to the file
+      fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' });
+  
+      console.log('CSV file created successfully.');
+  
+    } catch (error) {
+      console.error('Error creating CSV file:', error);
+    }
+  };
+  
+  const createCSV2 = async (data, filePath) => {
+    try {
+      let csvContent = '';
+      let headerFields = [];
+      let headerFieldNames = [];
+  
+      // Recursive function to generate header fields and names
+      const generateHeader = (data, prefix = '') => {
+        for (const key in data) {
+          if (Array.isArray(data[key])) {
+            // Handle array data
+            const arrayItem = data[key][0];
+            if (typeof arrayItem === 'object') {
+              generateHeader(arrayItem, `${prefix}${key}.`);
+            } else {
+              headerFields.push(`${prefix}${key}`);
+              headerFieldNames.push(`${prefix}${key}`);
+            }
+          } else if (typeof data[key] === 'object' && data[key] !== null) {
+            // Handle nested objects
+            generateHeader(data[key], `${prefix}${key}.`);
+          } else {
+            // Handle simple fields
+            headerFields.push(`${prefix}${key}`);
+            headerFieldNames.push(`${prefix}${key}`);
+          }
+        }
+      };
+  
+      // Generate the header fields and names
+      generateHeader(data[0]);
+  
+      // Constructing the CSV header line
+      const headerLine = headerFieldNames.map((name) => `"${name}"`).join(',');
+  
+      // Appending the header line to the CSV content
+      csvContent += headerLine + '\n';
+  
+      // Recursive function to extract nested values
+      const extractNestedValue = (row, field) => {
+        const nestedFields = field.split('.');
+        let nestedValue = row;
+        for (let i = 0; i < nestedFields.length; i++) {
+          nestedValue = nestedValue[nestedFields[i]];
+          if (nestedValue === undefined) break;
+        }
+        return nestedValue;
+      };
+  
+      // Constructing the CSV data lines
+      data.forEach((row) => {
+        const rowValues = headerFields.map((field, index) => {
+          // Handle nested fields
+          if (field.includes('.')) {
+            return extractNestedValue(row, field);
+          }
+          return row[field];
+        });
+  
+        // Stringify array data if needed
+        const rowLine = rowValues.map((value) => {
+          if (Array.isArray(value)) {
+            // Join array values with a separator (e.g., '|') for better readability in Excel
+            return value.map((item) => JSON.stringify(item)).join('|');
+          }
+          return value;
+        }).map((value) => {
+          if (typeof value === 'string') {
+            return `"${value}"`; // Enclose string values in double quotes
+          }
+          return value;
+        }).join(',');
+  
+        csvContent += rowLine + '\n';
+      });
+  
+      // Writing the CSV content to the file
+      fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' });
+  
+      console.log('CSV file created successfully.');
+  
+    } catch (error) {
+      console.error('Error creating CSV file:', error);
+    }
+  };
+  const createCSV4 = async (data, filePath) => {
   try {
     let csvContent = '';
+    let headerFields = [];
+    let headerFieldNames = [];
 
-    // Extracting the header fields from the data
-    const headerFields = ['dob','gender','contactno'];
-const headerData=[
-    {
-        dob:'30/08/2001',
-        gender:'Male',
-        contactno:'8302888090'
-  }]
+    // Recursive function to generate header fields and names
+    const generateHeader = (data, prefix = '') => {
+      for (const key in data) {
+        if (Array.isArray(data[key])) {
+          // Handle array data
+          headerFields.push(`${prefix}${key}`);
+          headerFieldNames.push(`${prefix}${key}`);
+        } else if (typeof data[key] === 'object' && data[key] !== null) {
+          // Handle nested objects
+          generateHeader(data[key], `${prefix}${key}.`);
+        } else {
+          // Handle simple fields
+          headerFields.push(`${prefix}${key}`);
+          headerFieldNames.push(`${prefix}${key}`);
+        }
+      }
+    };
+
+    // Generate the header fields and names
+    generateHeader(data[0]);
+
     // Constructing the CSV header line
-    const headerLine = headerFields.join(',');
+    const headerLine = headerFieldNames.map((name) => `"${name}"`).join(',');
 
     // Appending the header line to the CSV content
     csvContent += headerLine + '\n';
 
+    // Recursive function to extract nested values and stringify them
+    const extractNestedValue = (row, field) => {
+      const nestedFields = field.split('.');
+      let nestedValue = row;
+      for (let i = 0; i < nestedFields.length; i++) {
+        nestedValue = nestedValue[nestedFields[i]];
+        if (nestedValue === undefined) break;
+      }
+      if (typeof nestedValue === 'object' && nestedValue !== null) {
+        return JSON.stringify(nestedValue);
+      }
+      return nestedValue;
+    };
+
     // Constructing the CSV data lines
-    headerData.forEach((row) => {
-      const rowValues = headerFields.map((field) => row[field]);
-      const rowLine = rowValues.join(',');
+    data.forEach((row) => {
+      const rowValues = headerFields.map((field, index) => {
+        // Handle nested fields
+        if (field.includes('.')) {
+          return extractNestedValue(row, field);
+        }
+        return row[field];
+      });
+
+      const rowLine = rowValues.map((value) => {
+        if (typeof value === 'string') {
+          return `"${value}"`; // Enclose string values in double quotes
+        }
+        return value;
+      }).join(',');
+
       csvContent += rowLine + '\n';
     });
 
@@ -34,7 +383,171 @@ const headerData=[
     console.error('Error creating CSV file:', error);
   }
 };
+const createCSV3 = async (data, filePath) => {
+    try {
+      let csvContent = '';
+      let headerFields = [];
+      let headerFieldNames = [];
+  
+      // Recursive function to generate header fields and names
+      const generateHeader = (data, prefix = '') => {
+        for (const key in data) {
+          if (Array.isArray(data[key])) {
+            // Handle array data
+            headerFields.push(`${prefix}${key}`);
+            headerFieldNames.push(`${prefix}${key}`);
+          } else if (typeof data[key] === 'object' && data[key] !== null) {
+            // Handle nested objects
+            generateHeader(data[key], `${prefix}${key}.`);
+          } else {
+            // Handle simple fields
+            headerFields.push(`${prefix}${key}`);
+            headerFieldNames.push(`${prefix}${key}`);
+          }
+        }
+      };
+  
+      // Generate the header fields and names
+      generateHeader(data[0]);
+  
+      // Constructing the CSV header line
+      const headerLine = headerFieldNames.map((name) => `"${name}"`).join(',');
+  
+      // Appending the header line to the CSV content
+      csvContent += headerLine + '\n';
+  
+      // Recursive function to extract nested values and stringify them
+      const extractNestedValue = (row, field) => {
+        const nestedFields = field.split('.');
+        let nestedValue = row;
+        for (let i = 0; i < nestedFields.length; i++) {
+          nestedValue = nestedValue[nestedFields[i]];
+          if (nestedValue === undefined) break;
+        }
+        if (typeof nestedValue === 'object' && nestedValue !== null) {
+          return JSON.stringify(nestedValue);
+        }
+        return nestedValue;
+      };
+  
+      // Constructing the CSV data lines
+      data.forEach((row) => {
+        const rowValues = headerFields.map((field, index) => {
+          // Handle nested fields
+          if (field.includes('.')) {
+            return extractNestedValue(row, field);
+          }
+          return row[field];
+        });
+  
+        const rowLine = rowValues.map((value) => {
+          if (typeof value === 'string') {
+            return `"${value}"`; // Enclose string values in double quotes
+          }
+          return value;
+        }).join(',');
+  
+        csvContent += rowLine + '\n';
+      });
+  
+      // Writing the CSV content to the file
+      fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' });
+  
+      console.log('CSV file created successfully.');
+  
+    } catch (error) {
+      console.error('Error creating CSV file:', error);
+    }
+  };
+  
 
+
+
+
+  const createCSVFinal = async (data, filePath) => {
+    try {
+      let csvContent = '';
+      let headerFields = [];
+      let headerFieldNames = [];
+  
+      // Recursive function to generate header fields and names
+      const generateHeader = (data, prefix = '') => {
+        for (const key in data) {
+          if (Array.isArray(data[key])) {
+            // Handle array data
+            headerFields.push(`${prefix}${key}`);
+            headerFieldNames.push(`${prefix}${key}`);
+          } else if (typeof data[key] === 'object' && data[key] !== null) {
+            // Handle nested objects
+            generateHeader(data[key], `${prefix}${key}.`);
+          } else {
+            // Handle simple fields
+            headerFields.push(`${prefix}${key}`);
+            headerFieldNames.push(`${prefix}${key}`);
+          }
+        }
+      };
+  
+      // Generate the header fields and names
+      generateHeader(data[0]);
+  
+      // Constructing the CSV header line
+      const headerLine = headerFieldNames.map((name) => `"${name}"`).join(',');
+  
+      // Appending the header line to the CSV content
+      csvContent += headerLine + '\n';
+  
+      // Recursive function to extract nested values and stringify them
+      const extractNestedValue = (row, field) => {
+        const nestedFields = field.split('.');
+        let nestedValue = row;
+        for (let i = 0; i < nestedFields.length; i++) {
+          nestedValue = nestedValue[nestedFields[i]];
+          if (nestedValue === undefined) break;
+        }
+        if (typeof nestedValue === 'object' && nestedValue !== null) {
+          return `"${serializeNestedValue(nestedValue)}"`;
+        }
+        return `"${nestedValue}"`;
+      };
+      
+      const serializeNestedValue = (value) => {
+        if (Array.isArray(value)) {
+          return value.map((item) => serializeNestedValue(item)).join(', ');
+        } else if (typeof value === 'object') {
+          return Object.keys(value)
+            .map((key) => `${key}: ${serializeNestedValue(value[key])}`)
+            .join(', ');
+        }
+        return value;
+      };
+      
+      
+      // Constructing the CSV data lines
+      data.forEach((row) => {
+        const rowValues = headerFields.map((field, index) => {
+          // Handle nested fields
+          if (field.includes('.')) {
+            return extractNestedValue(row, field);
+          }
+          return `"${row[field]}"`;
+        });
+  
+        const rowLine = rowValues.join(',');
+  
+        csvContent += rowLine + '\n';
+      });
+  
+      // Writing the CSV content to the file
+      fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' });
+  
+      console.log('CSV file created successfully.');
+  
+    } catch (error) {
+      console.error('Error creating CSV file:', error);
+    }
+  };
+   
 // Example data
 const students = [
     {
@@ -157,6 +670,5 @@ const students = [
 const filePath = 'students.csv';
 
 // Create the CSV file with the provided data
-// createCSV(students, filePath);
-const date = new Date();
-console.log(date);
+createCSVFinal(students, filePath);
+
