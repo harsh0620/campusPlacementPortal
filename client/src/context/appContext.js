@@ -122,6 +122,9 @@ import {
   SEND_MESSAGEONMAIL_BEGIN,
   SEND_MESSAGEONMAIL_SUCCESS,
   SEND_MESSAGEONMAIL_ERROR,
+  FORGOT_PASSWORD_BEGIN,
+  FORGOT_PASSWORD_SUCCESS,
+  FORGOT_PASSWORD_ERROR,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -660,6 +663,28 @@ const AppProvider = ({ children }) => {
   const logoutUser = () => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
+  };
+  const forgotPassword = async ({email,userType}) => {
+    dispatch({ type: FORGOT_PASSWORD_BEGIN });
+    try {
+      console.log(email);
+      console.log(userType);
+      const { data } = await axios.post("/api/v1/auth/forgotpassword", {
+        email,
+        userType
+      });
+      dispatch({
+        type: FORGOT_PASSWORD_SUCCESS,
+        payload: { msg: data.message },
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: FORGOT_PASSWORD_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+    }
+    clearAlert();
   };
   const getAdminDetails = async (userType) => {
     dispatch({ type: GET_PROFILE_BEGIN });
@@ -1469,7 +1494,6 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await authFetch(`/student/job`);
       const { jobs } = data;
-      console.log(jobs);
       dispatch({
         type: GET_JOBSBYSTUDENT_SUCCESS,
         payload: {
@@ -1486,10 +1510,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: GET_JOBSBYIDBYSTUDENT_BEGIN });
     try {
       const { data } = await authFetch(`/student/job/${id}`);
-      console.log(data);
       const { job, applied } = data;
-      console.log(job);
-      console.log("Applied", applied);
       dispatch({
         type: GET_JOBSBYIDBYSTUDENT_SUCCESS,
         payload: {
@@ -1534,8 +1555,6 @@ const AppProvider = ({ children }) => {
         `/student/calculateProfileFilledPercentage`
       );
       const jobCalendar = await authFetch(`/student/jobsCalendar`);
-      console.log(jobCalendar.data);
-      console.log(jobCalendar.data.events);
       const { stats } = data;
       dispatch({
         type: GET_STATSBYSTUDENT_SUCCESS,
@@ -1862,6 +1881,7 @@ const AppProvider = ({ children }) => {
         registerUser,
         loginUser,
         logoutUser,
+        forgotPassword,
         searchStudentsByAdmin,
         getStudentByIdByAdmin,
         searchCompaniesByAdmin,

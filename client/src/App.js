@@ -20,6 +20,7 @@ import CompanyView from "./components/Company/CompanyView";
 import JobsView from "./components/Jobs/JobsView";
 import Profile from "./components/Profile";
 import '@fortawesome/fontawesome-free/css/all.css';
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const {user}=useAppContext();
@@ -60,6 +61,7 @@ function App() {
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="*" element={<Error />} />
       </Routes>
