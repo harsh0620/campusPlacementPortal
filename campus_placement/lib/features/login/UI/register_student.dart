@@ -63,30 +63,41 @@ class _RegisterStudentState extends State<RegisterStudent> {
 
   void enrollmentVal(String? value) {
     // final regex = RegExp(r'^\d{4}/CTAE/\d{4}$');
-    RegExp regex = RegExp(r'^\d{4}/CTAE/\d{4}$');
+    // RegExp regex = RegExp(r'^\d{4}/CTAE/\d{4}$');
+    // final regex = RegExp(r'^\d{4}/[A-Za-z]{4}/\d{4}$');
     if (value == null) {
       setState(() {
         emailError = 'Please enter valid enrollment no.';
       });
     } else {
       setState(() {
-        enrollError = regex.hasMatch(value) ? null : 'Invalid Enrollment no.';
+        enrollError = null;
       });
     }
+    // else {
+    //   setState(() {
+    //     enrollError = regex.hasMatch(value) ? null : 'Invalid Enrollment no.';
+    //   });
+    // }
   }
 
   void nameVal(String? value) {
-    final alphanumericRegex = RegExp(r'^[a-zA-Z0-9]+$');
+    // final alphanumericRegex = RegExp(r'^[a-zA-Z0-9]+$');
+    // final regex = RegExp(r'^[a-zA-Z0-9]+(?:\s[a-zA-Z0-9]+)*$');
     if (value == null) {
       setState(() {
-        emailError = 'Please enter valid Name';
+        nameError = 'Please enter valid Name';
       });
     } else {
       setState(() {
-        emailError =
-            alphanumericRegex.hasMatch(value) ? null : 'Invalid Email address';
+        enrollError = null;
       });
     }
+    // else {
+    //   setState(() {
+    //     nameError = regex.hasMatch(value) ? null : 'Invalid Name ';
+    //   });
+    // }
   }
 
   // void passwordVal(String? value) {
@@ -100,7 +111,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
       emailVal(_emailController.text);
     }
     if (_nameController.text.isEmpty) {
-      nameVal(_passwordController.text);
+      nameVal(_nameController.text);
     }
     if (_enrollController.text.isEmpty) {
       enrollmentVal(_enrollController.text);
@@ -168,7 +179,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     ),
                     SizedBox(height: 10.0.h),
                     CustomTextFormField(
-                      controller: _emailController,
+                      controller: _nameController,
                       hint: 'Enter your name',
                       errorText: nameError,
                       onChanged: nameVal,
@@ -222,6 +233,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     ),
                     SizedBox(height: 10.0.h),
                     CustomTextFormField(
+                      obscureText: true,
                       controller: _passwordController,
                       hint: 'Enter your Password',
                       errorText: _passwordInput.displayError?.text(),

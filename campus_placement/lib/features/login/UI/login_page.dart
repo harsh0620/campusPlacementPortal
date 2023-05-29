@@ -186,6 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 20.0.h),
                     CustomTextFormField(
+                      obscureText: true,
                       controller: _passwordController,
                       hint: 'Enter your Password',
                       errorText: passwordError,
@@ -270,6 +271,7 @@ class CustomTextFormField extends StatelessWidget {
     super.key,
     required this.controller,
     this.hint,
+    this.obscureText = false,
     this.errorText,
     this.onChanged,
     this.onSubmitted,
@@ -277,6 +279,7 @@ class CustomTextFormField extends StatelessWidget {
 
   final TextEditingController controller;
   final String? hint;
+  final bool obscureText;
   final String? errorText;
   final void Function(String)? onChanged;
   final void Function(String?)? onSubmitted;
@@ -284,6 +287,7 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      obscureText: obscureText,
       controller: controller,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(

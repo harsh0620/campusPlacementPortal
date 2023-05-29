@@ -12,7 +12,7 @@ extension PasswordErrorText on PasswordError {
   String text() {
     switch (this) {
       case PasswordError.tooShort:
-        return 'Password is too short';
+        return 'Enter Password of length >8';
       case PasswordError.noUppercase:
         return 'No Uppercase letter present';
       case PasswordError.noLowercase:
