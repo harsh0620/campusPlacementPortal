@@ -157,4 +157,6 @@ const students = [
 const filePath = 'students.csv';
 
 // Create the CSV file with the provided data
-createCSV(students, filePath);
+// createCSV(students, filePath);
+const date = new Date();
+console.log(date);

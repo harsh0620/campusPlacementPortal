@@ -102,7 +102,7 @@ const companySchema = mongoose.Schema({
     ref: "Admin",
     required: [true, "Please login"],
   },
-  date: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },

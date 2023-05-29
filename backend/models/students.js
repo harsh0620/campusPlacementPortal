@@ -285,6 +285,10 @@ const studentSchema = mongoose.Schema({
       },
     },
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 // Hash password before saving the user
 studentSchema.pre("save", async function () {

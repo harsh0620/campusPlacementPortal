@@ -211,7 +211,7 @@ const getJobDrive = async (req, res, next) => {
         "You are not authorized to perform action for job drive"
       );
     }
-    const jobDrive = await JobDrive.find({ company: userId }).populate(
+    const jobDrive = await JobDrive.find({ company: userId }).sort({ driveDate: -1 }).populate(
       "company",
       "name"
     );

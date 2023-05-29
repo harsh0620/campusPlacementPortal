@@ -1,11 +1,21 @@
 import React from "react";
-import {
-  FaFacebook,
-  FaTwitter,
-  FaLinkedin,
-  FaGithub,
-} from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaLinkedin, FaGithub, FaCheckCircle, FaCogs } from "react-icons/fa";
+import {BsLightningCharge} from "react-icons/bs";
 // import heroImage from '../images/hero-image.jpg';
+
+const FeatureBox = ({ title, description, icon }) => {
+  return (
+    <div className="bg-blue-50 px-4 py-6 shadow rounded-lg">
+      <div className="flex items-center">
+        <div className="flex-shrink-0 text-blue-500">{icon}</div>
+        <div className="ml-4">
+          <h4 className="text-lg font-medium text-gray-900">{title}</h4>
+          <p className="mt-2 text-base text-gray-500">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 function Landing() {
   return (
     <div>
@@ -52,104 +62,14 @@ function Landing() {
             </div>
             <div className="mt-10">
               <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="bg-blue-50 px-4 py-6 shadow rounded-lg">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg
-                        className="h-6 w-6 text-blue-600"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="text-lg font-medium text-gray-900">
-                        Easy Job Search
-                      </h4>
-                      <p className="mt-2 text-base text-gray-500">
-                        Our platform makes it easy to search for jobs based on
-                        your preferences and qualifications.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 px-4 py-6 shadow rounded-lg">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg
-                        className="h-6 w-6 text-blue-600"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="text-lg font-medium text-gray-900">
-                        Apply with Ease
-                      </h4>
-                      <p className="mt-2 text-base text-gray-500">
-                        Once you find a job you're interested in, applying is a
-                        breeze with our streamlined application process.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 px-4 py-6 shadow rounded-lg">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg
-                        className="h-6 w-6 text-blue-600"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="
-                  currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M20 12H4"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="text-lg font-medium text-gray-900">
-                        Manage Applications
-                      </h4>
-                      <p className="mt-2 text-base text-gray-500">
-                        Keep track of all your job applications in one place
-                        with our easy-to-use application management system.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <FeatureBox title={"Easy Placement Management"} description={"Our platform makes it easy for CTAE Placement Head and Student in placement process"} icon={<FaCheckCircle/>}/>
+                <FeatureBox title={" Apply with Ease"} description={" Once you find a job you're interested in, applying is a breeze with our streamlined application process."} icon={<BsLightningCharge/>}/>
+                <FeatureBox title={"Manage Applications"} description={"Keep track of all your job applications in one place with our easy-to-use application management system."} icon={<FaCogs/>}/>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* CTA Section */}
         <div className="bg-blue-500 w-full mt-8">
           <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -199,9 +119,10 @@ function Landing() {
               </a>
             </div>
             <div className="flex items-center justify-center md:order-1">
-            <p className="text-center text-base text-gray-400 flex items-center m-auto">
-              © {new Date().getFullYear()} Campus Placement Portal All rights reserved.
-            </p>
+              <p className="text-center text-base text-gray-400 flex items-center m-auto">
+                © {new Date().getFullYear()} Campus Placement Portal All rights
+                reserved.
+              </p>
             </div>
           </div>
         </div>

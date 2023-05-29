@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {Tooltip} from "react-tooltip";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { AiFillProfile } from "react-icons/ai";
@@ -53,7 +53,6 @@ const StudentHome = () => {
     getStatsByStudent,
     statsForStudent,
     filledPercentageStudent,
-    jobsCalendarStudent,
     isLoading,
   } = useAppContext();
   useEffect(() => {

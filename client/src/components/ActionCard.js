@@ -10,7 +10,7 @@ const ActionCard = ({ title, icon, dropDownComponent, bgColor }) => {
 
   return (
     <div className="bg-white border rounded-xl p-4 mt-2 mb-2">
-      <div className="flex items-center justify-between "  onClick={handleToggleDropdown}>
+      <div className="flex items-center justify-between cursor-pointer"  onClick={handleToggleDropdown}>
         <div className="flex items-center">
           <div className={`${bgColor} text-white rounded-full p-2 mr-4`}>
             {icon}

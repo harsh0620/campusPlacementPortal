@@ -117,6 +117,8 @@ import {
   ACTIONON_JOBDRIVEBYCOMPANY_ERROR,
   GET_STATSBYCOMPANY_BEGIN,
   GET_STATSBYCOMPANY_SUCCESS,
+  GET_STATSBYADMIN_BEGIN,
+  GET_STATSBYADMIN_SUCCESS,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -252,6 +254,8 @@ export const initialState = {
   documentPhoto: "",
   documentAadhar: "",
   documentAllDocument: "",
+  statsForAdmin: {},
+  adminStatsYear: new Date().getFullYear(),
   statsForStudent: {},
   statsForCompany: {},
   designation: "",
@@ -264,6 +268,7 @@ export const initialState = {
   companiesByStudent: [],
   jobsByStudent: [],
   jobsByCompany: [],
+  specificAdmin: {},
   specificJob: {},
   specificJobApplied: {},
   specificCompany: {
@@ -1004,6 +1009,25 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+  const getStatsByAdmin = async () => {
+    dispatch({ type: GET_STATSBYADMIN_BEGIN });
+    try {
+      const {adminStatsYear}=state;
+      const { data } = await authFetch.get(`/admin/stats?statsYear=${adminStatsYear}`);
+      const { stats } = data;
+      console.log(stats);
+      dispatch({
+        type: GET_STATSBYADMIN_SUCCESS,
+        payload: {
+          stats,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      //logoutUser();
+    }
+    clearAlert();
+  }
   const sendJobNotification = async ({ emails, jobId }) => {
     dispatch({ type: SEND_NOTIFICATION_BEGIN });
     try {
@@ -1777,6 +1801,7 @@ const AppProvider = ({ children }) => {
         verifyJob,
         verifyStudent,
         sendJobNotification,
+        getStatsByAdmin,
         // STUDENT SIDE
         getStudentByIdByStudent,
         getStudentByIdByStudentInCSV,

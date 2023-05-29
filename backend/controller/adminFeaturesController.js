@@ -196,13 +196,12 @@ const getCompanyById = async (req, res, next) => {
       );
     }
     const companyId = req.params.companyId;
-    const company = await Company.findOne({ _id: companyId })
-  .populate({
-    path: "placementDrives",
-    populate: {
-      path: "company",
-    },
-  });
+    const company = await Company.findOne({ _id: companyId }).populate({
+      path: "placementDrives",
+      populate: {
+        path: "company",
+      },
+    });
 
     if (!company) {
       throw new NotFoundError(`No company with ID: ${companyId}`);
@@ -226,7 +225,10 @@ const getJob = async (req, res, next) => {
         "You are not authorized to view all students"
       );
     }
-    const jobs = await jobDrive.find({}).populate("company", "name");
+    const jobs = await jobDrive
+      .find({})
+      .sort({ driveDate: -1 })
+      .populate("company", "name");
     res.status(StatusCodes.OK).json({
       jobs,
     });
@@ -248,7 +250,10 @@ const getJobById = async (req, res, next) => {
     const job = await jobDrive
       .findOne({ _id: jobId })
       .populate("company", "name")
-      .populate("appliedBy", "name enrollmentNo personalDetails.stream applicationStatus placementDetails.selected");
+      .populate(
+        "appliedBy",
+        "name enrollmentNo personalDetails.stream applicationStatus placementDetails.selected"
+      );
     if (!job) {
       throw new NotFoundError(`No job with ID: ${jobId}`);
     }
@@ -292,7 +297,9 @@ const verifyStudent = async (req, res, next) => {
     await student.save();
     // Return a success message with the updated verification status of the student's account
     return res.status(StatusCodes.OK).json({
-      message: ` Student ${student?.applicationStatus==="verified" ? "verified" : "unverified"} successfully`,
+      message: ` Student ${
+        student?.applicationStatus === "verified" ? "verified" : "unverified"
+      } successfully`,
     });
   } catch (err) {
     next(err);
@@ -436,7 +443,7 @@ const sendMailToGoogleGroups = async (req, res, next) => {
     if (!jobDrive) {
       throw new NotFoundError(`No job drive with ID: ${jobDriveId}`);
     }
-    if(!jobDrive.verified){
+    if (!jobDrive.verified) {
       throw new BadRequestError("Please verify the job drive first");
     }
     // Convert the job drive object to a plain JavaScript object
@@ -645,6 +652,150 @@ const getAppliedStudents = async (req, res, next) => {
     next(error);
   }
 };
+
+const getStats = async (req, res, next) => {
+  try {
+    const adminId = req.user.userId;
+    const admin = await Admin.findOne({ _id: adminId });
+    if (!admin) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const streamsList = [
+      {
+        title: "Computer Science",
+        value: "Computer Science",
+      },
+      {
+        title: "Electronics",
+        value: "Electronics",
+      },
+      {
+        title: "Mechanical",
+        value: "Mechanical",
+      },
+      {
+        title: "Civil",
+        value: "Civil",
+      },
+      {
+        title: "Electrical",
+        value: "Electrical",
+      },
+      {
+        title: "Agriculture",
+        value: "Agriculture",
+      },
+      {
+        title: "Mining",
+        value: "Mining",
+      },
+    ];
+    const year = parseInt(req.query.statsYear);
+    const totalJobsCount = await JobDrive.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+    });
+    const totalVerifiedJobsCount = await JobDrive.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+      verified: true,
+    });
+    const totalUnverifiedJobsCount = await JobDrive.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+      verified: false,
+    });
+    const totalStudentsCount = await Student.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+    });
+    const totalVerifiedStudentsCount = await Student.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+      applicationStatus: "verified",
+    });
+    const totalUnverifiedStudentsCount = await Student.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+      applicationStatus: "unverified",
+    });
+
+    const totalPlacedStudentsCount = await Student.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+      "placementDetails.selected": true,
+    });
+
+    const totalNotPlacedStudentsCount = await Student.countDocuments({
+      createdAt: {
+        $gte: new Date(year, 0, 1),
+        $lt: new Date(year + 1, 0, 1),
+      },
+      "placementDetails.selected": false,
+    });
+
+    const branchWiseData = await Promise.all(
+      streamsList.map(async (stream) => {
+        const placedCount = await Student.countDocuments({
+          createdAt: {
+            $gte: new Date(year, 0, 1),
+            $lt: new Date(year + 1, 0, 1),
+          },
+          "personalDetails.stream": stream.value,
+          "placementDetails.selected": true,
+        });
+
+        const unplacedCount = await Student.countDocuments({
+          createdAt: {
+            $gte: new Date(year, 0, 1),
+            $lt: new Date(year + 1, 0, 1),
+          },
+          "personalDetails.stream": stream.value,
+          "placementDetails.selected": false,
+        });
+
+        return {
+          branch: stream.title,
+          placed: placedCount,
+          unplaced: unplacedCount,
+        };
+      })
+    );
+
+    res.status(StatusCodes.OK).json({
+      stats: {
+        totalStudentsCount,
+        totalPlacedStudentsCount,
+        totalNotPlacedStudentsCount,
+        totalJobsCount,
+        totalVerifiedJobsCount,
+        totalUnverifiedJobsCount,
+        totalVerifiedStudentsCount,
+        totalUnverifiedStudentsCount,
+        branchWiseData
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   verifyStudent,
   verifyJobDrive,
@@ -659,4 +810,5 @@ export {
   sendMailToUsers,
   sendMailToSelectedStudent,
   getAppliedStudents,
+  getStats,
 };

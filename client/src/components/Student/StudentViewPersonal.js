@@ -13,7 +13,6 @@ const StudentViewPersonalComp = () => {
   return (
     <div className="flex flex-col">
       <div className="flex flex-col justify-between">
-        {!specificStudent && <p>No personal data</p>}
         {specificStudent && (
           <div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
             <div>

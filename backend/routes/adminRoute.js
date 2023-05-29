@@ -20,6 +20,7 @@ import {
   getJob,
   getJobById,
   getAppliedStudents,
+  getStats,
 } from "../controller/adminFeaturesController.js";
 
 /**
@@ -136,5 +137,6 @@ router.route("/sendMails/:jobDriveId").post(sendMailToGoogleGroups);
  * @access Private
  */
 router.route("/sendMessages").post(sendMessage);
+router.route("/stats").get(getStats);
 
 export default router;

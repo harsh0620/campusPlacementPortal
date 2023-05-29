@@ -112,6 +112,8 @@ import {
   ACTIONON_JOBDRIVEBYCOMPANY_ERROR,
   GET_STATSBYCOMPANY_BEGIN,
   GET_STATSBYCOMPANY_SUCCESS,
+  GET_STATSBYADMIN_BEGIN,
+  GET_STATSBYADMIN_SUCCESS,
 } from "./actions";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -232,6 +234,7 @@ const reducer = (state, action) => {
     case GET_PROFILE_SUCCESS:
       return {
         ...state,
+        specificAdmin: action?.payload?.user,
         name:
           action?.payload?.user?.name === undefined
             ? ""
@@ -444,6 +447,14 @@ const reducer = (state, action) => {
         showAlert: true,
         alertType: "error",
         alertText: action.payload.msg,
+      };
+      case GET_STATSBYADMIN_BEGIN:
+      return { ...state, isLoading: true, showAlert: false };
+    case GET_STATSBYADMIN_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        statsForAdmin: action.payload.stats,
       };
     // STUDENT SIDE:
     case GET_PROFILE_BASIC_BEGIN:
