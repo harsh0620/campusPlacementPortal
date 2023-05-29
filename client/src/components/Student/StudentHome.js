@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Tooltip} from "react-tooltip";
+// import {Tooltip} from "react-tooltip";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { AiFillProfile } from "react-icons/ai";
 import { BsFillCalendar2MonthFill } from "react-icons/bs";
@@ -40,11 +40,11 @@ const CalendarComponent = () => {
         eventMouseLeave={()=>handleMouseLeave()}
         events={jobsCalendarStudent}
       />
-     {showTooltip && (
+     {/* {showTooltip && (
         <Tooltip effect="solid" place="top">
           {tooltipContent}
         </Tooltip>
-      )}
+      )} */}
     </div>
   );
 };

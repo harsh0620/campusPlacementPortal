@@ -9,6 +9,7 @@ import 'auth/auth_bloc.dart';
 import 'core/locator/locator.dart';
 import 'core/router/router.dart';
 import 'features/login/cubit/login_cubit.dart';
+import 'features/login/cubit/register_student_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,29 +26,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return ScreenUtilInit(builder: (context, child) {
-    //   return MultiBlocProvider(
-    //     providers: [
-    //       BlocProvider<AuthBloc>(
-    //         create: (context) => locator<AuthBloc>(),
-    //       ),
-    //       BlocProvider<LoginCubit>(
-    //         create: (context) => locator<LoginCubit>(),
-    //       ),
-    //     ],
-    //     child: BlocBuilder<AuthBloc, AuthState>(
-    //       builder: (context, state) {
-    //         return MaterialApp.router(
-    //           debugShowCheckedModeBanner: false,
-    //           routerConfig: router(context),
-    //           theme: ThemeData(
-    //             textTheme: GoogleFonts.quicksandTextTheme(),
-    //           ),
-    //         );
-    //       },
-    //     ),
-    //   );
-    // });
     return ScreenUtilInit(
       // designSize: const Size(1440, 1024),
       minTextAdapt: true,
@@ -59,6 +37,9 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<LoginCubit>(
               create: (context) => locator<LoginCubit>(),
+            ),
+            BlocProvider<RegisterStudentCubit>(
+              create: (context) => locator<RegisterStudentCubit>(),
             ),
           ],
           child: BlocBuilder<AuthBloc, AuthState>(

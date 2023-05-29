@@ -1,3 +1,4 @@
+import 'package:campus_placement/features/login/cubit/register_student_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,4 +38,6 @@ Future<void> initLocator() async {
   locator.registerLazySingleton<LoginCubit>(
     () => LoginCubit(locator<RemoteRepository>()),
   );
+  locator.registerLazySingleton<RegisterStudentCubit>(
+      () => RegisterStudentCubit(locator<RemoteRepository>()));
 }
