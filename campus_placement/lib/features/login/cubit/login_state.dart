@@ -14,7 +14,7 @@ class LoginState extends Equatable {
   final ForgetPassword forgetPassword;
   final OtpStatus otpStatus;
   final ConfirmPasswordStatus confirmPasswordStatus;
-  final Object? user;
+  final user;
   final String? token;
   final String? errorMessage;
 
@@ -32,7 +32,7 @@ class LoginState extends Equatable {
       ConfirmPasswordStatus? confirmPasswordStatus,
       ForgetPassword? forgetPassword,
       OtpStatus? otpStatus,
-      Object? user,
+      user,
       String? token,
       String? errorMessage}) {
     return LoginState(

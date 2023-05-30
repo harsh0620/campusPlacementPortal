@@ -20,4 +20,15 @@ class ColorConst {
   static const lightGrey2 = Color(0xFFECECEC);
   static const lightGrey3 = Color(0xFFC9C9C9);
   static const dartGrey3 = Color(0xFFA3A3A3);
+
+  static const customBlue = Color(0xFF3B82F6);
+  static const customPink = Color(0xFFEC4899);
+  static const customPurple = Color(0xFF8B5CF6);
+  static const customYellow = Color(0xFFFBBF24);
+  static const customGreen = Color(0xFF10B981);
+  static const customIndigo = Color(0XFF6366F1);
+  static const customteal = Color(0xFF14B8A6);
+  static const customcyan = Color(0xFF22D3EE);
+  static const customgray = Color(0xFF6B7280);
+  static const customred = Color(0xFFEF4444);
 }

@@ -19,7 +19,7 @@ class RegisterStudentCubit extends Cubit<RegisterStudentState> {
         email, password, enrollmentNo, studentName);
     if (response != null) {
       emit(state.copyWith(
-        // user: response.user,
+        user: response.user,
         token: response.token,
         registerStudentStatus: RegisterStudentStatus.success,
       ));
