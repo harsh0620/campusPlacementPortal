@@ -13,6 +13,7 @@ import {
   updateCompanyById,
   updateJobDrive,
 } from "../controller/companyController.js";
+import { getStudentByIdInCSV } from "../controller/companyController.js";
 
 /**
  * @desc Get Company by ID
@@ -37,4 +38,5 @@ router
   .delete(authenticateUser, deleteJobDrive);
   router.route("/action/:studentId").patch(authenticateUser, actionForStudentForJobDrive);
 router.route("/student/:studentId").get(authenticateUser, getStudentById);
+router.route("/csv").post(authenticateUser, getStudentByIdInCSV);
 export default router;

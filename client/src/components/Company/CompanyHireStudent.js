@@ -15,6 +15,9 @@ const CompanyHireStudent = ({ studentId }) => {
   const { id } = useParams();
   const handleAction = () => {
     actionForStudentForJobDrive({studentId:id});
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 4500);
   };
   const handleActionChange = (e) => {
     handleChange({ name: e.target.name, value: e.target.value });

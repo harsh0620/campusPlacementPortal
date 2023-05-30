@@ -10,7 +10,7 @@ import {
   verifyJobDrive,
   verifyStudent,
   sendMailToGoogleGroups,
-  sendMessage,
+  sendMessagesOnMail,
   getStudents,
   getStudentById,
   sendMailToSelectedStudent,
@@ -21,6 +21,7 @@ import {
   getJobById,
   getAppliedStudents,
   getStats,
+  getStudentByIdInCSV,
 } from "../controller/adminFeaturesController.js";
 
 /**
@@ -136,7 +137,8 @@ router.route("/sendMails/:jobDriveId").post(sendMailToGoogleGroups);
  * @route POST /api/v1/admin/sendMessages
  * @access Private
  */
-router.route("/sendMessages").post(sendMessage);
+router.route("/sendMessagesOnMail").post(sendMessagesOnMail);
 router.route("/stats").get(getStats);
+router.route("/csv").post(getStudentByIdInCSV);
 
 export default router;

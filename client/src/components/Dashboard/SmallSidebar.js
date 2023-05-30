@@ -2,9 +2,12 @@ import React from "react";
 import { MdDashboard, MdOutlineDashboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { adminSidebarItems } from "../../utils/constants";
+import { FaUserCircle } from "react-icons/fa";
+import { useAppContext } from "../../context/appContext";
 
 const SmallSidebar = () => {
   const navigate = useNavigate();
+  const {user}=useAppContext();
   return (
     <footer
       className="md:hidden bg-white flex justify-between fixed 
@@ -21,6 +24,7 @@ const SmallSidebar = () => {
             window.location.pathname === "/") &&
           "text-black"
         } cursor-pointer text-gray-600}`}
+        title="Home"
       >
         <div className="sm:text-3xl text-2xl">
           {window.location.pathname === "/" ||
@@ -44,6 +48,7 @@ const SmallSidebar = () => {
             className={`flex flex-col items-center justify-center ${
               window.location.pathname.indexOf(link) !== -1 && "text-black"
             } cursor-pointer text-gray-600`}
+            title={title}
           >
             <div className="sm:text-3xl text-2xl">
               {window.location.pathname.indexOf(link) !== -1
@@ -54,6 +59,22 @@ const SmallSidebar = () => {
           </div>
         );
       })}
+      <div
+            onClick={() => {
+              navigate(`/profile/${user?._id}`);
+            }}
+            className={`flex flex-col items-center justify-center ${
+              window.location.pathname.substring(0,9)===`/profile/`  && "text-black"
+            } cursor-pointer text-gray-600`}
+            title="Profile"
+          >
+            <div className="sm:text-3xl text-2xl" >
+              {window.location.pathname.substring(0,9)===`/profile/` 
+                ? <FaUserCircle/>
+                : <FaUserCircle color="#bbb" />}
+            </div>
+            <div className="text-xs hidden xs:block font-semibold">{"Profile"}</div>
+          </div>
     </footer>
   );
 };

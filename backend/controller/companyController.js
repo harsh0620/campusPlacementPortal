@@ -8,7 +8,7 @@ import Admin from "../models/admin.js";
 import Company from "../models/Company.js";
 import Student from "../models/students.js";
 import JobDrive from "../models/jobDrive.js";
-
+import fs from "fs";
 /**
 
 @desc Get a single company by ID
@@ -329,12 +329,135 @@ const getStudentById = async (req, res, next) => {
       );
     }
     const studentId = req.params.studentId;
-    const student = await Student.findOne({ _id: studentId });
+    const student = await Student.findOne({ _id: studentId }).populate("placementDetails.selectedIn.company", "name");
     if (!student) {
       throw new NotFoundError(`No student with ID: ${studentId}`);
     }
     return res.status(StatusCodes.OK).json({
       student,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const createCSVFinal = async (data, filePath) => {
+  try {
+    let csvContent = '';
+    let headerFields = [];
+    let headerFieldNames = [];
+
+    // Recursive function to generate header fields and names
+    const generateHeader = (data, prefix = '') => {
+      for (const key in data) {
+        if (Array.isArray(data[key])) {
+          // Handle array data
+          headerFields.push(`${prefix}${key}`);
+          headerFieldNames.push(`${prefix}${key}`);
+        } else if (typeof data[key] === 'object' && data[key] !== null) {
+          // Handle nested objects
+          generateHeader(data[key], `${prefix}${key}.`);
+        } else {
+          // Handle simple fields
+          headerFields.push(`${prefix}${key}`);
+          headerFieldNames.push(`${prefix}${key}`);
+        }
+      }
+    };
+
+    // Generate the header fields and names
+    generateHeader(data[0]);
+
+    // Constructing the CSV header line
+    const headerLine = headerFieldNames.map((name) => `"${name}"`).join(',');
+
+    // Appending the header line to the CSV content
+    csvContent += headerLine + '\n';
+
+    // Recursive function to extract nested values and stringify them
+    const extractNestedValue = (row, field) => {
+      const nestedFields = field.split('.');
+      let nestedValue = row;
+      for (let i = 0; i < nestedFields.length; i++) {
+        nestedValue = nestedValue[nestedFields[i]];
+        if (nestedValue === undefined) break;
+      }
+      if (typeof nestedValue === 'object' && nestedValue !== null) {
+        return `"${serializeNestedValue(nestedValue)}"`;
+      }
+      return `"${nestedValue}"`;
+    };
+    
+    const serializeNestedValue = (value) => {
+      if (Array.isArray(value)) {
+        return value.map((item) => serializeNestedValue(item)).join(', ');
+      } else if (typeof value === 'object') {
+        return Object.keys(value)
+          .map((key) => `${key}: ${serializeNestedValue(value[key])}`)
+          .join(', ');
+      }
+      return value;
+    };
+    
+    
+    // Constructing the CSV data lines
+    data.forEach((row) => {
+      const rowValues = headerFields.map((field, index) => {
+        // Handle nested fields
+        if (field.includes('.')) {
+          return extractNestedValue(row, field);
+        }
+        return `"${row[field]}"`;
+      });
+
+      const rowLine = rowValues.join(',');
+
+      csvContent += rowLine + '\n';
+    });
+
+    // Writing the CSV content to the file
+    fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' });
+
+    console.log('CSV file created successfully.');
+
+  } catch (error) {
+    console.error('Error creating CSV file:', error);
+  }
+};
+const getStudentByIdInCSV = async (req, res, next) => {
+  try {
+    const companyId = req.user.userId;
+    const company = await Company.findOne({ _id: companyId });
+    if (!company) {
+      throw new UnAuthenticatedError(
+        "You are not authorized to perform this action"
+      );
+    }
+    const studentIds = req.body.studentIds;
+    const students = await Student.find({ _id: { $in: studentIds } }).populate("placementDetails.selectedIn.company", "name");
+console.log(students);
+    // Convert student data to JSON
+    const studentData = students.map(student => student.toObject());
+    console.log(studentData);
+
+    const timestamp = Date.now().toString();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const filename = `student_${timestamp}_${randomString}.csv`;
+    const filePath = `${filename}`;
+
+    // Create the CSV file
+    await createCSVFinal(studentData, filePath);
+
+    // Set the response headers for CSV download
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    // Stream the file as the response
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+
+    // Delete the temporary CSV file after streaming
+    fileStream.on('close', () => {
+      fs.unlinkSync(filePath);
     });
   } catch (error) {
     next(error);
@@ -489,6 +612,7 @@ export {
   updateJobDrive,
   deleteJobDrive,
   getStudentById,
+  getStudentByIdInCSV,
   actionForStudentForJobDrive,
   getStats,
 };

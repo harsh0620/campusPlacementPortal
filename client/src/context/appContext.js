@@ -119,6 +119,12 @@ import {
   GET_STATSBYCOMPANY_SUCCESS,
   GET_STATSBYADMIN_BEGIN,
   GET_STATSBYADMIN_SUCCESS,
+  SEND_MESSAGEONMAIL_BEGIN,
+  SEND_MESSAGEONMAIL_SUCCESS,
+  SEND_MESSAGEONMAIL_ERROR,
+  FORGOT_PASSWORD_BEGIN,
+  FORGOT_PASSWORD_SUCCESS,
+  FORGOT_PASSWORD_ERROR,
 } from "./actions";
 
 const token = localStorage.getItem("token");
@@ -658,6 +664,29 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
   };
+  const forgotPassword = async ({email,userType}) => {
+    dispatch({ type: FORGOT_PASSWORD_BEGIN });
+    try {
+      console.log(email);
+      console.log(userType);
+      const { data } = await axios.post("/api/v1/auth/forgotpassword", {
+        email,
+        userType
+      });
+      console.log(data);
+      dispatch({
+        type: FORGOT_PASSWORD_SUCCESS,
+        payload: { msg: data.message },
+      });
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: FORGOT_PASSWORD_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+    }
+    clearAlert();
+  };
   const getAdminDetails = async (userType) => {
     dispatch({ type: GET_PROFILE_BEGIN });
     try {
@@ -872,7 +901,8 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const getStudentByIdByStudentInCSV = async (id) => {
+  const getCSVDataByStudent = async (id) => {
+    startLoading();
     try {
       const { data } = await authFetch.get(`/student/csv/${id}`, {
         responseType: "blob",
@@ -885,18 +915,70 @@ const AppProvider = ({ children }) => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      stopLoading();
+      toast.success("CSV Downloaded");
     } catch (error) {
       console.log(error);
+      stopLoading();
+      toast.error("Error Downloading CSV");
+    }
+  };
+  const getCSVDataByCompany = async (ids) => {
+    startLoading();
+    try {
+      const { data } = await authFetch.post(
+        `/company/csv`,
+        { studentIds: ids },
+        {
+          responseType: "blob",
+        }
+      );
+      console.log(data);
+      const url = window.URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "student.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      stopLoading();
+      toast.success("CSV Downloaded");
+    } catch (error) {
+      console.log(error);
+      stopLoading();
+      toast.error("Error Downloading CSV");
       // Handle error
     }
   };
-  
-  
-  
-  
-  
-  
-  
+  const getCSVDataByAdmin = async (ids) => {
+    startLoading();
+    try {
+      const { data } = await authFetch.post(
+        `/admin/csv`,
+        { studentIds: ids },
+        {
+          responseType: "blob",
+        }
+      );
+      console.log(data);
+      const url = window.URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "student.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      stopLoading();
+      toast.success("CSV Downloaded");
+    } catch (error) {
+      console.log(error);
+      stopLoading();
+      toast.error("Error Downloading CSV");
+    }
+  };
+
   const searchCompaniesByAdmin = async () => {
     dispatch({ type: GET_COMPANIESBYADMIN_BEGIN });
     try {
@@ -1012,8 +1094,10 @@ const AppProvider = ({ children }) => {
   const getStatsByAdmin = async () => {
     dispatch({ type: GET_STATSBYADMIN_BEGIN });
     try {
-      const {adminStatsYear}=state;
-      const { data } = await authFetch.get(`/admin/stats?statsYear=${adminStatsYear}`);
+      const { adminStatsYear } = state;
+      const { data } = await authFetch.get(
+        `/admin/stats?statsYear=${adminStatsYear}`
+      );
       const { stats } = data;
       console.log(stats);
       dispatch({
@@ -1027,7 +1111,7 @@ const AppProvider = ({ children }) => {
       //logoutUser();
     }
     clearAlert();
-  }
+  };
   const sendJobNotification = async ({ emails, jobId }) => {
     dispatch({ type: SEND_NOTIFICATION_BEGIN });
     try {
@@ -1043,6 +1127,30 @@ const AppProvider = ({ children }) => {
       if (error.response.status === 401) return;
       dispatch({
         type: SEND_NOTIFICATION_ERROR,
+        payload: { msg: error.response.data.message },
+      });
+      toast.error(`Error Creating Admin: ${error.response.data.message}`);
+    }
+    clearAlert();
+  };
+  const sendMessageOnMail = async () => {
+    dispatch({ type: SEND_MESSAGEONMAIL_BEGIN });
+    try {
+      const { mailsArray, mailSubject, mailBody } = state;
+      const { data } = await authFetch.post(`/admin/sendMessagesOnMail`, {
+        mailsArray,
+        mailSubject,
+        mailBody,
+      });
+      const { message } = data;
+      dispatch({
+        type: SEND_MESSAGEONMAIL_SUCCESS,
+      });
+      toast.success(message);
+    } catch (error) {
+      if (error.response.status === 401) return;
+      dispatch({
+        type: SEND_MESSAGEONMAIL_ERROR,
         payload: { msg: error.response.data.message },
       });
       toast.error(`Error Creating Admin: ${error.response.data.message}`);
@@ -1387,7 +1495,6 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await authFetch(`/student/job`);
       const { jobs } = data;
-      console.log(jobs);
       dispatch({
         type: GET_JOBSBYSTUDENT_SUCCESS,
         payload: {
@@ -1404,10 +1511,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: GET_JOBSBYIDBYSTUDENT_BEGIN });
     try {
       const { data } = await authFetch(`/student/job/${id}`);
-      console.log(data);
       const { job, applied } = data;
-      console.log(job);
-      console.log("Applied", applied);
       dispatch({
         type: GET_JOBSBYIDBYSTUDENT_SUCCESS,
         payload: {
@@ -1452,8 +1556,6 @@ const AppProvider = ({ children }) => {
         `/student/calculateProfileFilledPercentage`
       );
       const jobCalendar = await authFetch(`/student/jobsCalendar`);
-      console.log(jobCalendar.data);
-      console.log(jobCalendar.data.events);
       const { stats } = data;
       dispatch({
         type: GET_STATSBYSTUDENT_SUCCESS,
@@ -1706,15 +1808,11 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
-  const actionForStudentForJobDrive = async ({studentId}) => {
+  const actionForStudentForJobDrive = async ({ studentId }) => {
     dispatch({ type: ACTIONON_JOBDRIVEBYCOMPANY_BEGIN });
     try {
-      const {
-        actionJobAction,
-        actionJobProfile,
-        actionJobPackage,
-      } = state;
-      console.log(studentId)
+      const { actionJobAction, actionJobProfile, actionJobPackage } = state;
+      console.log(studentId);
       const { data } = await authFetch.patch(`/company/action/${studentId}`, {
         action: actionJobAction,
         jobProfile: actionJobProfile,
@@ -1784,6 +1882,7 @@ const AppProvider = ({ children }) => {
         registerUser,
         loginUser,
         logoutUser,
+        forgotPassword,
         searchStudentsByAdmin,
         getStudentByIdByAdmin,
         searchCompaniesByAdmin,
@@ -1801,10 +1900,11 @@ const AppProvider = ({ children }) => {
         verifyJob,
         verifyStudent,
         sendJobNotification,
+        sendMessageOnMail,
         getStatsByAdmin,
         // STUDENT SIDE
         getStudentByIdByStudent,
-        getStudentByIdByStudentInCSV,
+        getCSVDataByStudent,
         getStudentProfileBasics,
         updateStudentProfileBasics,
         getStudentProfilePersonal,
@@ -1831,7 +1931,9 @@ const AppProvider = ({ children }) => {
         updateJobDrive,
         deleteJobDrive,
         actionForStudentForJobDrive,
-        getStatsByCompany
+        getStatsByCompany,
+        getCSVDataByCompany,
+        getCSVDataByAdmin,
       }}
     >
       {children}

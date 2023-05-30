@@ -8,8 +8,13 @@ import {
 import { ExportJsonCsv } from "react-export-json-csv";
 import { useState } from "react";
 const StudentViewHeader = ({ handleCapture }) => {
-  const { specificStudent,getStudentByIdByStudentInCSV, getRandomColor, user, verifyStudent } =
-    useAppContext();
+  const {
+    specificStudent,
+    getCSVDataByStudent,
+    getRandomColor,
+    user,
+    verifyStudent,
+  } = useAppContext();
   const handleVerify = () => {
     if (
       window.confirm(
@@ -24,7 +29,7 @@ const StudentViewHeader = ({ handleCapture }) => {
       window.location.reload(false);
     }, 4500);
   };
-  let arrayTemp=[];
+  let arrayTemp = [];
   arrayTemp.push(specificStudent);
   const [headers] = useState([
     {
@@ -80,26 +85,34 @@ const StudentViewHeader = ({ handleCapture }) => {
           <button
             title="Download CSV"
             className="flex flex-col justify-center items-center mx-auto border bg-white px-2 py-1 rounded-lg text-sm font-medium"
-            onClick={()=>getStudentByIdByStudentInCSV(specificStudent?._id)}
+            onClick={() => getCSVDataByStudent(specificStudent?._id)}
           >
             <FaFileDownload />
             {/* <ExportJsonCsv headers={headers} items={arrayTemp}> */}
             <span className="font-bold text-xs">CSV</span>
-          {/* </ExportJsonCsv> */}
-            
+            {/* </ExportJsonCsv> */}
           </button>
         </div>
-        <div className="flex flex-row absolute top-0 right-0 mt-16 mr-4">
-          {specificStudent?.placementDetails?.selected===true?(
-             <span className="px-2  text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 text-center justify-center m-auto">
-             Placed
-           </span>
-          ):(
+        <div
+          className="flex flex-row absolute top-0 right-0 mt-16 mr-4"
+          title={
+            user?.role === "admin"
+              ? specificStudent?.placementDetails?.selected === true
+                ? `Placed In- ${specificStudent?.placementDetails?.selectedIn?.company?.name} as ${specificStudent?.placementDetails?.selectedIn?.jobProfile} with Package of ${specificStudent?.placementDetails?.selectedIn?.package}`
+                : "Not Placed"
+              : ""
+          }
+        >
+          {specificStudent?.placementDetails?.selected === true ? (
+            <span className="px-2  text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 text-center justify-center m-auto">
+              Placed
+            </span>
+          ) : (
             <span className="px-2  text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 text-center justify-center m-auto">
-            Not Placed
-          </span>
+              Not Placed
+            </span>
           )}
-            </div>
+        </div>
         <div className="flex flex-col absolute md:mt-6 mt-12 ml-4">
           {specificStudent?.personalDetails?.profileImage ||
           specificStudent?.personalDetails?.profileImage.length > 0 ? (
@@ -148,6 +161,32 @@ const StudentViewHeader = ({ handleCapture }) => {
             <div className="text-lg font-medium">
               {specificStudent?.enrollmentNo}
             </div>
+              <div className="text-lg ">
+                {specificStudent?.placementDetails?.selected === true ? (
+                  <div>
+                    Placed In-{" "}
+                    <span className="font-medium text-blue-500">
+                      {
+                        specificStudent?.placementDetails?.selectedIn?.company
+                          ?.name
+                      }
+                    </span>{" "}
+                    as{" "}
+                    <span className="font-medium text-blue-500">
+                      {
+                        specificStudent?.placementDetails?.selectedIn
+                          ?.jobProfile
+                      }
+                    </span>{" "}
+                    with Package of{" "}
+                    <span className="font-medium text-blue-500">
+                      {specificStudent?.placementDetails?.selectedIn?.package}
+                    </span>
+                  </div>
+                ) : (
+                  "Not Placed"
+                )}
+              </div>
           </div>
           <div className="flex flex-row">
             <div className="flex flex-col">
