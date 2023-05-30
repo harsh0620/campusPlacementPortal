@@ -27,8 +27,8 @@ const ForgotPassword = () => {
   async function onSubmit(e) {
     e.preventDefault();
     console.log(values);
-    const { email, password, userType } = values;
-    if (!email || !password || !userType) {
+    const { email, userType } = values;
+    if (!email || !userType) {
       displayAlert("danger", "Please enter email");
       return;
     }
@@ -49,7 +49,7 @@ const ForgotPassword = () => {
         className="flex justify-center items-center
       px-6 py-2 max-w-6xl m-auto h-screen"
       >
-        <div className="lg:p-[36px]  p-4 lg:mt-8 mt-14   w-full  md:w-[100%] lg:w-[40%] md:mx-0 mx-auto border border-black rounded-lg shadow-xl">
+        <div className="lg:p-[36px]  p-4 lg:mt-8 mt-14   w-full  md:w-[100%] lg:w-[50%] md:mx-0 mx-auto border border-black rounded-lg shadow-xl">
           <div className="w-full h-full ">
             <div className="font-medium text-2xl justify-center flex">
               Forgot Password
@@ -117,7 +117,7 @@ const ForgotPassword = () => {
                 {!isLoading && "Forgot Password"}
               </button>
 
-              <div className="mt-4 flex flex-col md:flex-row items-center w-full">
+              <div className="mt-4 flex flex-col md:flex-row items-center w-full overflow-x-auto">
                 <div className="flex items-center font-light text-base text-gray-500">
                   Don't have an account
                   <span
@@ -125,6 +125,18 @@ const ForgotPassword = () => {
                     onClick={() => navigate("/register")}
                   >
                     Register
+                  </span>
+                </div>
+                <div
+                  className="cursor-pointer md:ml-auto flex items-center font-light text-base text-gray-500"
+                  
+                >
+                  Already have an account
+                 <span
+                    className="text-black ml-2 font-medium cursor-pointer"
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
                   </span>
                 </div>
               </div>

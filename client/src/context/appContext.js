@@ -673,6 +673,7 @@ const AppProvider = ({ children }) => {
         email,
         userType
       });
+      console.log(data);
       dispatch({
         type: FORGOT_PASSWORD_SUCCESS,
         payload: { msg: data.message },
