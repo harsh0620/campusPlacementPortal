@@ -6,7 +6,7 @@ part 'login_model.g.dart';
 @JsonSerializable(explicitToJson: true)
 class LoginResponse extends Equatable {
   final String token;
-  final Object user;
+  final user;
 //
   const LoginResponse({
     required this.token,

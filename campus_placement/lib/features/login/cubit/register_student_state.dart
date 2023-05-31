@@ -4,7 +4,7 @@ enum RegisterStudentStatus { initial, loading, success, failure }
 
 class RegisterStudentState {
   final RegisterStudentStatus registerStudentStatus;
-  final Object? user;
+  final user;
   final String? token;
   final String? errorMessage;
 
@@ -16,7 +16,7 @@ class RegisterStudentState {
 
   RegisterStudentState copyWith(
       {RegisterStudentStatus? registerStudentStatus,
-      Object? user,
+      user,
       String? token,
       String? errorMessage}) {
     return RegisterStudentState(
