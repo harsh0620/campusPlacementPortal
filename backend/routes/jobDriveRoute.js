@@ -26,14 +26,14 @@ router.route("/all").get(authenticateUser, getJobDrives);
 
 /**
  * @desc Get jobDrive by ID
- * @route GET /api/v1/jobDrive/:id
+ * @route GET /api/v1/jobDrive/:jobDriveId
  * @access Private
  */
 router.route("/:jobDriveId").get(authenticateUser, getJobDriveById);
 
 /**
  * @desc Update a jobDrive
- * @route POST /api/v1/jobDrive/edit/:id
+ * @route POST /api/v1/jobDrive/edit/:jobDriveId
  * @access Private
  */
 router.route("/edit/:jobDriveId").patch(authenticateUser, updateJobDrive);
@@ -47,7 +47,7 @@ router.route("/delete/:jobDriveId").delete(authenticateUser, deleteJobDrive);
 
 /**
  * @desc Get Applied student in jobDrive by id
- * @route GET /api/v1/getAppliedStudent/:jobDriveId
+ * @route GET /api/v1/jobDrive/getAppliedStudent/:jobDriveId
  * @access Private
  */
 router

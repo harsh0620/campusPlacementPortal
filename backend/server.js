@@ -27,30 +27,35 @@ app.use(cors());
 // Parse incoming JSON data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 // Mount auth routes at /api/v1/auth
 app.use("/api/v1/auth", authRouter);
+
 // Mount admin routes at /api/v1/admin
+// Authenticate admin before accessing admin routes
 app.use("/api/v1/admin", authenticateAdmin, adminRouter);
+
 // Mount company routes at /api/v1/company
 app.use("/api/v1/company", companyRouter);
+
 // Mount student routes at /api/v1/auth
 app.use("/api/v1/student", studentAuthRouter);
+
 // Mount jobDrives routes at /api/v1/jobDrive
 app.use("/api/v1/jobDrive", jobDriveRouter);
 
 // Mount middleware for handling 404 not found errors
 app.use(notFoundMiddleware);
+
 // Mount middleware for handling all other errors
 app.use(errorHandlerMiddleware);
 
 const PORT = process.env.PORT || 5000;
 
+// Connect to database and start the server
 const start = async () => {
   try {
-    // Connect to database
     await connectDB();
-
-    // Start the server
     app.listen(PORT, () => {
       console.log(
         `Server running in ${process.env.NODE_ENV} mode on http://localhost:${PORT}`

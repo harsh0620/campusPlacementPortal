@@ -1,6 +1,7 @@
+// Import express and router
 import express from "express";
-
 const router = express.Router();
+// Import controller functions
 import {
   registerStudent,
   getBasicDetailsStudent,
@@ -14,9 +15,27 @@ import {
   getDocumentDetailsStudent,
   updateDocumentStudent,
 } from "../controller/studentAuthController.js";
+// Import authentication middleware
 import authenticateUser from "../middleware/auth.js";
+// Import login user function
 import { loginUser } from "../controller/authController.js";
-import { applyToJobDrive, calculateProfileFilledPercentage, getCompany, getCompanyById, getJob, getJobById, getJobsCalendar, getStats, getStudentById, getStudentByIdInCSV } from "../controller/studentController.js";
+// Import student controller functions
+import {
+  applyToJobDrive,
+  calculateProfileFilledPercentage,
+  getCompany,
+  getCompanyById,
+  getJob,
+  getJobById,
+  getJobsCalendar,
+  getStats,
+  getStudentById,
+  getStudentByIdInCSV,
+} from "../controller/studentController.js";
+
+
+
+
 /**
  * @desc Register a new student user
  * @route POST /api/v1/student/auth/register
@@ -31,40 +50,38 @@ router.route("/auth/register").post(registerStudent);
  */
 router.route("/auth/login").post(loginUser);
 
-
 /**
  * Get company
- *
  * @route GET /api/v1/student/company
  * @access Private
  */
-router.route("/company").get(authenticateUser,getCompany);
+router.route("/company").get(authenticateUser, getCompany);
 
 /**
  * Get company by id
  * @route GET /api/v1/student/company/:companyId
  * @access Private
- * */
-router.route("/company/:companyId").get(authenticateUser,getCompanyById);
+ */
+router.route("/company/:companyId").get(authenticateUser, getCompanyById);
+
 /**
  * Get job
- *
  * @route GET /api/v1/student/job
  * @access Private
  */
-router.route("/job").get(authenticateUser,getJob);
+router.route("/job").get(authenticateUser, getJob);
 
 /**
  * Get job by id
  * @route GET /api/v1/student/job/:jobId
  * @access Private
- * */
-router.route("/job/:jobId").get(authenticateUser,getJobById);
-
+ */
+router.route("/job/:jobId").get(authenticateUser, getJobById);
 
 /**
- * @desc Update an existing student user's personalDetails
- * @route PATCH /api/v1/student/basicDetails
+ * @desc Update an existing student user's basicDetails
+ * @desc Get an existing student user's basicDetails
+ * @route PATCH,GET /api/v1/student/basicDetails
  * @access Private
  */
 router
@@ -74,7 +91,8 @@ router
 
 /**
  * @desc Update an existing student user's personalDetails
- * @route PATCH /api/v1/student/personalDetails
+ * @desc Get an existing student user's personalDetails
+ * @route PATCH,GET /api/v1/student/personalDetails
  * @access Private
  */
 router
@@ -84,7 +102,8 @@ router
 
 /**
  * @desc Update an existing student user's academicDetails
- * @route PATCH /api/v1/student/academicDetails
+ * @desc Get an existing student user's academicDetails
+ * @route PATCH,GET /api/v1/student/academicDetails
  * @access Private
  */
 router
@@ -94,42 +113,69 @@ router
 
 /**
  * @desc Update an existing student user's professionalDetails
- * @route PATCH /api/v1/student/professionalDetails
+ * @desc Get an existing student user's professionalDetails
+ * @route PATCH,GET /api/v1/student/professionalDetails
  * @access Private
  */
 router
   .route("/professionalDetails")
   .patch(authenticateUser, updateProfessionalDetailsStudent)
   .get(authenticateUser, getProfessionalDetailsStudent);
+
 /**
  * @desc Update an existing student user's documentDetails
- * @route PATCH /api/v1/student/documentDetails
+ * @desc Get an existing student user's documentDetails
+ * @route PATCH,GET /api/v1/student/documentDetails
  * @access Private
- */
+ * */
 router
   .route("/documentDetails")
   .patch(authenticateUser, updateDocumentStudent)
   .get(authenticateUser, getDocumentDetailsStudent);
 
 /**
- * @desc Apply to jobDrive
+ * @desc Apply to a job drive
  * @route PATCH /api/v1/student/apply/:jobDriveId
  * @access Private
  */
 router.route("/apply/:jobDriveId").patch(authenticateUser, applyToJobDrive);
 
-
-router.route("/calculateProfileFilledPercentage").get(authenticateUser, calculateProfileFilledPercentage)
-router.route("/stats").get(authenticateUser, getStats)
-router.route("/jobsCalendar").get(authenticateUser, getJobsCalendar)
+/**
+ * @desc Calculate profile filled percentage
+ * @route GET /api/v1/student/calculateProfileFilledPercentage
+ * @access Private
+ */
+router
+  .route("/calculateProfileFilledPercentage")
+  .get(authenticateUser, calculateProfileFilledPercentage);
 
 /**
- * @desc Get a student by id
- * @route GET /api/v1/student/students/:studentId
+ * @desc Get stats
+ * @route GET /api/v1/student/stats
+ * @access Private
+ */
+router.route("/stats").get(authenticateUser, getStats);
+
+/**
+ * @desc Get jobs calendar
+ * @route GET /api/v1/student/jobsCalendar
+ * @access Private
+ */
+router.route("/jobsCalendar").get(authenticateUser, getJobsCalendar);
+
+/**
+ * @desc Get student by id in csv
+ * @route GET /api/v1/student/csv/:studentId
  * @access Private
  */
 router.route("/csv/:studentId").get(authenticateUser, getStudentByIdInCSV);
+
+/**
+ * @desc Get student by id
+ * @route GET /api/v1/student/:studentId
+ * @access Private
+ * */
 router.route("/:studentId").get(authenticateUser, getStudentById);
 
-
+// Export router
 export default router;
