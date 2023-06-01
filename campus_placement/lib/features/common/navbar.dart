@@ -44,7 +44,7 @@ class _CommonNavbarState extends State<CommonNavbar> {
     TabData(
         iconWidget: Icon(Icons.settings),
         tooltip: 'Settings',
-        child: StudentSettings()),
+        child: StudentSettingsWrapper()),
   ];
 
   List<TabData> adminTabList = [
@@ -190,7 +190,8 @@ class _CommonNavbarState extends State<CommonNavbar> {
         ],
         automaticallyImplyLeading: false,
       ),
-      body: _availableTabs()[0].child,
+      body: _availableTabs()[_selectedIndex].child,
+      // body: ,
       // body: Row(
       //   children: [
       //     Navbar(

@@ -67,7 +67,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
     // final regex = RegExp(r'^\d{4}/[A-Za-z]{4}/\d{4}$');
     if (value == null) {
       setState(() {
-        emailError = 'Please enter valid enrollment no.';
+        enrollError = 'Please enter valid enrollment no.';
       });
     } else {
       setState(() {
@@ -90,7 +90,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
       });
     } else {
       setState(() {
-        enrollError = null;
+        nameError = null;
       });
     }
     // else {
@@ -216,7 +216,7 @@ class _RegisterStudentState extends State<RegisterStudent> {
                     SizedBox(height: 10.0.h),
                     CustomTextFormField(
                       controller: _enrollController,
-                      hint: 'Enter Enrollment Address',
+                      hint: 'Enter Enrollment No.',
                       errorText: enrollError,
                       onChanged: enrollmentVal,
                     ),

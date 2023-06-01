@@ -14,6 +14,9 @@ abstract class RemoteRepository {
   Future<LoginResponse?> registerStudentUser(
       String email, String password, String enrollmentNo, String studentName);
   Future<void> logoutUser();
+
+  Future<Map<String, dynamic>?> getStudentStats();
+  Future<String?> getProfileFilled();
 }
 
 class RemoteRepositoryImpl extends RemoteRepository {
@@ -51,6 +54,32 @@ class RemoteRepositoryImpl extends RemoteRepository {
       return LoginResponse.fromJson(rs);
     } catch (e) {
       debugPrint('Error in loginUser => $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getStudentStats() async {
+    try {
+      final response = await _client.get(EndPoints.getStudentHomeStats);
+      final Map<String, dynamic> stats = response.data['stats'];
+      print("GetStats response $response");
+      return stats;
+    } catch (e) {
+      debugPrint('Error in getStudentStats => $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<String?> getProfileFilled() async {
+    try {
+      final response = await _client.get(EndPoints.getStudentProfileFilled);
+      final String? profileFilled = response.data['filledPercentage'];
+      print("getProfileFilled response $profileFilled");
+      return profileFilled;
+    } catch (e) {
+      debugPrint('Error in getProfileFilled => $e');
       return null;
     }
   }

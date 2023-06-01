@@ -7,6 +7,7 @@ import '../../auth/auth_bloc.dart';
 import '../../constants/constants.dart';
 import '../../data/repository/repo.dart';
 import '../../features/login/cubit/login_cubit.dart';
+import '../../features/student_management/cubit/student_home_cubit.dart';
 import '../dio/app_interceptor.dart';
 import '../dio/dio_client.dart';
 import '../dio/logger.dart';
@@ -37,6 +38,9 @@ Future<void> initLocator() async {
 
   locator.registerLazySingleton<LoginCubit>(
     () => LoginCubit(locator<RemoteRepository>()),
+  );
+  locator.registerFactory<StudentHomeCubit>(
+    () => StudentHomeCubit(locator<RemoteRepository>()),
   );
   locator.registerLazySingleton<RegisterStudentCubit>(
       () => RegisterStudentCubit(locator<RemoteRepository>()));
