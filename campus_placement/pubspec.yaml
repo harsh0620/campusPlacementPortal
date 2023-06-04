@@ -46,7 +46,7 @@ dependencies:
 
 
   json_annotation: ^4.8.1
-  dropdown_button2: ^2.1.3
+  
   pinput: ^2.2.31
   flutter_screenutil: ^5.8.1
 
