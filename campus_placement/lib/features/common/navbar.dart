@@ -30,7 +30,9 @@ class _CommonNavbarState extends State<CommonNavbar> {
   int _selectedIndex = 0;
   List<TabData> studentTabList = [
     TabData(
-        iconWidget: Icon(Icons.home), tooltip: 'Home', child: StudentHome()),
+        iconWidget: Icon(Icons.home),
+        tooltip: 'Home',
+        child: StudentHomeWrapper()),
     TabData(
         iconWidget: Icon(Icons.work), tooltip: 'Jobs', child: StudentJobs()),
     TabData(

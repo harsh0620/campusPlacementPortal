@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -266,103 +267,273 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({
-    super.key,
-    required this.controller,
-    this.hint,
-    this.obscureText = false,
-    this.errorText,
-    this.onChanged,
-    this.onSubmitted,
-  });
+// class CustomTextFormField extends StatelessWidget {
+//   const CustomTextFormField(
+//       {super.key,
+//       this.controller,
+//       this.hint,
+//       this.obscureText = false,
+//       this.errorText,
+//       this.onChanged,
+//       this.onSubmitted,
+//       this.initialValue});
 
-  final TextEditingController controller;
+//   final TextEditingController? controller;
+//   final String? hint;
+//   final bool obscureText;
+//   final String? errorText;
+//   final void Function(String)? onChanged;
+//   final void Function(String?)? onSubmitted;
+//   final String? initialValue;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return TextFormField(
+//       obscureText: obscureText,
+//       controller: controller,
+//       initialValue: initialValue,
+//       keyboardType: TextInputType.emailAddress,
+//       decoration: InputDecoration(
+//         filled: true,
+//         hoverColor: Colors.transparent,
+//         focusColor: ColorConst.white,
+//         fillColor: ColorConst.white,
+//         disabledBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(6),
+//           borderSide: BorderSide(
+//             color: ColorConst.lightGrey3,
+//             width: 1.w,
+//           ),
+//         ),
+//         enabledBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(6),
+//           borderSide: const BorderSide(
+//             color: ColorConst.dartGrey3,
+//             width: 1,
+//           ),
+//         ),
+//         focusedBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(6),
+//           borderSide: const BorderSide(
+//             color: ColorConst.black,
+//             width: 2,
+//           ),
+//         ),
+//         focusedErrorBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(6),
+//           borderSide: const BorderSide(
+//             color: ColorConst.red,
+//             width: 2,
+//           ),
+//         ),
+//         errorBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(6),
+//           borderSide: const BorderSide(
+//             color: ColorConst.red,
+//             width: 1,
+//           ),
+//         ),
+//         // prefixIcon: prefixIcon,
+//         // prefixIconColor: ColorConst.burgundy,
+//         // suffixIcon: suffixIcon,
+//         // suffixIconColor: ColorConst.burgundy,
+//         hintText: hint,
+//         hintStyle: TextStyle(
+//           // TextType.subHeading2,
+//           color: ColorConst.dartGrey3,
+//           fontSize: 16.sp,
+//         ),
+//         errorText: errorText,
+//         errorStyle: TextStyle(
+//           // TextType.text6,
+//           color: ColorConst.red,
+//           fontSize: 16.sp,
+//         ),
+//         enabled: true,
+
+//         // helperText: helperText,
+//         // helperStyle: getTextStyle(
+//         //   // TextType.text6,
+//         //   color: ColorConst.dartGrey3,
+//         //   fontSize: helperFontSize,
+//         // ),
+//         // contentPadding: contentPadding,
+//       ),
+//       style: TextStyle(
+//         // TextType.subHeading1,
+//         color: ColorConst.dartGrey3,
+//         fontSize: 16.sp,
+//       ),
+//       onChanged: onChanged,
+//       onFieldSubmitted: onSubmitted,
+//     );
+//   }
+// }
+
+class CustomTextFormField extends StatelessWidget {
+  final TextEditingController? controller;
+  final String? initialValue;
+  final String? label;
   final String? hint;
-  final bool obscureText;
   final String? errorText;
+  final String? helperText;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final bool obscureText;
+  final bool autofocus;
+  final bool enabled;
+  final Color? focusedColor;
+  final Color? enabledColor;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
   final void Function(String)? onChanged;
   final void Function(String?)? onSubmitted;
+  final String? Function(String?)? validator;
+  final Iterable<String>? autofillHints;
+  final List<TextInputFormatter>? inputFormatters;
+  final double? labelFontSize;
+  final int? maxline;
+  final int? minline;
+
+  /// will be same for errorFontSize
+  final double? helperFontSize;
+  final double? hintFontSize;
+  final double? inputFontSize;
+
+  final EdgeInsets contentPadding;
+  final FocusNode? focusNode;
+  final void Function(PointerDownEvent)? onTapOutside;
+
+  const CustomTextFormField({
+    Key? key,
+    this.label,
+    this.focusNode,
+    this.onTapOutside,
+    this.controller,
+    this.initialValue,
+    this.hint,
+    this.errorText,
+    this.helperText,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.obscureText = false,
+    this.autofocus = false,
+    this.enabled = true,
+    this.focusedColor,
+    this.enabledColor,
+    this.maxline,
+    this.minline,
+    this.onChanged,
+    this.onSubmitted,
+    this.validator,
+    this.keyboardType,
+    this.textInputAction,
+    this.autofillHints,
+    this.helperFontSize,
+    this.hintFontSize,
+    this.inputFontSize,
+    this.labelFontSize,
+    this.inputFormatters,
+    this.contentPadding =
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      obscureText: obscureText,
-      controller: controller,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        filled: true,
-        hoverColor: Colors.transparent,
-        focusColor: ColorConst.white,
-        fillColor: ColorConst.white,
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(
-            color: ColorConst.lightGrey3,
-            width: 1.w,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.dartGrey3,
-            width: 1,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.black,
-            width: 2,
-          ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.red,
-            width: 2,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(
-            color: ColorConst.red,
-            width: 1,
-          ),
-        ),
-        // prefixIcon: prefixIcon,
-        // prefixIconColor: ColorConst.burgundy,
-        // suffixIcon: suffixIcon,
-        // suffixIconColor: ColorConst.burgundy,
-        hintText: hint,
-        hintStyle: TextStyle(
-          // TextType.subHeading2,
-          color: ColorConst.dartGrey3,
-          fontSize: 16.sp,
-        ),
-        errorText: errorText,
-        errorStyle: TextStyle(
-          // TextType.text6,
-          color: ColorConst.red,
-          fontSize: 16.sp,
-        ),
-        enabled: true,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextFormField(
+          focusNode: focusNode,
+          onTapOutside: onTapOutside,
+          maxLines: maxline ?? 1,
+          minLines: minline ?? 1,
+          controller: controller,
+          initialValue: initialValue,
+          decoration: InputDecoration(
+            filled: true,
+            hoverColor: Colors.transparent,
+            focusColor: ColorConst.white,
+            fillColor: ColorConst.white,
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: BorderSide(
+                color: ColorConst.lightGrey3,
+                width: 1.w,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(
+                color: ColorConst.dartGrey3,
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(
+                color: ColorConst.black,
+                width: 2,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(
+                color: ColorConst.red,
+                width: 2,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(
+                color: ColorConst.red,
+                width: 1,
+              ),
+            ),
+            // prefixIcon: prefixIcon,
+            // prefixIconColor: ColorConst.burgundy,
+            // suffixIcon: suffixIcon,
+            // suffixIconColor: ColorConst.burgundy,
+            hintText: hint,
+            hintStyle: TextStyle(
+              // TextType.subHeading2,
+              color: ColorConst.dartGrey3,
+              fontSize: 16.sp,
+            ),
+            errorText: errorText,
+            errorStyle: TextStyle(
+              // TextType.text6,
+              color: ColorConst.red,
+              fontSize: 16.sp,
+            ),
+            enabled: true,
 
-        // helperText: helperText,
-        // helperStyle: getTextStyle(
-        //   // TextType.text6,
-        //   color: ColorConst.dartGrey3,
-        //   fontSize: helperFontSize,
-        // ),
-        // contentPadding: contentPadding,
-      ),
-      style: TextStyle(
-        // TextType.subHeading1,
-        color: ColorConst.dartGrey3,
-        fontSize: 16.sp,
-      ),
-      onChanged: onChanged,
-      onFieldSubmitted: onSubmitted,
+            // helperText: helperText,
+            // helperStyle: getTextStyle(
+            //   // TextType.text6,
+            //   color: ColorConst.dartGrey3,
+            //   fontSize: helperFontSize,
+            // ),
+            // contentPadding: contentPadding,
+          ),
+          style: TextStyle(
+            // TextType.subHeading1,
+            color: ColorConst.dartGrey3,
+            fontSize: 16.sp,
+          ),
+          inputFormatters: inputFormatters,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          obscureText: obscureText,
+          autofocus: autofocus,
+          enabled: enabled,
+          onChanged: onChanged,
+          onFieldSubmitted: onSubmitted,
+          validator: validator,
+          autofillHints: autofillHints,
+        ),
+      ],
     );
   }
 }

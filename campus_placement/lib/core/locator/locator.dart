@@ -6,8 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../auth/auth_bloc.dart';
 import '../../constants/constants.dart';
 import '../../data/repository/repo.dart';
+import '../../data/student_repo.dart';
 import '../../features/login/cubit/login_cubit.dart';
 import '../../features/student_management/cubit/student_home_cubit.dart';
+import '../../features/student_management/cubit/student_settings_cubit.dart';
 import '../dio/app_interceptor.dart';
 import '../dio/dio_client.dart';
 import '../dio/logger.dart';
@@ -28,6 +30,9 @@ Future<void> initLocator() async {
   locator.registerSingleton<RemoteRepository>(
     RemoteRepositoryImpl(locator<DioClient>()),
   );
+  locator.registerSingleton<StudentRepository>(
+    StudentRepositoryImpl(locator<DioClient>()),
+  );
   locator.registerSingleton<AuthBloc>(
     AuthBloc(locator<RemoteRepository>()),
   );
@@ -38,6 +43,9 @@ Future<void> initLocator() async {
 
   locator.registerLazySingleton<LoginCubit>(
     () => LoginCubit(locator<RemoteRepository>()),
+  );
+  locator.registerFactory<StudentSettingsCubit>(
+    () => StudentSettingsCubit(locator<StudentRepository>()),
   );
   locator.registerFactory<StudentHomeCubit>(
     () => StudentHomeCubit(locator<RemoteRepository>()),

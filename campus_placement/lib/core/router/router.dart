@@ -125,7 +125,7 @@ GoRouter goRouter(BuildContext context) {
           name: Routes.studentHome,
           // redirect: (context, state) {},
           builder: (ctx, state) {
-            return StudentHome();
+            return StudentHomeWrapper();
           },
         ),
         GoRoute(

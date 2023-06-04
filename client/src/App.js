@@ -19,7 +19,7 @@ import StudentView from "./components/Student/StudentView";
 import CompanyView from "./components/Company/CompanyView";
 import JobsView from "./components/Jobs/JobsView";
 import Profile from "./components/Profile";
-import '@fortawesome/fontawesome-free/css/all.css';
+// import '@fortawesome/fontawesome-free/css/all.css';
 import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
