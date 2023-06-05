@@ -223,9 +223,9 @@ class _AcademicsWidgetState extends State<AcademicsWidget> {
                 Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      'Academic Details ${widget.no}',
+                      'Academic Details',
                       style: TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 22.sp),
+                          fontWeight: FontWeight.w700, fontSize: 18.sp),
                     )),
                 SizedBox(
                   height: 30.h,

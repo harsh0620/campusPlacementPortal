@@ -480,14 +480,14 @@ class CustomTextFormField extends StatelessWidget {
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: const BorderSide(
-                color: ColorConst.red,
+                color: ColorConst.black,
                 width: 2,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: const BorderSide(
-                color: ColorConst.red,
+                color: ColorConst.black,
                 width: 1,
               ),
             ),
@@ -518,10 +518,10 @@ class CustomTextFormField extends StatelessWidget {
             // contentPadding: contentPadding,
           ),
           style: TextStyle(
-            // TextType.subHeading1,
-            color: ColorConst.dartGrey3,
-            fontSize: 16.sp,
-          ),
+              // TextType.subHeading1,
+              color: ColorConst.black,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600),
           inputFormatters: inputFormatters,
           keyboardType: keyboardType,
           textInputAction: textInputAction,

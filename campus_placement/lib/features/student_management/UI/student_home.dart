@@ -66,11 +66,11 @@ class _StudentHomeState extends State<StudentHome> {
           children: [
             DetialsContainer(
               label: 'Basic Details',
-              color: ColorConst.customBlue,
+              color: ColorConst.customPink,
               iconWidget: Icon(
                 Icons.info_outline,
                 // color: Colors.white,
-                color: ColorConst.customBlue,
+                color: ColorConst.customPink,
               ),
               child: BlocProvider(
                 create: (context) => locator<StudentSettingsCubit>(),
@@ -548,17 +548,23 @@ class _BasicDetailsWidgetState extends State<BasicDetailsWidget> {
                       _aboutMeval = value;
                     });
                   },
+                  style: TextStyle(
+                      // TextType.subHeading1,
+                      color: ColorConst.black,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600),
                   controller: _aboutMeController,
                   keyboardType: TextInputType.multiline,
                   maxLines: 4,
                   // enabled: enabled,
                   decoration: InputDecoration(
                     hintStyle: TextStyle(
-                      fontSize: 14.sp,
-                      // TextType.text1,
-                      color: ColorConst.lightGrey3,
-                      // fontSize: hintFontSize,
-                    ),
+                        fontSize: 14.sp,
+                        // TextType.text1,
+                        color: ColorConst.black,
+                        fontWeight: FontWeight.w600
+                        // fontSize: hintFontSize,
+                        ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(6),
                       borderSide: const BorderSide(

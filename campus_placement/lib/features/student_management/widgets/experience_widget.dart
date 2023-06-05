@@ -158,9 +158,9 @@ class ExperienceWidgetState extends State<ExperienceWidget> {
             Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Professional Details ${widget.no}',
+                  'Professional Details',
                   style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 22.sp),
+                      TextStyle(fontWeight: FontWeight.w700, fontSize: 18.sp),
                 )),
             SizedBox(
               height: 30.h,

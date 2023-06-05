@@ -28,11 +28,12 @@ class _CommonNavbarState extends State<CommonNavbar> {
   late final user;
   late TextEditingController editingController;
   int _selectedIndex = 0;
+  late String lastName;
   List<TabData> studentTabList = [
     TabData(
         iconWidget: Icon(Icons.home),
         tooltip: 'Home',
-        child: StudentHomeWrapper()),
+        child: StudentSettingsWrapper()),
     TabData(
         iconWidget: Icon(Icons.work), tooltip: 'Jobs', child: StudentJobs()),
     TabData(
@@ -46,7 +47,14 @@ class _CommonNavbarState extends State<CommonNavbar> {
     TabData(
         iconWidget: Icon(Icons.settings),
         tooltip: 'Settings',
-        child: StudentSettingsWrapper()),
+        child: StudentHomeWrapper()),
+  ];
+  List<String> name = [
+    "Home",
+    "Jobs",
+    "Companies",
+    "Profile",
+    "Settings",
   ];
 
   List<TabData> adminTabList = [
@@ -81,7 +89,7 @@ class _CommonNavbarState extends State<CommonNavbar> {
   void initState() {
     super.initState();
     user = context.read<AuthBloc>().state.user;
-
+    lastName = user?['name'].substring(user?['name'].indexOf(" ") + 1).trim();
     editingController = TextEditingController();
   }
 
@@ -94,11 +102,14 @@ class _CommonNavbarState extends State<CommonNavbar> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorConst.white,
+        backgroundColor: ColorConst.customteal,
         centerTitle: false,
         title: Text(
-          'CPP',
-          style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w700),
+          name[_selectedIndex],
+          style: TextStyle(
+              fontSize: 25.sp,
+              fontWeight: FontWeight.w700,
+              color: Colors.black),
           // type: TextType.heading2,
         ),
         actions: [
@@ -176,19 +187,59 @@ class _CommonNavbarState extends State<CommonNavbar> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircleAvatar(
-                  backgroundColor: ColorConst.white,
-                  child: Text(
-                    "HC",
-                    style: const TextStyle(
-                        color: ColorConst.black, fontWeight: FontWeight.bold),
+                  backgroundColor: ColorConst.black,
+                  radius: 20.sp,
+                  child: Container(
+                    padding: EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      // color: const Color(0xff7c94b6),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
+                    // child: Text(
+                    //   "${user?['name'][0]} ${lastName[0]}",
+                    //   style: const TextStyle(
+                    //       color: ColorConst.black, fontWeight: FontWeight.bold),
+                    // ),
                   ),
                 ),
-                SizedBox(width: 4.w),
-                const Icon(Icons.arrow_drop_down),
-                SizedBox(width: 20.w),
+                SizedBox(width: 5.w),
               ],
             ),
           ),
+          SizedBox(width: 10.w),
+          // CircleAvatar(
+          //   backgroundColor: ColorConst.black,
+          //   radius: 20.sp,
+          //   child: Container(
+          //     padding: EdgeInsets.all(3),
+          //     decoration: BoxDecoration(
+          //       // color: const Color(0xff7c94b6),
+          //       borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          //       // border: Border.all(
+          //       //   color: ColorConst.customgray,
+          //       //   width: 2.0,
+          //       // ),
+          //     ),
+          //     child: Icon(
+          //       Icons.settings,
+          //       color: Colors.white,
+          //     ),
+          //     // child: Text(
+          //     //   "${user?['name'][0]} ${lastName[0]}",
+          //     //   style: const TextStyle(
+          //     //       color: ColorConst.black, fontWeight: FontWeight.bold),
+          //     // ),
+          //   ),
+          // ),
+          // SizedBox(width: 10.w),
         ],
         automaticallyImplyLeading: false,
       ),
@@ -205,12 +256,12 @@ class _CommonNavbarState extends State<CommonNavbar> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
             // sets the background color of the `BottomNavigationBar`
-            canvasColor: Colors.green,
+            canvasColor: ColorConst.customteal,
             // sets the active color of the `BottomNavigationBar` if `Brightness` is light
             primaryColor: Colors.red,
             textTheme: Theme.of(context)
                 .textTheme
-                .copyWith(caption: new TextStyle(color: Colors.yellow))),
+                .copyWith(caption: new TextStyle(color: ColorConst.black))),
         child: BottomNavigationBar(
           // backgroundColor: ColorConst.black,
           type: BottomNavigationBarType.fixed,
@@ -221,8 +272,8 @@ class _CommonNavbarState extends State<CommonNavbar> {
             color: Colors.white,
           ),
           unselectedItemColor: Colors.white,
-          selectedIconTheme: IconThemeData(color: Colors.amberAccent, size: 40),
-          selectedItemColor: Colors.amberAccent,
+          selectedIconTheme: IconThemeData(color: ColorConst.black, size: 40),
+          selectedItemColor: ColorConst.black,
           selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
           items: List.generate(_availableTabs().length, (index) {
             return BottomNavigationBarItem(
